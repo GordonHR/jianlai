@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>剑来 · 可玩性增强预览（天时 / 一本账）</title>
+<style>
+:root{
+  --ink:#171410; --ink2:#221c16; --gold:#e8cf8f; --gold2:#c9a24b;
+  --red:#b5432f; --paper:#efe6d4; --dim:#9a8f7c;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--paper);
+  font-family:"Songti SC","STSong","SimSun",serif;letter-spacing:.02em}
+.wrap{max-width:1040px;margin:0 auto;padding:28px 24px 60px}
+h1{font-size:22px;font-weight:400;color:var(--gold);letter-spacing:.28em;margin:0 0 6px}
+.sub{font-size:13px;color:var(--dim);letter-spacing:.06em;margin-bottom:22px}
+.tabs{display:flex;gap:10px;margin-bottom:20px}
+.tab{padding:9px 20px;border:1px solid #4a3f30;border-radius:3px;cursor:pointer;
+  font-size:14px;color:var(--dim);background:#1e1812;letter-spacing:.12em;transition:.18s}
+.tab:hover{color:var(--gold);border-color:var(--gold2)}
+.tab.on{color:#221c16;background:linear-gradient(180deg,#f0dfae,#c9a24b);border-color:var(--gold2)}
+.panel{display:none}
+.panel.on{display:block}
+.note{font-size:12px;color:var(--dim);line-height:1.9;margin:14px 0 26px;
+  border-left:2px solid #4a3f30;padding-left:12px}
+.hint{font-size:12px;color:#7d7160;margin-top:8px}
+
+/* ── 战场舞台 ── */
+.stage{position:relative;height:340px;border:1px solid #4a3f30;border-radius:4px;
+  overflow:hidden;transition:background 1.1s ease}
+.sky{position:absolute;inset:0;transition:1.1s ease}
+.glow{position:absolute;inset:0;pointer-events:none;transition:1.1s ease}
+.particle{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+
+/* 天时底 */
+.sky.night{background:radial-gradient(120% 90% at 50% 0%,#1b2440 0%,#0d1020 60%,#080a14 100%)}
+.sky.drought{background:radial-gradient(120% 90% at 50% 100%,#4a2f14 0%,#2b1c0d 60%,#170f07 100%)}
+.sky.snow{background:radial-gradient(120% 90% at 50% 0%,#2b3440 0%,#1a2028 60%,#0e1218 100%)}
+.sky.manh{background:radial-gradient(120% 90% at 50% 100%,#3a1414 0%,#25100f 60%,#150807 100%)}
+.sky.exam{background:radial-gradient(120% 90% at 50% 0%,#2a2618 0%,#1c1a11 60%,#100f0a 100%)}
+.sky.lizhu{background:radial-gradient(120% 90% at 50% 50%,#1d2a26 0%,#121b18 60%,#0a100e 100%)}
+
+/* 远山剪影 */
+.ridge{position:absolute;left:0;right:0;bottom:0;height:120px;opacity:.55}
+.ridge svg{width:100%;height:100%;display:block}
+
+/* 角色位 */
+.seats{position:absolute;left:0;right:0;top:96px;display:flex;justify-content:center;gap:64px}
+.seat{width:96px;text-align:center}
+.por{height:116px;border:1px solid #6b5a3e;border-radius:3px;
+  background:linear-gradient(180deg,#2a231a,#191410);display:flex;align-items:center;
+  justify-content:center;color:var(--gold);font-size:13px;letter-spacing:.1em}
+.pname{margin-top:6px;font-size:12px;color:var(--paper)}
+.hp{margin-top:4px;height:4px;background:#3a3128;border-radius:2px;overflow:hidden}
+.hp i{display:block;height:100%;background:var(--gold2)}
+
+/* 天时条 */
+.omenbar{position:absolute;left:16px;top:14px;display:flex;align-items:center;gap:10px;
+  padding:7px 14px;border:1px solid var(--gold2);border-radius:2px;
+  background:rgba(10,8,6,.62);backdrop-filter:blur(2px)}
+.omenbar .lb{font-size:11px;color:var(--dim);letter-spacing:.2em}
+.omenbar .nm{font-size:15px;color:var(--gold);letter-spacing:.16em}
+.omenbar .ef{font-size:11px;color:#c8bda6;margin-left:4px}
+
+/* 翻牌演出 */
+.flipwrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:rgba(8,6,4,.55);z-index:6}
+.omencard{width:190px;height:262px;perspective:900px;cursor:pointer}
+.omencard .in{position:relative;width:100%;height:100%;transform-style:preserve-3d;
+  transition:transform .9s cubic-bezier(.3,.9,.4,1)}
+.omencard.flip .in{transform:rotateY(180deg)}
+.f,.b{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--gold2);
+  border-radius:5px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:20px;text-align:center}
+.f{background:repeating-linear-gradient(45deg,#241d15,#241d15 8px,#2b2318 8px,#2b2318 16px)}
+.f .seal{width:52px;height:52px;border:2px solid var(--red);color:var(--red);
+  display:flex;align-items:center;justify-content:center;font-size:22px;transform:rotate(6deg)}
+.b{transform:rotateY(180deg);background:linear-gradient(180deg,#2a2217,#171208)}
+.b .t{font-size:26px;color:var(--gold);letter-spacing:.3em;margin-bottom:14px}
+.b .s{font-size:11px;color:var(--dim);line-height:1.9}
+.b .r{position:absolute;bottom:14px;font-size:10px;color:#7d7160;letter-spacing:.14em}
+
+/* 粒子 */
+.flake{position:absolute;background:#dfe8f2;border-radius:50%;opacity:.85;
+  animation:fall linear infinite}
+@keyframes fall{0%{transform:translateY(-20px) translateX(0);opacity:0}
+  10%{opacity:.9}100%{transform:translateY(360px) translateX(28px);opacity:0}}
+.spark{position:absolute;width:2px;height:2px;background:#e8a35f;border-radius:50%;
+  animation:rise linear infinite}
+@keyframes rise{0%{transform:translateY(340px);opacity:0}20%{opacity:.9}
+  100%{transform:translateY(-10px);opacity:0}}
+.star{position:absolute;width:2px;height:2px;background:#f0ead8;border-radius:50%;
+  animation:twinkle 3s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.15}50%{opacity:.9}}
+.mist{position:absolute;left:-30%;width:160%;height:90px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(150,40,30,.30),transparent 70%);
+  animation:drift 14s linear infinite}
+@keyframes drift{0%{transform:translateX(-20%)}100%{transform:translateX(20%)}}
+
+/* 章回体战报 */
+.chapter{margin-top:14px;border:1px solid #4a3f30;border-radius:4px;background:#1b1610;overflow:hidden}
+.chapter .hd{padding:11px 16px;border-bottom:1px solid #3a3128;font-size:14px;color:var(--gold);
+  letter-spacing:.14em;background:linear-gradient(90deg,#221b13,#1b1610)}
+.chapter .hd em{font-style:normal;color:var(--red);font-size:12px;margin-left:8px;letter-spacing:.1em}
+.chapter ul{margin:0;padding:10px 16px 14px;list-style:none;max-height:180px;overflow:auto}
+.chapter li{font-size:12.5px;line-height:2;color:#cfc4ac;border-bottom:1px dashed #2e2720}
+.chapter li:last-child{border-bottom:0}
+.chapter li b{color:var(--gold2);font-weight:400}
+
+/* 天时切换按钮 */
+.omenpick{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.omenpick button{padding:7px 14px;font-size:12.5px;color:var(--dim);background:#1e1812;
+  border:1px solid #4a3f30;border-radius:2px;cursor:pointer;letter-spacing:.1em;transition:.16s}
+.omenpick button:hover{color:var(--gold);border-color:var(--gold2)}
+.omenpick button.on{color:#221c16;background:var(--gold2);border-color:var(--gold2)}
+
+/* ── 账房 ── */
+.acc{display:grid;grid-template-columns:1fr 320px;gap:16px}
+.card{border:1px solid #4a3f30;border-radius:4px;background:#1b1610;padding:16px 18px}
+.card h3{margin:0 0 12px;font-size:14px;font-weight:400;color:var(--gold);letter-spacing:.18em}
+.assets{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.as{border:1px solid #3a3128;border-radius:3px;padding:11px 12px;background:#201a13}
+.as .k{font-size:11px;color:var(--dim);letter-spacing:.12em}
+.as .v{font-size:20px;color:var(--gold);margin-top:4px}
+.as .v small{font-size:11px;color:var(--dim);margin-left:4px}
+.ledger{list-style:none;margin:0;padding:0}
+.ledger li{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;
+  padding:8px 0;border-bottom:1px dashed #2e2720;color:#cfc4ac}
+.ledger li:last-child{border-bottom:0}
+.ledger .src{color:var(--dim);font-size:11px}
+.ledger .amt{color:var(--gold2);white-space:nowrap}
+.ledger .amt.neg{color:#c07a6a}
+.tree{list-style:none;margin:0;padding:0}
+.tree li{position:relative;padding:9px 0 9px 20px;font-size:12.5px;color:#8d8371}
+.tree li:before{content:"";position:absolute;left:3px;top:15px;width:7px;height:7px;
+  border-radius:50%;border:1px solid #5a4c38;background:#1b1610}
+.tree li.done{color:#cfc4ac}
+.tree li.done:before{background:var(--gold2);border-color:var(--gold2);
+  box-shadow:0 0 8px rgba(201,162,75,.6)}
+.tree li.next{color:var(--gold)}
+.tree li.next:before{border-color:var(--gold);animation:blink 1.6s infinite}
+@keyframes blink{0%,100%{box-shadow:0 0 0 0 rgba(232,207,143,.5)}
+  50%{box-shadow:0 0 0 5px rgba(232,207,143,0)}}
+.choice{margin-top:16px;border:1px solid var(--gold2);border-radius:4px;
+  background:linear-gradient(180deg,#241d14,#1a150e);padding:14px 16px}
+.choice .q{font-size:13.5px;color:var(--gold);line-height:1.8}
+.choice .opts{display:flex;gap:10px;margin-top:12px}
+.choice .opts div{flex:1;padding:11px 12px;border:1px solid #4a3f30;border-radius:3px;
+  font-size:12.5px;color:#cfc4ac;cursor:pointer;transition:.16s;line-height:1.7}
+.choice .opts div:hover{border-color:var(--gold2);color:var(--gold)}
+.choice .opts div span{display:block;font-size:11px;color:var(--dim);margin-top:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>剑 来</h1>
+  <div class="sub">可玩性增强 · 候选预览（本文件为样品，未改动任何生产资源）</div>
+
+  <div class="tabs">
+    <div class="tab on" data-t="p1">一 · 天时地势</div>
+    <div class="tab" data-t="p2">二 · 一本账</div>
+  </div>
+
+  <!-- ═══ 面板一：天时·地势 ═══ -->
+  <div class="panel on" id="p1">
+    <div class="note">
+      开局翻一张「天时牌」，全场吃一条全局规则，战场背景随之变化。<br>
+      制造的新决策：<b style="color:var(--gold2)">同一手牌在不同天时下打法不同</b>——要不要为配合天时改选角色、起手要不要留守心。纯数据表，零新增美术资源。
+    </div>
+
+    <div class="stage" id="stage">
+      <div class="sky snow" id="sky"></div>
+      <div class="glow" id="glow"></div>
+      <div class="particle" id="ptc"></div>
+      <div class="ridge">
+        <svg viewBox="0 0 1000 120" preserveAspectRatio="none">
+          <path d="M0,120 L0,72 L120,44 L210,66 L330,26 L430,58 L560,34 L680,70 L800,40 L900,64 L1000,48 L1000,120 Z"
+                fill="#000" opacity=".55"/>
+        </svg>
+      </div>
+      <div class="omenbar">
+        <span class="lb">天 时</span>
+        <span class="nm" id="obName">风雪</span>
+        <span class="ef" id="obEff">剑气 −1，守心 +1</span>
+      </div>
+      <div class="seats">
+        <div class="seat"><div class="por">陈平安</div><div class="pname">陈平安</div>
+          <div class="hp"><i style="width:70%"></i></div></div>
+        <div class="seat"><div class="por">宁 姚</div><div class="pname">宁姚</div>
+          <div class="hp"><i style="width:45%"></i></div></div>
+      </div>
+      <div class="flipwrap" id="flipwrap">
+        <div class="omencard" id="ocard" onclick="drawOmen()">
+          <div class="in">
+            <div class="f"><div class="seal">天时</div></div>
+            <div class="b">
+              <div class="t" id="cbT">风雪</div>
+              <div class="s" id="cbS">剑气 −1<br>守心 +1</div>
+              <div class="r" id="cbR">剑气长城 · 风雪</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hint">点击牌面翻牌（可反复重抽）· 下方按钮直接切换天时看背景</div>
+
+    <div class="omenpick" id="pick"></div>
+
+    <div class="chapter">
+      <div class="hd" id="chTitle">第七回合 · 风雪问剑 <em>天时：风雪</em></div>
+      <ul id="chLog"></ul>
+    </div>
+  </div>
+
+  <!-- ═══ 面板二：一本账 ═══ -->
+  <div class="panel" id="p2">
+    <div class="note">
+      统一存档把六个模块串成一条经济链：对战与经营产出 → 账房 → 消费与解锁 → 增强下一局。<br>
+      制造的新决策：<b style="color:var(--gold2)">这笔钱是现在买法宝让下一局更强，还是攒着在落魄山买下第二个山头？</b>
+    </div>
+
+    <div class="acc">
+      <div>
+        <div class="assets">
+          <div class="as"><div class="k">雪花钱</div><div class="v">1,240</div></div>
+          <div class="as"><div class="k">金精铜钱</div><div class="v">6<small>袋</small></div></div>
+          <div class="as"><div class="k">功 德</div><div class="v">318</div></div>
+        </div>
+        <div class="card">
+          <h3>账 目</h3>
+          <ul class="ledger">
+            <li><span>对局 · 剑气长城 第五波 · 胜<span class="src">　斩获</span></span><span class="amt">+320 雪花钱</span></li>
+            <li><span>落魄山 · 第五年结算<span class="src">　山头岁入</span></span><span class="amt">+2 金精铜钱</span></li>
+            <li><span>山水祠 · 第廿四旬<span class="src">　香火折算</span></span><span class="amt">+46 功德</span></li>
+            <li><span>包袱斋 · 篆文小暑钱<span class="src">　赊欠未清</span></span><span class="amt neg">−120 雪花钱</span></li>
+            <li><span>行迹 · 晋升「洞府」<span class="src">　累计</span></span><span class="amt">+1 重境界</span></li>
+          </ul>
+        </div>
+        <div class="choice">
+          <div class="q">结账时，你要怎么处置这 320 雪花钱？</div>
+          <div class="opts">
+            <div>先在包袱斋挑件趁手法宝<span>下一局立刻变强</span></div>
+            <div>攒着，等落魄山买第二个山头<span>长期产出，见效慢</span></div>
+            <div>先抵赊欠<span>石柔那儿还挂着 120</span></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>解 锁</h3>
+          <ul class="tree">
+            <li class="done">仗剑独行 · 困难</li>
+            <li class="done">天时 · 风雪 / 大旱</li>
+            <li class="next">行迹 3 级 · 问剑正阳山</li>
+            <li>行迹 5 级 · 青萍剑宗下宗事件</li>
+            <li>行迹 8 级 · 本命飞剑「井中月」</li>
+          </ul>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <h3>原 著 依 据</h3>
+          <div style="font-size:12.5px;line-height:2;color:#cfc4ac">
+            陈平安为落魄山账房先生、韦文龙管账；<br>
+            包袱斋「可赊欠」历来定例；<br>
+            山水祠：以全部功德换取众神点燃心香；<br>
+            落魄山：三袋金精铜钱买山头。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var OMENS = [
+  {k:'night',   n:'夜游',        ef:'判定 +2；魏檗在场额外摸一张',   src:'魏檗神号「夜游」',
+   log:['魏檗自披云山夜行而至，挑灯一盏。','陈平安判定「夜游」，道心通明，气势 +1。','宁姚一剑递出，剑气 3 点。']},
+  {k:'drought', n:'大旱',        ef:'丹药回复 −1；香火类技能 +1',   src:'山水祠旱灾事件',
+   log:['河床见底，乡民抬猪头三牲上山。','陈平安服丹，回复 1 点（大旱 −1）。','埋河水神传信：水脉尚余一线。']},
+  {k:'snow',    n:'风雪',        ef:'剑气 −1，守心 +1',             src:'剑气长城 · 风雪',
+   log:['风雪自关口压下，火把尽灭。','陈平安出剑，剑气 1 点（风雪 −1）。','宁姚守心，抵去 2 点（风雪 +1）。']},
+  {k:'manh',    n:'蛮荒压境',    ef:'每回合开始气血上限 −1（不致死）',src:'蛮荒天下入侵',
+   log:['天边一线黑潮，妖族压境。','全体气血上限 −1。','陈平安：「守住这一夜。」']},
+  {k:'exam',    n:'文庙大考',    ef:'中土文庙 / 儒家角色判定 +2',   src:'中土文庙',
+   log:['文庙钟鸣，天下士子赴考。','荀渊讲道理，判定 +2，道心通明。','陈平安弃一张手牌，换得一句话。']},
+  {k:'lizhu',   n:'骊珠洞天降格', ef:'所有角色手牌上限 −1',          src:'骊珠洞天',
+   log:['洞天降格，气数外泄。','全体手牌上限 −1。','泥瓶巷那口井，又落了一层灰。']}
+];
+var cur = 2;
+
+function drawOmen(){
+  cur = Math.floor(Math.random()*OMENS.length);
+  var c = document.getElementById('ocard');
+  c.classList.remove('flip');
+  document.getElementById('cbT').textContent = OMENS[cur].n;
+  document.getElementById('cbS').innerHTML = OMENS[cur].ef.replace(/；/g,'<br>');
+  document.getElementById('cbR').textContent = OMENS[cur].src;
+  setTimeout(function(){
+    c.classList.add('flip');
+    setTimeout(function(){ applyOmen(cur, true); }, 900);
+  }, 60);
+}
+function applyOmen(i, hideCard){
+  var o = OMENS[i], sky = document.getElementById('sky'), ptc = document.getElementById('ptc');
+  sky.className = 'sky ' + o.k;
+  ptc.innerHTML = '';
+  var n = (o.k==='snow'?46:(o.k==='drought'?26:(o.k==='night'?40:(o.k==='manh'?5:22))));
+  for(var j=0;j<n;j++){
+    var d = document.createElement('div'), s;
+    if(o.k==='snow'){ d.className='flake'; s=(2+Math.random()*3)+'px';
+      d.style.width=s; d.style.height=s; d.style.left=(Math.random()*100)+'%';
+      d.style.animationDuration=(3.5+Math.random()*3)+'s'; d.style.animationDelay=(-Math.random()*5)+'s'; }
+    else if(o.k==='night'){ d.className='star';
+      d.style.left=(Math.random()*100)+'%'; d.style.top=(Math.random()*70)+'%';
+      d.style.animationDuration=(2+Math.random()*3)+'s'; d.style.animationDelay=(-Math.random()*4)+'s'; }
+    else if(o.k==='drought'){ d.className='spark';
+      d.style.left=(Math.random()*100)+'%';
+      d.style.animationDuration=(2.5+Math.random()*2.5)+'s'; d.style.animationDelay=(-Math.random()*4)+'s'; }
+    else if(o.k==='manh'){ d.className='mist';
+      d.style.top=(10+j*16)+'%';
+      d.style.animationDuration=(10+j*2)+'s'; d.style.animationDelay=(-Math.random()*8)+'s'; }
+    else { d.className='star';
+      d.style.left=(Math.random()*100)+'%'; d.style.top=(Math.random()*80)+'%';
+      d.style.width='1px'; d.style.height='1px';
+      d.style.animationDuration=(3+Math.random()*3)+'s'; d.style.animationDelay=(-Math.random()*5)+'s'; }
+    ptc.appendChild(d);
+  }
+  document.getElementById('obName').textContent = o.n;
+  document.getElementById('obEff').textContent = o.ef;
+  document.getElementById('chTitle').innerHTML =
+    '第七回合 · ' + o.n + '问剑 <em>天时：' + o.n + '</em>';
+  var ul = document.getElementById('chLog'); ul.innerHTML = '';
+  o.log.forEach(function(t){ var li=document.createElement('li'); li.innerHTML=t; ul.appendChild(li); });
+  if(hideCard) document.getElementById('flipwrap').style.display='none';
+  var bs = document.querySelectorAll('#pick button');
+  for(var b=0;b<bs.length;b++) bs[b].className = (b===i?'on':'');
+}
+function buildPick(){
+  var w = document.getElementById('pick');
+  OMENS.forEach(function(o,i){
+    var b = document.createElement('button');
+    b.textContent = o.n; b.onclick = function(){
+      document.getElementById('flipwrap').style.display='none';
+      applyOmen(i,true); };
+    w.appendChild(b);
+  });
+}
+document.querySelectorAll('.tab').forEach(function(t){
+  t.onclick = function(){
+    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on');});
+    document.querySelectorAll('.panel').forEach(function(x){x.classList.remove('on');});
+    t.classList.add('on');
+    document.getElementById(t.dataset.t).classList.add('on');
+  };
+});
+buildPick(); applyOmen(2,false);
+</script>
+</body>
+</html>

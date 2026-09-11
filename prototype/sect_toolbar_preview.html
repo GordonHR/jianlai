@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<title>落魄山 · 底部栏+抽屉 预览</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { background:#0c0a08; display:flex; justify-content:center; font-family:"KaiTi","STKaiti","Songti SC",serif; }
+  /* 手机外框 */
+  .phone { position:relative; width:390px; height:844px; background:radial-gradient(circle at 50% 0%, #1d2a2a 0%, #14110f 70%); overflow:hidden; box-shadow:0 0 60px rgba(0,0,0,.6); }
+  /* 主舞台（可滚动，底栏固定不挤内容） */
+  .stage { position:absolute; left:0; right:0; top:0; bottom:0; padding:18px 14px 84px; overflow-y:auto; color:#ece6d8; }
+  .head { border-bottom:1px solid rgba(232,198,106,.2); padding-bottom:10px; margin-bottom:12px; }
+  .head .t { font-size:22px; color:#e8c66a; letter-spacing:3px; }
+  .sub { font-size:13px; color:#b9ad8f; margin-top:4px; }
+  .ev { background:linear-gradient(180deg,rgba(36,30,22,.7),rgba(20,17,15,.7)); border:1px solid rgba(232,198,106,.3); border-radius:12px; padding:14px; margin-bottom:12px; }
+  .ev .h { font-size:18px; color:#f3e8c8; }
+  .ev .p { font-size:13px; color:#cabf9f; line-height:1.7; margin:6px 0; }
+  .opt { display:flex; align-items:flex-start; gap:8px; width:100%; margin:10px 0; padding:12px; min-height:56px; border-radius:10px; border:1px solid rgba(232,198,106,.28); background:rgba(20,17,15,.5); color:#e8dec4; font-size:14px; line-height:1.5; cursor:pointer; }
+  .opt .ico { width:26px; height:26px; flex:none; border:1px solid rgba(232,198,106,.4); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#e8cf8f; font-size:13px; }
+  /* 固定底部栏 */
+  .foot { position:fixed; left:0; right:0; bottom:0; width:390px; margin:0 auto; z-index:64;
+    display:flex; gap:10px; padding:12px 14px calc(12px + env(safe-area-inset-bottom));
+    background:rgba(20,17,15,.92); border-top:1px solid rgba(232,198,106,.2); backdrop-filter:blur(8px); }
+  .foot .btn { flex:1; text-align:center; padding:11px 0; border-radius:10px; font-size:15px; letter-spacing:2px;
+    border:1px solid rgba(232,198,106,.4); background:rgba(232,198,106,.08); color:#e8c66a; cursor:pointer; user-select:none; }
+  .foot .btn.primary { flex:2; background:#e8c66a; color:#1a140c; font-weight:bold; border-color:#e8c66a; }
+  .foot .btn.on { background:linear-gradient(135deg,#9ed4be,#6fae86); color:#14110f; border-color:transparent; font-weight:bold; }
+  /* 抽屉浮层 */
+  .sheet { position:fixed; left:0; right:0; bottom:0; width:390px; margin:0 auto; top:0; z-index:71; }
+  .sheet .mask { position:absolute; inset:0; background:rgba(0,0,0,.5); }
+  .sheet .body { position:absolute; left:0; right:0; bottom:0; height:80%; max-height:760px;
+    background:#181310; border-top:1px solid rgba(232,198,106,.22); border-radius:24px 24px 0 0;
+    padding:14px 18px 40px; transform:translateY(100%); animation:sUp .32s cubic-bezier(.25,.8,.25,1) forwards; }
+  .sheet .handle { display:flex; justify-content:center; padding:6px 0 12px; }
+  .sheet .bar { width:42px; height:5px; border-radius:3px; background:rgba(232,198,106,.35); }
+  .sheet .scroll { height:100%; overflow-y:auto; }
+  @keyframes sUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+  .h3 { font-size:19px; color:#e8c66a; letter-spacing:2px; border-left:5px solid #e8c66a; padding-left:12px; margin:14px 0 10px; }
+  .panel { background:rgba(20,17,15,.5); border:1px solid rgba(232,198,106,.18); border-radius:12px; padding:12px; margin-bottom:12px; }
+  .ab { font-size:14px; color:#f0e8d2; }
+  .as { font-size:12px; color:#a99e84; margin-top:3px; }
+  .acts { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; }
+  .acts .b { padding:9px 4px; font-size:13px; text-align:center; border-radius:9px; border:1px solid rgba(232,198,106,.4); background:rgba(232,198,106,.08); color:#e8c66a; cursor:pointer; }
+  .row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:9px 0; border-bottom:1px dashed rgba(232,198,106,.14); }
+  .row:last-child { border-bottom:none; }
+  .tl { border-left:2px solid rgba(232,198,106,.42); padding-left:12px; margin-top:8px; }
+  .tl .tt { font-size:17px; color:#e8c66a; }
+  .tl .td { font-size:13px; color:#cabf9f; line-height:1.7; margin-top:4px; }
+  .hint { position:fixed; left:50%; top:14px; transform:translateX(-50%); background:rgba(0,0,0,.75); color:#e8c66a; font-size:12px; padding:6px 12px; border-radius:8px; z-index:80; opacity:0; transition:opacity .25s; }
+  .hint.show { opacity:1; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="stage" id="stage">
+    <div class="head">
+      <div class="t">落 魄 山</div>
+      <div class="sub">甲子年·春 · 香火 120 ／ 气数 40 ／ 阴德 18 ／ 威灵 5</div>
+    </div>
+    <div class="ev">
+      <div class="h">山门·问心</div>
+      <div class="p">一少年负剑而来，言欲拜入落魄山。你观其心性，似有可取之处。</div>
+      <div class="opt"><span class="ico">收</span><span>收入门下（耗 1 行动点）</span></div>
+      <div class="opt"><span class="ico">问</span><span>先试其道心，再定去留</span></div>
+      <div class="opt"><span class="ico">拒</span><span>山门初立，不宜妄收</span></div>
+    </div>
+    <div class="ev">
+      <div class="h">山下·商旅</div>
+      <div class="p">有行商求一纸护身符，愿以银钱换山门庇佑。</div>
+      <div class="opt"><span class="ico">许</span><span>走商结善缘（得银）</span></div>
+      <div class="opt"><span class="ico">辞</span><span>不掺俗务</span></div>
+    </div>
+    <div style="height:120px"></div>
+  </div>
+
+  <!-- 固定底栏 -->
+  <div class="foot">
+    <div class="btn" id="btnMood">山 务</div>
+    <div class="btn" id="btnChron">山 志</div>
+    <div class="btn primary" id="btnNext">过 此 旬 →</div>
+  </div>
+
+  <!-- 山务抽屉 -->
+  <div class="sheet" id="sheetMood" style="display:none">
+    <div class="mask" data-close="mood"></div>
+    <div class="body">
+      <div class="handle"><div class="bar"></div></div>
+      <div class="scroll">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <div class="h3" style="margin:0">山 务</div>
+          <div class="as" style="flex:1">本旬行动点 3 ／ 3　·　积压未理事 1</div>
+        </div>
+        <div class="acts">
+          <div class="b">营 建</div><div class="b">寻访弟子</div><div class="b">祭炼飞剑</div>
+          <div class="b">讲 道</div><div class="b">走 商</div><div class="b">赌 局</div>
+        </div>
+        <div class="panel"><div class="h3" style="margin-top:0">山 中 建 筑</div>
+          <div class="row"><div><div class="ab">剑庐 <span style="color:#e8c66a">Lv.2/5</span></div><div class="as">祭炼飞剑之所</div></div><div class="b" style="padding:6px 12px;border:1px solid rgba(232,198,106,.4);border-radius:8px;color:#e8c66a">升 级</div></div>
+          <div class="row"><div><div class="ab">别院 <span style="color:#e8c66a">Lv.1/4</span></div><div class="as">逢凶化吉之机</div></div><div class="b" style="padding:6px 12px;border:1px solid rgba(232,198,106,.4);border-radius:8px;color:#e8c66a">升 级</div></div>
+        </div>
+        <div class="panel"><div class="h3" style="margin-top:0">门 下 弟 子（1/6）</div>
+          <div class="row"><div class="ab">裴钱 · 玉璞境 · 3道</div><div class="as">忠心 高</div></div>
+        </div>
+        <div class="panel"><div class="h3" style="margin-top:0">本 命 飞 剑</div>
+          <div class="row"><div class="ab">笼中雀 <span style="color:#e8c66a">阶3 · 2道</span></div></div>
+        </div>
+        <div class="panel"><div class="h3" style="margin-top:0">山 中 纪 事</div>
+          <div class="as" style="color:#cabf9f;line-height:1.8">· 你于一隅受香，位卑言轻。<br>· 少年负剑入门，道心可造。<br>· 行商结善缘，得银二十。</div>
+        </div>
+        <div class="b" style="text-align:center;padding:11px 0;margin-top:6px;border:1px solid rgba(232,198,106,.25);border-radius:10px;color:#b9ad8f;cursor:pointer" data-close="mood">回 到 卷 首</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 山志抽屉 -->
+  <div class="sheet" id="sheetChron" style="display:none">
+    <div class="mask" data-close="chron"></div>
+    <div class="body">
+      <div class="handle"><div class="bar"></div></div>
+      <div class="scroll">
+        <div class="h3" style="margin-top:0">山 志 · 原 著 脉 络</div>
+        <div class="as" style="color:#a99e84">自泥瓶巷到万山朝奉，脉络依《剑来》原著按时序排列。</div>
+        <div class="tl"><div class="tt">第一卷 · 笼中雀</div><div class="td">小镇少年陈平安，于泥瓶巷中拾级而上。</div></div>
+        <div class="tl"><div class="tt">骊珠洞天</div><div class="td">齐静春坐镇，落魄山初有因果。</div></div>
+        <div class="tl"><div class="tt">剑气长城</div><div class="td">宁姚持剑，问剑天下。</div></div>
+        <div class="b" style="text-align:center;padding:11px 0;margin-top:14px;border:1px solid rgba(232,198,106,.25);border-radius:10px;color:#b9ad8f;cursor:pointer" data-close="chron">收 起 ↑</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="hint" id="hint">点右下「山务 / 山志」试试抽屉</div>
+
+<script>
+  function openSheet(id, btn){ document.getElementById(id).style.display='block'; if(btn) btn.classList.add('on'); }
+  function closeSheet(id, btn){ document.getElementById(id).style.display='none'; if(btn) btn.classList.remove('on'); }
+  document.getElementById('btnMood').onclick = ()=>{ const s=document.getElementById('sheetMood'); s.style.display==='block'?closeSheet('sheetMood',this):openSheet('sheetMood',this); };
+  document.getElementById('btnChron').onclick = ()=>{ const s=document.getElementById('sheetChron'); s.style.display==='block'?closeSheet('sheetChron',this):openSheet('sheetChron',this); };
+  document.querySelectorAll('[data-close]').forEach(el=>el.onclick=()=>{ const k=el.getAttribute('data-close'); closeSheet(k==='mood'?'sheetMood':'sheetChron', k==='mood'?document.getElementById('btnMood'):document.getElementById('btnChron')); });
+  document.getElementById('btnNext').onclick = ()=>showHint('（此处进入本旬结算中转页）');
+  function showHint(t){ const h=document.getElementById('hint'); h.textContent=t; h.classList.add('show'); setTimeout(()=>h.classList.remove('show'),1600); }
+  setTimeout(()=>showHint('点右下「山务 / 山志」试试抽屉'),500);
+</script>
+</body>
+</html>

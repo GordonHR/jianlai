@@ -1,0 +1,275 @@
+page { background:#14110f; }
+.sect{
+  color:#ece6d8; max-width:1080rpx; margin:0 auto; padding:18rpx 14rpx 150rpx;
+  background: radial-gradient(140% 60% at 50% 0%, rgba(232,198,106,.05), transparent 55%),
+              radial-gradient(120% 120% at 50% 100%, rgba(0,0,0,.30), transparent 60%);
+  border-radius:18rpx; box-shadow: inset 0 0 90rpx rgba(0,0,0,.28); overflow:hidden;
+  font-size:26rpx;
+}
+.sect-head{ border-bottom:1px solid rgba(232,198,106,.2); padding-bottom:12rpx; margin-bottom:12rpx; }
+.sect-headline{ display:flex; flex-direction:column; gap:4rpx; margin-bottom:8rpx; }
+.sect-sub{ font-size:22rpx; color:#b9ad8f; }
+.sect-act{ font-size:24rpx; color:#e8c66a; }
+.sect-timer{ font-size:22rpx; color:#cdb98a; text-align:right; margin-top:4rpx; }
+.sect-timer .b{ color:#e8c66a; font-size:28rpx; }
+.sect-season{ display:inline-block; padding:1rpx 10rpx; border:1px solid rgba(232,198,106,.35); border-radius:16rpx; margin-left:6rpx; }
+.sub2{ display:block; color:#8a8170; font-size:20rpx; margin-top:2rpx; }
+
+.sect-res{ display:flex; justify-content:center; gap:18rpx; flex-wrap:wrap; margin:8rpx 0 10rpx; font-size:22rpx; color:#b9ad8f; }
+.sect-res-i{ display:inline-flex; align-items:center; gap:8rpx; }
+.sect-res-i .ico{ width:40rpx; height:40rpx; flex:0 0 40rpx; opacity:.92; }
+.sect-res-i .k{ color:#8a8170; }
+.sect-res-i .v{ color:#e8c66a; font-size:26rpx; font-weight:bold; }
+.sect-res-i .v.warn{ color:#e0795f; }
+.sect-res-i .v.good{ color:#7fc79a; }
+
+.sect-nodes{ display:flex; gap:8rpx; flex-wrap:wrap; margin:6rpx 0 10rpx; }
+.sect-node{ font-size:20rpx; padding:4rpx 12rpx; border-radius:20rpx; border:1px solid rgba(232,198,106,.22); background:rgba(20,17,15,.4); color:#cdb98a; display:flex; align-items:center; }
+.sect-node .bar{ display:inline-block; width:56rpx; height:6rpx; border-radius:4rpx; background:rgba(255,255,255,.12); margin-left:8rpx; overflow:hidden; }
+.sect-node .bar .i{ display:block; height:100%; background:#e8c66a; }
+.sect-node.done{ opacity:.55; }
+.sect-node.fire{ border-color:#e0795f; color:#ffb59a; }
+
+.sect-mood{ font-size:22rpx; color:#9ed4be; font-style:italic; text-align:center; letter-spacing:1rpx; margin:10rpx 24rpx 4rpx; line-height:1.7; opacity:.92; }
+/* 山务/山志：fixed bottom sheet（与山水祠·书简湖同范式） */
+.sect-sheet{ position:fixed; left:0; right:0; top:0; bottom:0; z-index:71; width:100%; box-sizing:border-box; }
+.sect-sheet-mask{ position:absolute; left:0; right:0; top:0; bottom:0; background:rgba(0,0,0,.5); }
+.sect-sheet-body{ position:absolute; left:0; right:0; bottom:0; height:92vh; max-height:1200rpx;
+  background:#181310; border-top:1rpx solid rgba(232,198,106,.22);
+  border-radius:24rpx 24rpx 0 0; padding:20rpx 24rpx 48rpx; box-sizing:border-box;
+  transform:translateY(100%); animation:sectSheetUp .32s cubic-bezier(.25,.8,.25,1) forwards;
+  overflow:hidden; }
+.sect-sheet-handle{ display:flex; justify-content:center; padding:12rpx 0 18rpx; }
+.sect-sheet-bar{ width:64rpx; height:8rpx; border-radius:4rpx; background:rgba(232,198,106,.35); }
+.sect-sheet-scroll{ height:100%; }
+@keyframes sectSheetUp{ from{ transform:translateY(100%); } to{ transform:translateY(0); } }
+.sect-drawer-bar{ display:flex; align-items:center; gap:12rpx; flex-wrap:wrap; margin-bottom:14rpx; }
+.sect-drawer-title{ font-family:"KaiTi","STKaiti",serif; font-size:30rpx; color:#e8c66a; letter-spacing:6rpx; }
+.sect-drawer-sub{ flex:1; font-size:26rpx; color:#7d9189; min-width:200rpx; }
+.sect-panel{ background:rgba(20,17,15,.5); border:1px solid rgba(232,198,106,.18); border-radius:12rpx; padding:18rpx 16rpx; margin-bottom:18rpx; }
+.sect-panel .h3{ margin:0 0 14rpx; font-family:"KaiTi","STKaiti",serif; font-size:34rpx; color:#e8c66a; letter-spacing:2rpx; border-left:6rpx solid #e8c66a; padding-left:14rpx; }
+.sect-empty{ color:#8a8170; font-size:28rpx; padding:12rpx 0; }
+.sect-figs .fig-bar{ height:18rpx; border-radius:9rpx; background:rgba(255,255,255,.12); overflow:hidden; margin-bottom:12rpx; }
+.fig-card{ width:calc(50% - 5rpx); background:rgba(36,30,22,.6); border:1px solid rgba(232,198,106,.18); border-radius:10rpx; padding:14rpx 14rpx; box-sizing:border-box; }
+.fig-n{ font-family:"KaiTi","STKaiti",serif; font-size:30rpx; color:#f0e8d2; }
+.fig-t{ font-size:25rpx; color:#c9a24b; margin:4rpx 0 8rpx; }
+.fig-f{ font-size:25rpx; color:#cabf9f; line-height:1.6; }
+.fig-d{ font-size:25rpx; color:#a99e84; line-height:1.6; margin-top:6rpx; }
+.fig-q{ font-size:25rpx; color:#e8c66a; margin-top:8rpx; }
+.sect-card-name{ font-size:30rpx; color:#f0e8d2; }
+.sect-card-sub{ font-size:26rpx; color:#a99e84; margin-top:6rpx; }
+.sect-lv{ font-size:26rpx; color:#e8c66a; }
+.sect-drawer-actions{ display:grid; grid-template-columns:repeat(3,1fr); gap:12rpx; margin-bottom:18rpx; }
+.sect-drawer-actions .sect-btn{ padding:12rpx 8rpx; font-size:26rpx; }
+
+.sect-daoqi .dq-st{ font-size:24rpx; color:#cabf9f; line-height:1.9; }
+.dq-b.pos{ color:#e8a06a; }
+.dq-b.neg{ color:#6ab0e8; }
+.sect-daoqi .dq-rel{ margin-top:8rpx; font-size:23rpx; color:#cdb98a; line-height:1.8; }
+.dq-n{ margin-right:14rpx; }
+
+.sect-figs .fig-bar .i{ display:block; height:100%; background:#e8c66a; }
+.fig-grid{ display:flex; flex-wrap:wrap; gap:10rpx; }
+
+.sect-prologue{ background:rgba(40,32,22,.45); border:1px solid rgba(232,198,106,.25); border-radius:12rpx; padding:12rpx 0; margin:0 0 12rpx; }
+.sect-prologue .pl-sub{ font-size:20rpx; color:#b9ad8f; letter-spacing:2rpx; margin:0 18rpx 4rpx; }
+.sect-prologue .pl-title{ font-family:"KaiTi","STKaiti",serif; font-size:32rpx; color:#e8c66a; letter-spacing:2rpx; margin:0 18rpx 6rpx; }
+.sect-prologue .pl-body{ font-size:25rpx; line-height:1.8; color:#ece6d8; padding:0 18rpx; }
+.sect-prologue .pl-turn{ margin:10rpx 18rpx 0; text-align:right; }
+.pl-link{ font-size:22rpx; color:#e8c66a; letter-spacing:2rpx; }
+/* 册首语图：补样式（之前漏写，裸 image 默认 320rpx 居左），widthFix 锁定比例 */
+.sect-prologue-img{ display:block; width:100%; height:auto; margin:0 0 12rpx; border:1rpx solid rgba(232,198,106,.25); border-radius:8rpx; box-sizing:border-box; background:rgba(20,17,15,.4); }
+
+.sect-events{ display:flex; flex-direction:column; gap:14rpx; }
+.sect-ev{ background:linear-gradient(180deg,rgba(36,30,22,.7),rgba(20,17,15,.7)); border:1px solid rgba(232,198,106,.3); border-radius:12rpx; padding:16rpx 0; }
+.sect-ev.urgent{ border-color:#e0795f; box-shadow:0 0 22rpx rgba(224,121,95,.25); }
+.sect-ev.ask{ border-color:rgba(192,57,43,.62); box-shadow:0 0 28rpx rgba(192,57,43,.22); }
+.sect-ev.ask .h4{ color:#f7d9d2; }
+.sect-ev-type{ display:inline-block; font-size:21rpx; padding:3rpx 14rpx; border-radius:20rpx; margin:0 0 8rpx 14rpx; }
+.ev-jianghu{ background:rgba(47,111,94,.25); color:#8fd6bb; border:1px solid rgba(47,111,94,.5); }
+.ev-jiangli{ background:rgba(41,128,185,.22); color:#8fbce8; border:1px solid rgba(41,128,185,.5); }
+.ev-tianjie{ background:rgba(192,57,43,.22); color:#e89b8f; border:1px solid rgba(192,57,43,.5); }
+.ev-qiyu{ background:rgba(212,160,23,.22); color:#e8cf8f; border:1px solid rgba(212,160,23,.5); }
+.ev-fangke{ background:rgba(140,90,200,.22); color:#c9a8f0; border:1px solid rgba(140,90,200,.5); }
+.ev-lundao{ background:rgba(41,128,185,.22); color:#8fbce8; border:1px solid rgba(41,128,185,.5); }
+.ev-wenxin{ background:rgba(192,57,43,.26); color:#f0b3a8; border:1px solid rgba(192,57,43,.62); }
+.ev-jueze{ background:rgba(212,160,23,.16); color:#e8cf8f; border:1px solid rgba(212,160,23,.4); }
+.ev-misc{ background:rgba(170,160,140,.18); color:#cabf9f; border:1px solid rgba(170,160,140,.4); }
+.sect-ev .h4{ margin:2rpx 0 8rpx; padding:0 14rpx; box-sizing:border-box; font-size:30rpx; color:#f3e8c8; font-family:"KaiTi","STKaiti",serif; letter-spacing:1rpx; }
+.sect-ev .p{ margin:0 0 12rpx; padding:0 14rpx; box-sizing:border-box; font-size:26rpx; color:#cabf9f; line-height:1.7; white-space:pre-wrap; }
+.sect-quote{ margin:0 14rpx 14rpx; padding:10rpx 18rpx; border-left:6rpx solid rgba(232,198,106,.6); background:rgba(232,198,106,.06); border-radius:0 10rpx 10rpx 0; font-size:27rpx; color:#f3e8c8; line-height:1.6; box-sizing:border-box; }
+.sect-ev .sect-btn.ghost.sm{ margin:0 14rpx; }
+/* 与山水祠 .sc-opt 同规格（margin / padding / 字号 / 行高 / 最小高度 / 圆角 一致） */
+.sect-opt{ display:flex; align-items:flex-start; gap:8rpx; width:100%; box-sizing:border-box; text-align:left; margin:14rpx 14rpx; padding:16rpx 16rpx; min-height:88rpx; border-radius:10rpx; border:1px solid rgba(232,198,106,.28); background:rgba(20,17,15,.5); color:#e8dec4; font-size:26rpx; line-height:1.5; }
+.sect-opt .sect-opt-ico{ display:flex; align-items:center; justify-content:center; width:40rpx; height:40rpx; flex-shrink:0; margin-top:2rpx; border:1px solid rgba(232,198,106,.4); border-radius:50%; background:rgba(20,17,15,.55); color:#e8cf8f; }
+.sect-opt .sect-opt-ico svg{ width:22rpx; height:22rpx; }
+.sect-opt .ot{ font-size:27rpx; color:#f0e8d2; }
+.sect-opt .req{ font-size:23rpx; color:#e0795f; margin-top:6rpx; }
+/* 禁用态：不用整体 opacity 淡化（会连锁定原因一起吃掉），压暗底与边框，文字保留可读 */
+.sect-opt.disabled{ opacity:1; background:rgba(18,16,14,.66); border-color:rgba(232,198,106,.16); color:#9a9284; }
+.sect-opt.disabled .ot{ color:#9a9284; }
+.sect-opt.disabled .sect-opt-ico{ background:rgba(30,26,20,.4); color:#7a6a52; border-color:rgba(232,198,106,.1); }
+.sect-opt.disabled .req{ color:#e8916a; }
+
+.sect-opt-hover{ background:rgba(232,198,106,.12) !important; }
+/* 搁置：与正常选项同长宽、同图标圆章，仅压暗边框/底以示「暂缓」语义 */
+.sect-opt.skip-opt{ border-color:rgba(232,198,106,.16); background:rgba(20,17,15,.38); }
+.sect-opt.skip-opt .ot{ color:#b9ad8f; }
+
+
+.sect-actions{ display:flex; gap:12rpx; flex-wrap:wrap; margin:6rpx 0 14rpx; }
+/* 底部入口：固定吸附，不挤主舞台、不顶页面 */
+.sect-foot{ position:fixed; left:0; right:0; bottom:0; z-index:64;
+  display:flex; gap:16rpx; padding:14rpx 16rpx calc(14rpx + env(safe-area-inset-bottom));
+  background:#1a1611; border-top:1rpx solid rgba(232,198,106,.2); }
+.sect-foot .sect-btn{ flex:1; }
+.sect-foot .sect-btn.primary{ flex:2; }
+.sect-card-row{ display:flex; align-items:center; justify-content:space-between; gap:10rpx; padding:12rpx 0; border-bottom:1px dashed rgba(232,198,106,.14); }
+.sect-card-row:last-child{ border-bottom:none; }
+.sect-card-name{ font-size:30rpx; color:#f0e8d2; }
+.sect-card-sub{ font-size:26rpx; color:#a99e84; margin-top:4rpx; }
+.sect-lv{ font-size:26rpx; color:#e8c66a; }
+.sect-disc{ align-items:flex-start; }
+.sect-disc .dinfo{ flex:1; min-width:0; }
+.sect-portrait{ width:84rpx; height:126rpx; border-radius:10rpx; object-fit:cover; border:1px solid rgba(232,198,106,.35); flex:none; background:rgba(20,17,15,.6); }
+.sect-portrait.no-art{ display:flex; align-items:center; justify-content:center; font-size:24rpx; color:#e8c66a; letter-spacing:2rpx; }
+
+.sect-words{ margin-top:4rpx; }
+.sect-word{ display:inline-block; font-size:21rpx; color:#c9a24b; border:1px solid rgba(201,162,75,.4); border-radius:8rpx; padding:2rpx 10rpx; margin-right:8rpx; }
+
+.sect-log{ }
+.lg{ font-size:23rpx; color:#cabf9f; padding:5rpx 0; border-bottom:1px solid rgba(255,255,255,.05); }
+.lg.big{ color:#e8c66a; font-weight:bold; }
+.lg.good{ color:#7fc79a; }
+.lg.bad{ color:#e0795f; }
+
+.sect-btn{ font-family:inherit; border:1px solid rgba(232,198,106,.4); background:rgba(232,198,106,.08); color:#e8c66a; border-radius:10rpx; padding:10rpx 20rpx; font-size:24rpx; line-height:1.4;
+  min-height:88rpx; display:flex; align-items:center; justify-content:center; box-sizing:border-box; }
+.sect-btn.primary{ background:#e8c66a; color:#1a140c; font-weight:bold; border-color:#e8c66a; }
+.sect-btn.ghost{ background:transparent; color:#b9ad8f; border-color:rgba(232,198,106,.25); }
+.sect-btn.sm{ min-height:56rpx; padding:6rpx 16rpx; font-size:22rpx; }
+.sect-btn[disabled]{ opacity:.4; }
+.sect-btn.on{ background:linear-gradient(135deg,#9ed4be,#6fae86); color:#14110f; border-color:transparent; font-weight:bold; }
+
+.sect-back{ margin-top:18rpx; text-align:center; }
+.sect-back .sect-btn{ margin:0 8rpx; }
+
+.sect-ending{ text-align:center; padding:40rpx 20rpx; }
+.sect-end-img{ display:block; width:420rpx; max-width:74%; height:auto; margin:0 auto 28rpx; border:1px solid rgba(232,198,106,.3); border-radius:12rpx; }
+.sect-ending .grade{ display:inline-block; font-family:"KaiTi","STKaiti",serif; font-size:96rpx; font-weight:bold; color:#e8c66a; letter-spacing:6rpx; margin-bottom:10rpx; }
+.grade.S{ color:#e8c66a; text-shadow:0 0 30rpx rgba(232,198,106,.7); }
+.grade.A{ color:#9ed4be; }
+.grade.B{ color:#c9b07a; }
+.grade.C{ color:#b9ad8f; }
+.grade.D{ color:#9a8f78; }
+.sect-ending .et{ font-family:"KaiTi","STKaiti",serif; font-size:44rpx; color:#f0e8d2; letter-spacing:3rpx; margin-bottom:18rpx; }
+.sect-ending .ed{ font-size:27rpx; color:#cabf9f; line-height:2; white-space:pre-wrap; max-width:640rpx; margin:0 auto 16rpx; }
+.sect-ending .ep{ font-size:28rpx; color:#e8c66a; margin-bottom:18rpx; }
+.sect-ending .recap{ font-size:24rpx; color:#cdb98a; line-height:1.9; white-space:pre-wrap; max-width:640rpx; margin:0 auto 24rpx; }
+
+/* 山志·原著脉络：竖向时间轴 */
+.sect-chron{ position:relative; padding-left:8rpx; }
+.sect-chron-i{ position:relative; padding:0 0 22rpx 30rpx; border-left:1px solid rgba(232,198,106,.26); }
+.sect-chron-i:last-child{ border-left-color:transparent; }
+.sect-chron-i::before{ content:''; position:absolute; left:-7rpx; top:8rpx; width:14rpx; height:14rpx; border-radius:50%; background:#e8c66a; box-shadow:0 0 10rpx rgba(232,198,106,.6); }
+.sect-chron-t{ font-family:"KaiTi","STKaiti",serif; font-size:30rpx; color:#e8c66a; letter-spacing:2rpx; }
+.sect-chron-d{ font-size:24rpx; color:#cabf9f; line-height:1.8; margin-top:6rpx; }
+/* 原著原文引述：楷体 + 左侧朱线，与正文叙述区分（去 AI 化：无渐变/无卡片/无阴影堆叠） */
+.sect-chron-q{ font-family:"KaiTi","STKaiti",serif; font-size:24rpx; color:#d8c68d; line-height:1.9;
+  margin-top:10rpx; padding:2rpx 0 2rpx 16rpx; border-left:2rpx solid rgba(232,198,106,.42); }
+.sect-chron-src{ font-size:20rpx; color:#8a8170; margin-top:8rpx; }
+
+/* ---------- 本旬中转页 ---------- */
+.sect-settle{ text-align:center; padding:48rpx 24rpx 40rpx; }
+.st-head{ font-family:"KaiTi","STKaiti",serif; font-size:52rpx; color:#e8c66a; letter-spacing:10rpx; margin-bottom:8rpx; }
+.st-sub{ font-size:24rpx; color:#9ed4be; letter-spacing:3rpx; margin-bottom:32rpx; }
+.st-ledger{ max-width:560rpx; margin:0 auto 24rpx; border:1px solid #4a3a22; border-radius:14rpx; background:rgba(36,30,22,.5); overflow:hidden; }
+.st-row{ display:flex; align-items:center; justify-content:space-between; padding:18rpx 28rpx; border-bottom:1rpx solid #1f1a16; }
+.st-row:last-child{ border-bottom:none; }
+.st-k{ font-size:27rpx; color:#cabf9f; letter-spacing:2rpx; }
+.st-v{ font-family:"KaiTi","STKaiti",serif; font-size:30rpx; font-weight:bold; color:#b9ad8f; }
+.st-row.up .st-v{ color:#7fc79a; }
+.st-row.down .st-v{ color:#e0795f; }
+.st-notes{ max-width:600rpx; margin:0 auto 18rpx; }
+.st-note{ font-size:23rpx; color:#a99e84; line-height:1.8; font-style:italic; }
+.st-backlog{ font-size:23rpx; color:#e0795f; margin-bottom:24rpx; }
+.sect-settle .sect-btn.primary{ max-width:480rpx; margin:0 auto; }
+
+/* ---- 本旬中转 · 入场动效：卷轴铺开，逐行落账 ---- */
+@keyframes stSeal{
+  0%  { opacity:0; transform:scale(1.14); letter-spacing:28rpx; filter:blur(6rpx); }
+  60% { opacity:1; }
+  100%{ opacity:1; transform:scale(1); letter-spacing:10rpx; filter:blur(0); }
+}
+@keyframes stFadeUp{ from{ opacity:0; transform:translateY(16rpx); } to{ opacity:1; transform:translateY(0); } }
+@keyframes stUnroll{ 0% { opacity:0; transform:scaleY(.62); } 100%{ opacity:1; transform:scaleY(1); } }
+@keyframes stRowIn{
+  0%  { opacity:0; transform:translateX(-16rpx); filter:blur(3rpx); }
+  100%{ opacity:1; transform:translateX(0); filter:blur(0); }
+}
+@keyframes stNumIn{ 0%{ opacity:0; transform:scale(1.16); } 70%{ opacity:1; } 100%{ opacity:1; transform:scale(1); } }
+.sect-settle .st-head{ animation:stSeal .56s cubic-bezier(.2,.8,.3,1) both; }
+.sect-settle .st-sub{ animation:stFadeUp .46s ease-out .22s both; }
+.sect-settle .st-ledger{ transform-origin:top center; animation:stUnroll .42s cubic-bezier(.2,.8,.3,1) .30s both; }
+.sect-settle .st-row{ animation:stRowIn .34s ease-out both; }
+.sect-settle .st-v{ animation:stNumIn .28s ease-out both; }
+.sect-settle .st-row:nth-child(1){ animation-delay:.42s } .sect-settle .st-row:nth-child(1) .st-v{ animation-delay:.50s }
+.sect-settle .st-row:nth-child(2){ animation-delay:.50s } .sect-settle .st-row:nth-child(2) .st-v{ animation-delay:.58s }
+.sect-settle .st-row:nth-child(3){ animation-delay:.58s } .sect-settle .st-row:nth-child(3) .st-v{ animation-delay:.66s }
+.sect-settle .st-row:nth-child(4){ animation-delay:.66s } .sect-settle .st-row:nth-child(4) .st-v{ animation-delay:.74s }
+.sect-settle .st-row:nth-child(5){ animation-delay:.74s } .sect-settle .st-row:nth-child(5) .st-v{ animation-delay:.82s }
+.sect-settle .st-row:nth-child(n+6){ animation-delay:.82s } .sect-settle .st-row:nth-child(n+6) .st-v{ animation-delay:.90s }
+.sect-settle .st-notes{ animation:stFadeUp .42s ease-out .80s both; }
+.sect-settle .st-backlog{ animation:stFadeUp .42s ease-out .84s both; }
+.sect-settle .sect-btn.primary{ animation:stFadeUp .44s ease-out .88s both; max-width:480rpx; margin:0 auto; }
+
+/* ===================== 演出层：回合横幅 + 资源飘字（覆盖屏幕，不拦截点击） ===================== */
+.sect-fx{ position:fixed; inset:0; pointer-events:none; z-index:60; overflow:hidden; }
+.sect-fx-banner{ position:absolute; left:50%; top:32%; transform:translate(-50%,-50%); text-align:center; opacity:0; }
+.sect-fx-banner.in{ animation:sectBannerIn 1.9s ease forwards; }
+.sect-fx-banner .bt{ font-family:"KaiTi","STKaiti",serif; font-size:84rpx; color:#e8c66a; letter-spacing:18rpx; text-shadow:0 4rpx 36rpx rgba(0,0,0,.78), 0 0 44rpx rgba(232,198,106,.5); }
+.sect-fx-banner .bs{ font-size:28rpx; color:#e8dec4; letter-spacing:8rpx; margin-top:14rpx; }
+.sect-fx-banner .bline{ width:0; height:3rpx; margin:22rpx auto 0; background:linear-gradient(90deg,transparent,var(--gold,#e8c66a),transparent); animation:sectLine 1.9s ease forwards; }
+.sect-fx-banner.danger .bt{ color:#e0795f; text-shadow:0 4rpx 36rpx rgba(0,0,0,.82), 0 0 44rpx rgba(224,121,95,.5); }
+.sect-fx-banner.danger .bline{ background:linear-gradient(90deg,transparent,#e0795f,transparent); }
+.sect-fx-banner.glory .bt{ color:#f0d98a; text-shadow:0 0 56rpx rgba(232,198,106,.9), 0 4rpx 36rpx rgba(0,0,0,.7); font-size:96rpx; }
+@keyframes sectBannerIn{
+  0%{ opacity:0; transform:translate(-50%,-50%) scale(.82); letter-spacing:4rpx; filter:blur(6rpx); }
+  18%{ opacity:1; transform:translate(-50%,-50%) scale(1); letter-spacing:18rpx; filter:blur(0); }
+  78%{ opacity:1; }
+  100%{ opacity:0; transform:translate(-50%,-52%) scale(1.06); }
+}
+@keyframes sectLine{ 0%{width:0;opacity:1} 28%{width:62%} 80%{width:62%} 100%{width:0;opacity:0} }
+
+.sect-fx-float{ position:absolute; left:50%; top:40%; font-family:"KaiTi","STKaiti",serif; font-size:44rpx; font-weight:bold; white-space:nowrap; opacity:0; transform:translate(-50%,0); text-shadow:0 4rpx 20rpx rgba(0,0,0,.85); animation:sectFloatUp 1.4s ease-out forwards; }
+.sect-fx-float.good{ color:#7fc79a; }
+.sect-fx-float.bad{ color:#e0795f; }
+.sect-fx-float.neutral{ color:#e8c66a; }
+@keyframes sectFloatUp{
+  0%{ opacity:0; transform:translate(-50%,24rpx) scale(.8); }
+  20%{ opacity:1; transform:translate(-50%,0) scale(1.06); }
+  100%{ opacity:0; transform:translate(-50%,-100rpx) scale(1); }
+}
+
+/* 结局：墨滴落纸、由浓渐淡地晕开（与 PC 对齐） */
+.sect-ending{ position:relative; }
+.sect-ending::before{
+  content:''; position:absolute; inset:0; border-radius:22rpx; pointer-events:none;
+  background:radial-gradient(60% 50% at 50% 12%, rgba(232,198,106,.16), transparent 62%),
+             radial-gradient(90% 80% at 50% 55%, rgba(0,0,0,.34), transparent 70%);
+  animation:sectInkSpread 1.5s cubic-bezier(.2,.7,.3,1) both;
+}
+.sect-ending > view{ position:relative; }
+@keyframes sectInkSpread{
+  0%  { opacity:0; transform:scale(.55); filter:blur(28rpx); }
+  60% { opacity:1; filter:blur(4rpx); }
+  100%{ opacity:1; transform:scale(1); filter:blur(0); }
+}
+.grade.S{ animation:sectSGlow 2.6s ease-in-out infinite; }
+@keyframes sectSGlow{ 0%,100%{ text-shadow:0 0 30rpx rgba(232,198,106,.6); } 50%{ text-shadow:0 0 60rpx rgba(232,198,106,.95); } }
+
+/* 人物志：补立绘（仅当 art 存在，无图则不渲染，不乱塞占位） */
+.fig-portrait{ width:96rpx; height:144rpx; border-radius:10rpx; object-fit:cover; border:1px solid rgba(232,198,106,.35); background:rgba(20,17,15,.6); margin-bottom:8rpx; }
+.fig-portrait.no-art{ display:flex; align-items:center; justify-content:center; font-family:"KaiTi","STKaiti",serif; font-size:26rpx; color:#e8c66a; letter-spacing:2rpx; }
+.fig-card{ display:flex; flex-direction:column; align-items:flex-start; }
+.fig-card .fig-n{ margin-top:2rpx; }

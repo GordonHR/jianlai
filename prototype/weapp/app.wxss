@@ -1,0 +1,52 @@
+page {
+  background:
+    radial-gradient(1200px 600px at 50% -10%, #3a2f4a 0%, transparent 60%),
+    radial-gradient(900px 500px at 10% 110%, #2a3a44 0%, transparent 55%),
+    radial-gradient(900px 500px at 90% 110%, #432a2a 0%, transparent 55%),
+    linear-gradient(160deg, #15131c 0%, #1d1a26 50%, #14110f 100%);
+  background-attachment: fixed;
+  min-height: 100%;
+  color: #ece6d8;
+  font-family: "PingFang SC", "Microsoft YaHei", serif;
+}
+view, text, button, input { box-sizing: border-box; }
+.btn {
+  border: 1px solid rgba(232,198,106,.5);
+  background: rgba(232,198,106,.12);
+  color: #e8c66a;
+  border-radius: 10rpx;
+  padding: 14rpx 28rpx;
+  font-size: 28rpx;
+}
+.btn.primary { background: linear-gradient(180deg,#e8c66a,#b8893b); color:#1a140c; border:none; font-weight:600; }
+.btn.ghost { background: transparent; border-color: rgba(236,230,216,.3); color:#cdc4b0; }
+.btn[disabled] { opacity:.4; }
+
+/* ============ 交互体验优化（剑来诊断 §3） ============ */
+/* 3.1 统一可点区下限，避免误触；动作按钮 88rpx，紧凑控件 72rpx（不撑爆顶栏） */
+.btn, .seal-btn, .skill {
+  min-height: 88rpx;
+  display: flex; align-items: center; justify-content: center;
+  box-sizing: border-box;
+}
+.bg-btn, .float-btn {
+  min-height: 72rpx;
+  display: inline-flex; align-items: center; justify-content: center;
+  box-sizing: border-box;
+}
+.btn:active, .seal-btn:active, .skill:active, .bg-btn:active, .float-btn:active { filter: brightness(.9); }
+
+/* 3.4 内容图深色占位 + 载入淡入（仅作用于照片类，避开 SVG 图标，消除白闪） */
+@keyframes imgIn { from { opacity:0 } to { opacity:1 } }
+.seat-img, .my-img, .cx-img, .cx-dimg, .rsmvpi, .rslci,
+.ts-bg, .sc-wish-img, .sect-end-img, .sect-prologue-img, .sect-portrait, .fig-portrait,
+.charimg, .rimg, .lk-il-img, .wsp-art {
+  background: #2a2118;
+  animation: imgIn .3s ease both;
+}
+
+/* 3.5 模块切换轻量淡入（仅 opacity，避免 transform 影响 fixed 弹层定位） */
+@keyframes pageIn { from { opacity:0 } to { opacity:1 } }
+.title-screen, .setup, .game, .codex, .lake, .sect, .sc, .wsp {
+  animation: pageIn .18s ease both;
+}

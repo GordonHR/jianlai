@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>对战页三国杀对齐优化 · 预览（临时文件）</title>
+<style>
+  body { margin:0; padding:24px; background:#232323; font-family:"PingFang SC","Microsoft YaHei",serif; color:#ddd; }
+  h2 { font-size:15px; color:#c9a24b; margin:18px 0 8px; }
+  .wrap { display:flex; gap:28px; flex-wrap:wrap; }
+  .frame { width:353px; height:766px; overflow:hidden; position:relative; border-radius:18px; border:2px solid #555; background:#000; }
+  .phone { width:750px; height:1620px; transform:scale(.47); transform-origin:top left; position:absolute; top:0; left:0; }
+
+  /* ===== 以下样式镜像 game.wxss（rpx→px 1:1，手机上为 1/2） ===== */
+  .battlefield { position:absolute; inset:0; overflow:hidden; background:#14110f; }
+  .battlefield::after { content:""; position:absolute; inset:0; pointer-events:none; z-index:1;
+    background:radial-gradient(ellipse at 50% 45%, transparent 54%, rgba(0,0,0,.42) 100%); }
+  .battle-bg { position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+    background:#14110f;
+    background-image:radial-gradient(ellipse at 50% 42%, rgba(64,50,30,.34) 0%, transparent 62%); }
+  .battle-bg.sc-1 { background:#12161b; background-image:radial-gradient(ellipse at 50% 40%, rgba(118,138,158,.12) 0%, transparent 60%); }
+  .battle-bg.sc-2 { background:#170f0b; background-image:radial-gradient(ellipse at 50% 88%, rgba(196,92,44,.13) 0%, transparent 58%); }
+  .bg-ring  { position:absolute; left:50%; top:44%; transform:translate(-50%,-50%); width:580px; height:580px; border-radius:50%; border:1px solid rgba(201,162,75,.13); }
+  .bg-ring2 { position:absolute; left:50%; top:44%; transform:translate(-50%,-50%); width:420px; height:420px; border-radius:50%; border:1px solid rgba(201,162,75,.09); }
+  .bg-ring2::before { content:""; position:absolute; inset:28px; border-radius:50%; border:1px dashed rgba(201,162,75,.08); }
+  .bg-char  { position:absolute; left:50%; top:44%; transform:translate(-50%,-50%); font-family:"KaiTi","STKaiti",serif; font-size:430px; line-height:1; color:rgba(201,162,75,.05); }
+
+  .seat { position:relative; box-sizing:border-box; width:200px; height:280px; background:#1d1712; border:2px solid #3a2f23; border-radius:18px; padding:10px; display:flex; flex-direction:column; }
+  .seat-portrait { position:relative; flex:1; width:100%; min-height:0; border-radius:10px; overflow:hidden; background:linear-gradient(160deg,#2a2118,#1a1410); }
+  .seat-name { position:absolute; left:0; bottom:0; width:100%; box-sizing:border-box; background:rgba(0,0,0,.62); font-size:22px; padding:4px 8px; color:#f0e8d2; }
+  .seat-fac { position:absolute; left:0; top:0; right:0; font-size:18px; line-height:1; padding:5px 10px; background:rgba(20,17,15,.85); letter-spacing:2px; border-bottom:1px solid #3a2f23; }
+  .seat-hp { position:absolute; left:6px; bottom:34px; font-size:18px; padding:2px 8px; border-radius:6px; background:linear-gradient(180deg,#c0392b,#8e44ad); color:#fff; }
+  .seat-equip { position:absolute; left:6px; bottom:70px; font-size:16px; padding:2px 8px; border-radius:6px; background:rgba(20,17,15,.82); border:1px solid #6a5328; color:#e8c66a; }
+  .seat-cnt { position:absolute; right:6px; bottom:34px; min-width:38px; height:38px; padding:0 8px; border-radius:19px; background:rgba(20,17,15,.86); border:1px solid #c9a24b; color:#e8c66a; font-size:22px; font-weight:bold; display:flex; align-items:center; justify-content:center; }
+  .seat-foot { flex:0 0 auto; display:flex; align-items:center; justify-content:center; gap:8px; padding:4px 0 0; font-size:18px; color:#a4977f; letter-spacing:1px; }
+  .seat-foot .sf-side { color:#7a6f5e; }
+  .seat-thinking { position:absolute; left:0; right:0; bottom:0; font-size:20px; color:#14110f; background:linear-gradient(180deg,#ffd966,#c9a24b); text-align:center; padding:4px 6px; font-weight:bold; letter-spacing:2px; border-top:2px solid #6a5328; box-shadow:0 -2px 6px rgba(0,0,0,.5); }
+  .seat.current { border-color:#c9a24b; box-shadow:inset 0 0 0 2px #c9a24b, 0 4px 16px rgba(0,0,0,.65); }
+  .seat-dead { position:absolute; inset:0; z-index:3; display:flex; flex-direction:column; align-items:center; justify-content:center; background:rgba(8,6,5,.55); }
+  .sd-stamp { transform:rotate(-8deg); padding:6px 12px 6px 22px; border:3px solid #a83a2c; border-radius:8px; box-shadow:inset 0 0 0 1px rgba(168,58,44,.5); color:#d96b57; font-size:34px; font-weight:900; letter-spacing:10px; background:rgba(24,10,8,.4); }
+  .seat-left-tag { display:block; font-size:18px; font-weight:normal; color:#9a9180; letter-spacing:4px; margin-top:8px; opacity:.88; }
+  .enemy { color:#f0c4bc; } .friend { color:#aee0d4; }
+  .ph { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:64px; font-weight:bold; opacity:.16; font-family:"KaiTi",serif; }
+
+  .seat-top { position:absolute; top:16px; left:50%; transform:translateX(-50%); z-index:10; }
+  .seat-left { position:absolute; top:38%; left:16px; transform:translateY(-50%); z-index:10; }
+  .seat-right { position:absolute; top:38%; right:16px; transform:translateY(-50%); z-index:10; }
+
+  .card { flex:0 0 190px; width:190px; background:#211b16; border:2px solid #3a2f23; border-radius:16px; padding:8px; box-sizing:border-box; display:flex; flex-direction:column; }
+  .cf-head { font-size:22px; font-weight:bold; display:flex; align-items:center; gap:6px; color:#e8e0d2; }
+  .cf-point { flex:0 0 auto; font-size:26px; font-weight:bold; background:linear-gradient(180deg,#f4ead0,#c9a24b); color:#5c2525; border-radius:8px; min-width:40px; height:40px; padding:0 8px; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 1px 4px rgba(0,0,0,.4); }
+  .cf-art { position:relative; flex:1; min-height:150px; margin:8px 0; border-radius:10px; background:linear-gradient(160deg,#2a2118,#1a1410); border:1px solid #3a2f23; display:flex; align-items:center; justify-content:center; }
+  .cf-sig { font-size:52px; color:#9ed4be; }
+  .cf-foot { flex:0 0 auto; font-size:22px; color:#cdbfa1; text-align:center; padding-top:6px; border-top:1px solid #3a2f23; }
+  .card.mp { border-color:#6a5328; box-shadow:0 0 0 1px rgba(232,198,106,.25); }
+  .card.mp-on { transform:translateY(-24px); border-color:#c9a24b; box-shadow:0 8px 20px rgba(0,0,0,.6), inset 0 0 0 2px #c9a24b, 0 0 14px rgba(232,198,106,.35); z-index:6; }
+
+  .multi-bar { position:absolute; left:50%; transform:translateX(-50%); bottom:430px; z-index:12;
+    display:flex; flex-direction:column; align-items:center; gap:8px; max-width:92%;
+    background:rgba(20,17,15,.94); border:2px solid #c9a24b; border-radius:14px;
+    padding:12px 20px; box-sizing:border-box;
+    box-shadow:0 8px 24px rgba(0,0,0,.7), inset 0 0 0 1px #6a5328; }
+  .mb-btns { display:flex; align-items:center; gap:16px; }
+  .mb-count { font-size:22px; color:#e8c66a; font-weight:bold; }
+  .mb-text { font-size:20px; color:#cabf9f; text-align:center; line-height:1.5; }
+  .mbtn { min-width:200px; padding:0 30px; min-height:88px; display:flex; align-items:center; justify-content:center;
+    border-radius:10px; font-size:28px; font-weight:600; color:#1a140c;
+    background:linear-gradient(180deg,#e8c66a,#b8893b); }
+  .mbtn.off { opacity:.4; }
+</style>
+</head>
+<body>
+<h2>① 战场景别 + 中央环纹 + 座位信息密度（手牌数 / 装备签 / 号位脚注 / 思考横幅）— 场景 0 墨夜</h2>
+<div class="wrap">
+  <div class="frame"><div class="phone">
+    <div class="battlefield">
+      <div class="battle-bg sc-0"><div class="bg-ring"></div><div class="bg-ring2"></div><div class="bg-char">剑</div></div>
+      <div class="seat-top">
+        <div class="seat current">
+          <div class="seat-portrait"><div class="ph">謀</div>
+            <div class="seat-fac enemy">敌 · 魔教</div>
+            <div class="seat-name">董三更</div>
+            <div class="seat-hp">气血 3</div>
+            <div class="seat-equip">本命飞剑</div>
+            <div class="seat-cnt">2</div>
+            <div class="seat-thinking">出牌思考中</div>
+          </div>
+          <div class="seat-foot"><text class="sf-seat" style="font-size:18px">一号位</text></div>
+        </div>
+      </div>
+      <div class="seat-left">
+        <div class="seat">
+          <div class="seat-portrait"><div class="ph">良</div>
+            <div class="seat-fac friend">友 · 隐士</div>
+            <div class="seat-name">阿良</div>
+            <div class="seat-hp">气血 7</div>
+            <div class="seat-cnt">7</div>
+          </div>
+          <div class="seat-foot"><text style="font-size:18px">二号位</text></div>
+        </div>
+      </div>
+      <div class="seat-right">
+        <div class="seat">
+          <div class="seat-portrait"><div class="ph">芝</div>
+            <div class="seat-fac enemy">敌 · 剑修</div>
+            <div class="seat-name">陆芝</div>
+            <div class="seat-hp">气血 4</div>
+            <div class="seat-cnt">4</div>
+          </div>
+          <div class="seat-foot"><text style="font-size:18px">四号位 · 距离不计</text></div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+
+  <div class="frame"><div class="phone">
+    <div class="battlefield">
+      <div class="battle-bg sc-2"><div class="bg-ring"></div><div class="bg-ring2"></div><div class="bg-char">剑</div></div>
+      <div class="seat-top">
+        <div class="seat">
+          <div class="seat-portrait"><div class="ph">謀</div>
+            <div class="seat-fac enemy">敌 · 魔教</div>
+            <div class="seat-name">董三更</div>
+            <div class="seat-dead"><div class="sd-stamp">阵 亡</div><div class="seat-left-tag">已离开</div></div>
+          </div>
+          <div class="seat-foot"><text style="font-size:18px">一号位</text></div>
+        </div>
+      </div>
+      <div class="multi-bar">
+        <div class="mb-btns"><div class="mbtn off">弃 置</div><div class="mb-count">2 / 4</div></div>
+        <div class="mb-text">弃牌阶段：手牌超出上限 6 张，需弃置 4 张</div>
+      </div>
+      <div style="position:absolute; left:16px; right:16px; bottom:16px; z-index:10; display:flex; gap:14px; align-items:flex-end; flex-direction:row-reverse;">
+        <div style="display:flex; gap:12px; padding:30px 0 8px; align-items:flex-start;">
+          <div class="card mp"><div class="cf-head"><span class="cf-point">J</span>守心</div><div class="cf-art"><span class="cf-sig">守</span></div><div class="cf-foot">守势</div></div>
+          <div class="card mp-on"><div class="cf-head"><span class="cf-point">3</span>酒</div><div class="cf-art"><span class="cf-sig">酒</span></div><div class="cf-foot">问剑</div></div>
+          <div class="card mp-on"><div class="cf-head"><span class="cf-point">Q</span>火攻</div><div class="cf-art"><span class="cf-sig">锦</span></div><div class="cf-foot">锦囊</div></div>
+          <div class="card mp"><div class="cf-head"><span class="cf-point">8</span>剑气</div><div class="cf-art"><span class="cf-sig">剑</span></div><div class="cf-foot">攻击</div></div>
+          <div class="card mp"><div class="cf-head"><span class="cf-point">J</span>铁索连环</div><div class="cf-art"><span class="cf-sig">连</span></div><div class="cf-foot">锦囊</div></div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+</div>
+<p style="max-width:760px; font-size:13px; color:#999; line-height:1.8">
+说明：左=场景0（默认墨夜）+ 座位新信息（手牌数徽章 / 本命飞剑装备签 / 号位脚注 / 「出牌思考中」横幅）；右=场景2（烽烟暖调）+ 阵亡朱印 + 弃牌多选新交互（手牌直接点选，选中金边抬起，中央确认条）。场景1（风雪冷调）在手机上点「换景」查看。本页为临时预览，确认后可删。
+</p>
+</body>
+</html>

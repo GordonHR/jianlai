@@ -1,0 +1,11 @@
+<svg viewBox="0 0 24 24" width="26" height="26" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#e8cf8f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M7.4 21 L16.6 21" stroke-opacity=".26" stroke-width="1.2"/>
+<path d="M12 9.6 Q10.2 9.4 9.9 7.5 Q9.6 5.4 12 4.3 Q14.4 5.4 14.1 7.5 Q13.8 9.4 12 9.6 Z" fill="#e8cf8f" fill-opacity=".15"/>
+<path d="M12 9.6 Q8.6 10.8 8.4 14.2 Q8.2 17.5 12 18.5 Q15.8 17.5 15.6 14.2 Q15.4 10.8 12 9.6 Z" fill="#e8cf8f" fill-opacity=".15"/>
+<path d="M11.4 3.3 L12.6 3.3 L12.4 4.6 Z" fill="#e8cf8f" fill-opacity=".18"/>
+<path d="M10.2 9.8 Q12 10.8 13.8 9.8" stroke-opacity=".55" stroke-width="1.2"/>
+<path d="M9.7 12.3 Q8.9 14.6 9.7 16.6" stroke-opacity=".38" stroke-width="1.1"/>
+<path d="M14.4 5.6 Q16.3 4.8 17.2 6.1" stroke-opacity=".45" stroke-width="1"/>
+<circle cx="13.2" cy="14.8" r=".5" fill="#e8cf8f" fill-opacity=".5" stroke-width=".9"/>
+<circle cx="11.4" cy="16.2" r=".5" fill="#e8cf8f" fill-opacity=".5" stroke-width=".9"/>
+</svg>

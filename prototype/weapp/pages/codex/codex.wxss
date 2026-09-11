@@ -1,0 +1,164 @@
+page { background:#14110f; color:#e8e0d2; }
+.codex { padding:24rpx; }
+.cx-head { text-align:center; font-size:44rpx; font-weight:bold; color:#c9a24b; letter-spacing:10rpx; margin-bottom:20rpx; }
+.cx-head-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:18rpx; }
+.cx-head-row .cx-head { flex:1; margin-bottom:0; }
+.cx-back { font-size:24rpx; color:#c9a24b; border:1rpx solid #3a2f23; border-radius:10rpx; padding:10rpx 22rpx; letter-spacing:2rpx; }
+.cx-group { margin-bottom:30rpx; }
+.cx-gtitle { font-size:26rpx; font-weight:bold; margin-bottom:14rpx; border-left:6rpx solid #c9a24b; padding-left:14rpx; }
+.cx-grid { display:flex; flex-wrap:wrap; gap:16rpx; }
+.cx-card { width:calc(33.33% - 11rpx); box-sizing:border-box; background:#1d1712; border:1rpx solid #3a2f23; border-radius:12rpx; padding:12rpx; }
+.cx-port { position:relative; aspect-ratio: 2 / 3; height: auto; border-radius:8rpx; overflow:hidden; background:#2a2118; display:flex; align-items:center; justify-content:center; }
+.cx-img { width:100%; height:100%; }
+.cx-initial { font-size:70rpx; font-weight:bold; opacity:.22; }
+.cx-name { text-align:center; font-size:24rpx; margin-top:10rpx; font-weight:bold; }
+.cx-realm { text-align:center; font-size:18rpx; color:#8a7e6c; }
+
+.cx-mask { position:fixed; inset:0; background:rgba(0,0,0,.72); display:flex; align-items:center; justify-content:center; z-index:80; }
+.cx-detail { position:relative; width:92%; max-height:88%; overflow-y:auto; -webkit-overflow-scrolling:touch;
+              background:#1a1611; border:2rpx solid #c9a24b; border-radius:18rpx; padding:30rpx 30rpx 100rpx; box-sizing:border-box;
+              box-shadow:0 0 0 1rpx rgba(232,198,106,.18) inset, 0 -2rpx 0 rgba(232,198,106,.35) inset, 0 0 30rpx rgba(0,0,0,.6);
+              transform-origin:center; margin:0 auto;
+              animation:cxUnroll .52s cubic-bezier(.2,.8,.3,1) both; }
+/* 戏里戏外 · 故事详情：摊卷时带透视 + 卷起/展平更立体。
+   **关键：绝不加 transform-style:preserve-3d / perspective** —— 在 iOS WKWebView / 小程序 WebView 里
+   这俩会创建层叠上下文并劫持 touchmove，导致「按住拖动时弹框跟手晃动」。
+   用纯 opacity+filter+scale 的入场 + 卷轴视觉已经足够表达「卷起摊平」的立体感。 */
+.cx-detail.cx-tale-view { padding:40rpx 52rpx 110rpx;
+              animation:cxTaleUnroll .62s cubic-bezier(.2,.8,.3,1) both; }
+@keyframes cxTaleUnroll {
+  0%   { opacity:0; filter:blur(5rpx); }
+  60%  { opacity:1; filter:blur(0); }
+  100% { opacity:1; filter:blur(0); } }
+/* 顶/底淡出 mask：提示用户「能滚到这里」/「到底了」，比纯 overflow 体感好得多 */
+.cx-detail.cx-tale-view {
+  -webkit-mask-image:linear-gradient(180deg, transparent 0, #000 24rpx, #000 calc(100% - 32rpx), transparent 100%);
+          mask-image:linear-gradient(180deg, transparent 0, #000 24rpx, #000 calc(100% - 32rpx), transparent 100%); }
+@keyframes cxUnroll {
+  0%   { opacity:0; transform:scaleX(.72) scaleY(.9) translateY(18rpx); }
+  70%  { opacity:1; transform:scaleX(1.03) scaleY(1.02) translateY(-3rpx); }
+  100% { opacity:1; transform:none; } }
+.cx-detail::before { content:''; position:absolute; left:8rpx; top:8rpx; bottom:8rpx; width:2rpx;
+  background:linear-gradient(180deg, transparent 0%, rgba(232,198,106,.55) 10%, rgba(232,198,106,.75) 50%, rgba(232,198,106,.55) 90%, transparent 100%); pointer-events:none; }
+.cx-detail::after { content:''; position:absolute; right:8rpx; top:8rpx; bottom:8rpx; width:2rpx;
+  background:linear-gradient(180deg, transparent 0%, rgba(158,212,190,.40) 10%, rgba(158,212,190,.60) 50%, rgba(158,212,190,.40) 90%, transparent 100%); pointer-events:none; }
+/* 圆木画轴（仅戏里戏外视图） · 木纹 + 顶/底圆头端钮 —— pointer-events:none 必加，否则画轴会拦截两侧边缘的 touchmove，助长「按着跟手」 */
+.cx-detail.cx-tale-view::before, .cx-detail.cx-tale-view::after { width:14rpx; pointer-events:none;
+  background:linear-gradient(180deg, #3d2c1a 0%, #6a4a25 18%, #8a6433 50%, #6a4a25 82%, #3d2c1a 100%);
+  box-shadow:0 0 8rpx rgba(232,198,106,.38), inset 0 0 4rpx rgba(0,0,0,.55); border-radius:6rpx; }
+.cx-axis { position:absolute; top:0; bottom:0; width:14rpx; pointer-events:none; z-index:3;
+           border-radius:6rpx; transform-origin:center center;
+           background:linear-gradient(180deg, #3d2c1a 0%, #6a4a25 18%, #8a6433 50%, #6a4a25 82%, #3d2c1a 100%);
+           box-shadow:0 0 8rpx rgba(232,198,106,.38), inset 0 0 4rpx rgba(0,0,0,.55); }
+/* 画轴展开：两根木轴自画卷中央向两侧推开，同时由短及长 */
+@keyframes cxAxisOpenL {
+  0%   { left:50%; transform:translateX(-50%) scaleY(.22); opacity:0; }
+  20%  { opacity:1; }
+  100% { left:-14rpx; transform:translateX(0) scaleY(1); opacity:1; } }
+@keyframes cxAxisOpenR {
+  0%   { right:50%; transform:translateX(50%) scaleY(.22); opacity:0; }
+  20%  { opacity:1; }
+  100% { right:-14rpx; transform:translateX(0) scaleY(1); opacity:1; } }
+.cx-axis::before, .cx-axis::after { content:''; position:absolute; left:50%;
+  width:18rpx; height:18rpx; border-radius:50%; transform:translateX(-50%);
+  background:radial-gradient(circle at 32% 32%, #f4dba6 0%, #c0955a 30%, #6a4a25 72%, #2a1d10 100%);
+  box-shadow:0 0 6rpx rgba(232,198,106,.6), inset 0 0 2rpx rgba(0,0,0,.6); z-index:1; }
+.cx-axis::before { top:-9rpx; }
+.cx-axis::after  { bottom:-9rpx; }
+.cx-axis.left  { left:-14rpx;  animation:cxAxisOpenL .68s cubic-bezier(.2,.75,.3,1) both; }
+.cx-axis.right { right:-14rpx; animation:cxAxisOpenR .68s cubic-bezier(.2,.75,.3,1) both; }
+/* 朱印 */
+.cx-detail .seal-tl, .cx-detail .seal-br { position:absolute; z-index:4; font-size:18rpx; font-weight:bold;
+  color:rgba(180,60,40,.55); border:1rpx solid rgba(180,60,40,.45); background:rgba(180,60,40,.05);
+  padding:2rpx 8rpx; border-radius:4rpx; letter-spacing:0; line-height:1.4; }
+.cx-detail .seal-tl { top:18rpx; right:24rpx; }
+.cx-detail .seal-br { bottom:80rpx; right:24rpx; transform:rotate(-3deg); }
+/* 光阴长河 · 蒙版后的流动光影
+   原实现用一张 400x240 的 SVG 线条波纹平铺：波形在 tile 边界斜率不为 0、且 blur 被 viewBox 裁掉，
+   接缝处是硬折角（"很不连续"的根因）。改为整块柔和光斑平铺：每块光斑到 tile 边缘已衰减到全透明，
+   接缝天然不可见；再叠一层反向慢漂 + 呼吸，并罩一层径向蒙版，形成"蒙版后面透出的光影"。 */
+.cx-river { position:absolute; left:0; right:0; top:0; bottom:0; overflow:hidden;
+  pointer-events:none; z-index:-1;
+  background-image:
+    radial-gradient(closest-side, rgba(232,198,106,.30), rgba(232,198,106,.09) 48%, rgba(232,198,106,0) 80%),
+    radial-gradient(closest-side, rgba(158,212,190,.17), rgba(158,212,190,0) 76%),
+    radial-gradient(closest-side, rgba(255,240,205,.18), rgba(255,240,205,0) 76%);
+  background-size:560rpx 420rpx, 420rpx 320rpx, 340rpx 300rpx;
+  background-repeat:repeat;
+  mix-blend-mode:screen;
+  animation:cxRiverDriftA 34s linear infinite;
+  -webkit-mask-image:radial-gradient(132% 78% at 50% 38%, #000 0%, rgba(0,0,0,.62) 52%, rgba(0,0,0,.18) 80%, transparent 100%);
+          mask-image:radial-gradient(132% 78% at 50% 38%, #000 0%, rgba(0,0,0,.62) 52%, rgba(0,0,0,.18) 80%, transparent 100%); }
+/* 第二层：反向慢漂 + 呼吸，让光影不呈规律感（父级 mask 会一并裁切） */
+.cx-river::after { content:''; position:absolute; left:-30%; top:-30%; width:160%; height:160%;
+  background-image:
+    radial-gradient(closest-side, rgba(232,198,106,.20), rgba(232,198,106,0) 78%),
+    radial-gradient(closest-side, rgba(158,212,190,.13), rgba(158,212,190,0) 78%);
+  background-size:640rpx 480rpx, 500rpx 380rpx;
+  background-repeat:repeat;
+  mix-blend-mode:screen;
+  animation:cxRiverDriftB 46s ease-in-out infinite; }
+/* 位移量必须取各层 background-size 的整数倍，否则循环回跳时会跳变（同样会露馅为"不连续"） */
+@keyframes cxRiverDriftA {
+  from { background-position:0 0,      180rpx 120rpx, 120rpx 90rpx; }
+  to   { background-position:560rpx 420rpx, -240rpx 440rpx, 460rpx 90rpx; } }
+@keyframes cxRiverDriftB {
+  0%   { transform:translate3d(0,0,0) scale(1);    opacity:.5; }
+  50%  { transform:translate3d(-5%,3%,0) scale(1.09); opacity:.92; }
+  100% { transform:translate3d(0,0,0) scale(1);    opacity:.5; } }
+.cx-river2 { display:none; }
+/* 文字内容一律浮于光影之上（两个弹框通用）。
+   用 mix-blend-mode 时部分小程序实现会新建层叠上下文、使负 z-index 失效，故正文显式提到 z-index:2 做双保险。 */
+.cx-detail > view:not(.cx-river):not(.cx-river2):not(.cx-axis):not(.seal-tl):not(.seal-br){ position:relative; z-index:2; }
+.cx-dport { display:flex; justify-content:center; margin-bottom:16rpx; }
+.cx-dimg { width:180rpx; height:270rpx; border-radius:12rpx; border:2rpx solid #c9a24b; }
+.cx-initial.big { font-size:120rpx; }
+.cx-dname { text-align:center; font-size:40rpx; font-weight:bold; }
+.cx-dpos { text-align:center; font-size:25rpx; color:#b8ac98; margin:8rpx 0 16rpx; }
+.cx-dline { display:flex; flex-wrap:wrap; gap:10rpx; justify-content:center; font-size:25rpx; margin-bottom:16rpx; }
+.cx-k { color:#8a7e6c; margin-right:4rpx; }
+.cx-sec { font-size:27rpx; line-height:1.8; color:#e8e0d2; margin-top:20rpx; }
+.cx-tags { display:flex; flex-wrap:wrap; gap:10rpx; margin-top:14rpx; }
+.cx-tag { font-size:23rpx; padding:6rpx 14rpx; border-radius:20rpx; background:#2a2118; color:#c9a24b; }
+.cx-scene { margin-top:16rpx; padding-top:16rpx; border-top:1rpx solid #2a2118; }
+.cx-st { font-size:27rpx; font-weight:bold; color:#9ed4be; }
+.cx-sd { font-size:26rpx; line-height:1.85; color:#b8ac98; margin-top:8rpx; }
+.cx-sq { font-size:26rpx; color:#e8c66a; margin-top:10rpx; font-style:italic; }
+.cx-quote { font-size:26rpx; color:#c9a24b; margin-top:12rpx; line-height:1.85; }
+/* 人物关系：分组标签（与 PC 端 .rel-group / .rel-chip 视觉一致） */
+.cx-rel-group { display:flex; align-items:flex-start; margin-top:16rpx; }
+.cx-rel-label { flex:none; width:132rpx; font-size:25rpx; color:#c9a24b; padding-top:4rpx; }
+.cx-rel-chips { flex:1; min-width:0; display:flex; flex-wrap:wrap; }
+.cx-rel-chip { font-size:24rpx; color:#d8cfb8; background:rgba(201,162,75,.10);
+  border:1rpx solid rgba(201,162,75,.30); border-radius:20rpx;
+  padding:5rpx 17rpx; margin:0 10rpx 10rpx 0; }
+.cx-verdict { font-size:28rpx; color:#e8c66a; line-height:1.9; }
+.cx-close { margin-top:26rpx; text-align:center; padding:18rpx; border:1rpx solid #c9a24b; border-radius:12rpx; color:#c9a24b; font-size:26rpx; letter-spacing:4rpx; }
+
+/* 双栏切换 */
+.cx-tabs { display:flex; gap:0; margin:0 0 22rpx; border:1rpx solid #3a2f23; border-radius:12rpx; overflow:hidden; }
+.cx-tab { flex:1; text-align:center; padding:18rpx 0; font-size:26rpx; letter-spacing:4rpx; color:#8a7e6c; background:#1a1510; }
+.cx-tab.on { color:#14110f; background:linear-gradient(135deg,#c9a24b,#e8c66a); font-weight:bold; }
+
+/* 戏里戏外：列表 */
+.cx-tip { text-align:center; font-size:20rpx; color:#6a5e4c; margin:0 0 18rpx; letter-spacing:1rpx; }
+.cx-tales { display:flex; flex-direction:column; gap:18rpx; }
+.cx-tale { background:#1d1712; border:1rpx solid #3a2f23; border-radius:16rpx; padding:24rpx; box-sizing:border-box; }
+.cx-tl { font-size:28rpx; font-weight:bold; color:#e8c66a; margin-bottom:12rpx; }
+.cx-tmeta { display:flex; flex-wrap:wrap; gap:10rpx; margin-bottom:10rpx; }
+.cx-mchip { font-size:19rpx; color:#b8ac98; background:#241c10; border:1rpx solid #4a3a1d; border-radius:8rpx; padding:3rpx 12rpx; }
+.cx-tpeople { display:flex; flex-wrap:wrap; gap:10rpx; margin-bottom:12rpx; }
+.cx-pchip { font-size:20rpx; color:#c9a24b; background:rgba(201,162,75,.10); border:1rpx solid rgba(201,162,75,.30); border-radius:20rpx; padding:3rpx 14rpx; }
+.cx-tlead { font-size:22rpx; color:#b8ac98; font-style:italic; line-height:1.7; margin-bottom:12rpx; }
+.cx-tmore { font-size:21rpx; color:#9ed4be; letter-spacing:2rpx; }
+
+/* 戏里戏外：详情 */
+.cx-tmeta-d { margin-bottom:16rpx; }
+.cx-tmeta-d .cx-mchip { font-size:22rpx; }
+.cx-detail .cx-pchip { font-size:23rpx; }
+.cx-tlead-d { margin:16rpx 0 20rpx; font-size:26rpx; line-height:1.9; }
+.cx-beat { margin-bottom:20rpx; }
+.cx-bt { font-size:27rpx; font-weight:bold; color:#9ed4be; margin-bottom:8rpx; border-left:6rpx solid #c9a24b; padding-left:12rpx; }
+.cx-bd { font-size:26rpx; line-height:1.9; color:#b8ac98; }
+.cx-quote { font-size:26rpx; color:#e8c66a; line-height:1.9; margin:16rpx 0; padding:16rpx 20rpx; border-left:4rpx solid #c9a24b; background:rgba(201,162,75,.06); border-radius:0 10rpx 10rpx 0; }
+.cx-note { font-size:25rpx; color:#8a7e6c; line-height:1.9; margin-top:10rpx; border-top:1rpx solid #2a2118; padding-top:16rpx; }

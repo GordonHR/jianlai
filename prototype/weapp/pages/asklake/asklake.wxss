@@ -1,0 +1,179 @@
+page { background:#14110f; color:#e8e0d2; }
+
+/* 容器与标题 */
+.lake { padding:28rpx 28rpx 120rpx; min-height:100vh; box-sizing:border-box;
+  background:radial-gradient(circle at 50% 0%, #1d2a2a 0%, #14110f 70%); }
+.lk-head { text-align:center; font-size:44rpx; font-weight:bold; color:#9ed4be;
+  letter-spacing:10rpx; margin-bottom:14rpx; }
+.lk-seen { text-align:center; font-size:22rpx; color:#8a7e6c; margin-bottom:24rpx; }
+.lk-sub { text-align:center; font-size:26rpx; color:#b8ac98; margin:10rpx 0 26rpx; }
+
+/* 来路（origin）— 删 tip，聚焦标题+描述 */
+.lk-origins { display:flex; flex-direction:column; gap:20rpx; }
+.lk-origin { position:relative; background:#1d1712; border:1rpx solid #3a2f23;
+  border-radius:18rpx; padding:30rpx 30rpx 30rpx 120rpx; box-sizing:border-box; }
+.lk-origin:active { border-color:#c9a24b; }
+.lk-omark { position:absolute; left:24rpx; top:50%; transform:translateY(-50%);
+  width:74rpx; height:74rpx; line-height:74rpx; text-align:center; border-radius:50%;
+  font-size:36rpx; color:#14110f; font-weight:bold;
+  background:linear-gradient(135deg,#9ed4be,#c9a24b); }
+.lk-ot { font-size:30rpx; font-weight:bold; color:#e8c66a; margin-bottom:10rpx; }
+.lk-od { font-size:23rpx; line-height:1.8; color:#b8ac98; }
+
+/* 问心主卡 */
+.lk-progress { text-align:center; font-size:22rpx; color:#8a7e6c; margin-bottom:18rpx; }
+.lk-card { background:#1d1712; border:1rpx solid #3a2f23; border-radius:18rpx;
+  padding:26rpx; box-sizing:border-box; margin-bottom:22rpx; }
+.lk-ch { font-size:22rpx; color:#9ed4be; letter-spacing:3rpx; margin-bottom:14rpx; }
+.lk-qt { font-size:32rpx; font-weight:bold; color:#c9a24b; margin-bottom:16rpx; }
+.lk-qd { font-size:24rpx; line-height:1.9; color:#b8ac98; margin-bottom:18rpx;
+  white-space:pre-wrap; }
+.lk-line { font-size:22rpx; line-height:1.8; color:#8a7e6c; }
+.lk-line:nth-of-type(2) { margin-top:6rpx; }
+
+/* 选项 */
+.lk-choices { display:flex; flex-direction:column; gap:16rpx; }
+.lk-choice { background:#211b16; border:1rpx solid #3a2f23; border-radius:12rpx;
+  padding:24rpx 26rpx; box-sizing:border-box; }
+.lk-choice:active { border-color:#c9a24b; }
+.lk-choice.locked { opacity:.5; }
+.lk-ctxt { font-size:26rpx; color:#e8e0d2; display:block; line-height:1.5; }
+.lk-lock { font-size:20rpx; color:#c46b5b; margin-top:12rpx; line-height:1.5; }
+
+/* 侧栏：五维 / 根本 / 六方 */
+.lk-side { background:#181310; border:1rpx solid #2f261d; border-radius:16rpx;
+  padding:24rpx; box-sizing:border-box; margin:22rpx 0; }
+.lk-side-title { font-size:22rpx; color:#9ed4be; letter-spacing:2rpx; margin:8rpx 0 16rpx;
+  border-left:6rpx solid #c9a24b; padding-left:14rpx; }
+.lk-side-title:first-child { margin-top:0; }
+.lk-meter { display:flex; align-items:center; margin-bottom:14rpx; }
+.lk-ml { width:88rpx; flex:none; font-size:20rpx; color:#b8ac98; }
+.lk-mbar { flex:1; height:14rpx; background:#2a2018; border-radius:7rpx; overflow:hidden; }
+.lk-mfill { height:100%; border-radius:7rpx; min-width:4rpx; }
+.lk-npc { display:flex; align-items:center; margin-bottom:14rpx; }
+.lk-nl { width:88rpx; flex:none; font-size:20rpx; color:#b8ac98; }
+.lk-nbar { position:relative; flex:1; height:14rpx; background:#2a2018; border-radius:7rpx;
+  overflow:hidden; }
+.lk-nfill { position:absolute; height:100%; border-radius:7rpx; }
+.lk-flags { display:flex; flex-wrap:wrap; gap:10rpx; margin:10rpx 0 16rpx; }
+.lk-flag { font-size:19rpx; color:#e8c66a; background:#241c10; border:1rpx solid #4a3a1d;
+  border-radius:8rpx; padding:4rpx 12rpx; }
+.lk-trail { display:flex; flex-direction:column; gap:10rpx; margin-top:8rpx; }
+.lk-trail-item { font-size:20rpx; line-height:1.6; color:#b8ac98; }
+.lk-trail-item.il { color:#9ed4be; }
+.lk-trail-t { color:#8a7e6c; }
+.lk-trail-n { color:#8a7e6c; }
+
+/* 工具与按钮 */
+.lk-tools { position:fixed; left:0; right:0; bottom:0; z-index:90;
+  display:flex; justify-content:center; gap:18rpx;
+  padding:16rpx 28rpx 28rpx; box-sizing:border-box;
+  background:rgba(20,17,15,.96); border-top:1rpx solid rgba(232,198,106,.12); }
+.lk-btns { display:flex; gap:20rpx; justify-content:center; margin-top:20rpx; }
+.lk-btn { flex:1; max-width:340rpx; text-align:center; padding:22rpx 0; border-radius:12rpx;
+  font-size:26rpx; font-weight:bold; letter-spacing:2rpx; color:#14110f;
+  background:linear-gradient(135deg,#c9a24b,#e8c66a);
+  min-height:88rpx; display:flex; align-items:center; justify-content:center; box-sizing:border-box; }
+.lk-btn.ghost { color:#9ed4be; background:transparent; border:1rpx solid #3a5c52; }
+
+/* 底部轻量入口：心境 / 结局图鉴 */
+.lk-tool { flex:none; padding:14rpx 28rpx; border-radius:30rpx;
+  font-size:24rpx; letter-spacing:2rpx; color:#c9a24b;
+  background:rgba(29,23,18,.92); border:1rpx solid rgba(201,162,75,.45); }
+.lk-tool.on { color:#14110f; background:rgba(158,212,190,.9); border-color:rgba(158,212,190,.9); }
+
+/* 心境抽屉：fixed bottom sheet */
+.lk-sheet { position:fixed; left:0; right:0; top:0; bottom:0; z-index:100; width:100%; box-sizing:border-box; }
+.lk-sheet-mask { position:absolute; left:0; right:0; top:0; bottom:0;
+  background:rgba(0,0,0,.55); opacity:0; transition:opacity .25s ease; }
+.lk-sheet-body { position:absolute; left:0; right:0; bottom:0; height:92vh; max-height:1200rpx;
+  background:#181310; border-top:1rpx solid rgba(232,198,106,.22);
+  border-radius:24rpx 24rpx 0 0; padding:0; box-sizing:border-box;
+  transform:translateY(100%); transition:transform .32s cubic-bezier(.25,.8,.25,1);
+  overflow:hidden; }
+.lk-sheet-handle { display:flex; justify-content:center; padding:20rpx 0 16rpx; }
+.lk-sheet-bar { width:64rpx; height:8rpx; border-radius:4rpx; background:rgba(232,198,106,.35); }
+.lk-sheet-scroll { height:calc(92vh - 48rpx); width:calc(100% - 48rpx); margin:0 auto 40rpx; padding:0 12rpx 0 0; box-sizing:border-box; }
+.lk-sheet .lk-side-title:first-child { margin-top:4rpx; }
+.lk-sheet .lk-side-title { font-size:30rpx; letter-spacing:3rpx; margin:14rpx 0 18rpx; }
+.lk-sheet .lk-meter { margin-bottom:18rpx; }
+.lk-sheet .lk-ml, .lk-sheet .lk-nl { width:100rpx; font-size:28rpx; }
+.lk-sheet .lk-mbar, .lk-sheet .lk-nbar { height:22rpx; border-radius:11rpx; }
+.lk-sheet .lk-npc { margin-bottom:18rpx; }
+.lk-sheet .lk-flags { margin:14rpx 0 20rpx; gap:12rpx; }
+.lk-sheet .lk-flag { font-size:26rpx; padding:6rpx 16rpx; }
+.lk-sheet .lk-trail { gap:12rpx; margin-top:12rpx; }
+.lk-sheet .lk-trail-item { font-size:26rpx; line-height:1.7; }
+
+/* 插曲 */
+.lk-il-img { display:block; width:100%; height:auto; border:1rpx solid #3a2f23;
+  border-radius:12rpx; margin-bottom:18rpx; }
+.lk-card .lk-qd { margin-bottom:0; }
+
+/* 终局：徽章用单字字标，标题/描述/诗句为视觉重心 */
+.lk-end { margin-top:36rpx; text-align:center; }
+.lk-grade { display:inline-flex; align-items:center; justify-content:center; position:relative;
+  width:192rpx; height:192rpx; line-height:1; border-radius:50%;
+  font-size:48rpx; font-weight:bold; letter-spacing:0; margin-bottom:28rpx;
+  font-family:serif; }
+/* 结局图标：具象 SVG，随徽章缩放（大徽章 96rpx→52rpx，图鉴 64rpx→36rpx） */
+.al-eico { width:52rpx; height:52rpx; display:block; }
+.lk-cx-g .al-eico { width:36rpx; height:36rpx; }
+.lk-ebody { font-size:25rpx; line-height:2; color:#b8ac98; margin:0 16rpx 26rpx;
+  white-space:pre-wrap; }
+.lk-poem { font-size:26rpx; color:#9ed4be; letter-spacing:2rpx; margin-bottom:22rpx; }
+.lk-origin-line { font-size:21rpx; color:#8a7e6c; margin-bottom:26rpx; letter-spacing:1rpx; }
+
+/* 终局折叠区：默认收，分析内容点开后展开 */
+.lk-flip { margin:8rpx 16rpx 8rpx; border-top:1rpx solid #2f261d; padding-top:18rpx; text-align:left; }
+.lk-flip-h { display:flex; justify-content:space-between; align-items:center;
+  font-size:22rpx; color:#9ed4be; letter-spacing:2rpx; padding:14rpx 0; }
+.lk-flip-h:active { color:#c9a24b; }
+.lk-flip-arr { font-size:22rpx; color:#8a7e6c; }
+.lk-flip-body { padding:8rpx 0 18rpx; }
+.lk-flip-body .lk-side-title:first-child { margin-top:4rpx; }
+
+/* 结局等级配色（终局徽章 / 图鉴徽章共用） */
+.g-sp { color:#14110f; background:linear-gradient(135deg,#e8c66a,#fff0c0);
+  box-shadow:0 0 20rpx rgba(232,198,106,.5); }
+.g-S { color:#14110f; background:linear-gradient(135deg,#e8c66a,#c9a24b); }
+.g-A { color:#14110f; background:linear-gradient(135deg,#9ed4be,#6fae86); }
+.g-B { color:#e8e0d2; background:linear-gradient(135deg,#3a7a9a,#2f6f8f); }
+.g-C { color:#14110f; background:linear-gradient(135deg,#e0a05a,#d68a3f); }
+.g-D { color:#e8e0d2; background:linear-gradient(135deg,#6a5a50,#5a4a40); }
+
+/* 结局图标为金线稿(#e8cf8f)，压在 S+/S/A/C 的浅色等级渐变底上对比度≈1.1:1 几乎不可见；
+   故加一层深色内盘保证可读，外圈仍保留等级色（神品金/上品青/…） */
+.lk-cx-g { position:relative; }
+.lk-grade::before, .lk-cx-g::before { content:""; position:absolute; border-radius:50%;
+  background:rgba(16,12,10,.62); }
+.lk-grade::before { top:14rpx; left:14rpx; right:14rpx; bottom:14rpx; }
+.lk-cx-g::before { top:6rpx; left:6rpx; right:6rpx; bottom:6rpx; }
+.lk-grade .al-eico, .lk-cx-g .al-eico { position:relative; z-index:2; }
+.lk-grade .al-eico { width:112rpx; height:112rpx; }
+
+/* 图鉴：只显示已解锁，去掉未解锁占位 */
+.lk-codex { display:flex; flex-direction:column; gap:14rpx; }
+.lk-cx { display:flex; gap:18rpx; background:#181310; border:1rpx solid #3a5c52;
+  border-radius:14rpx; padding:22rpx; box-sizing:border-box;
+  box-shadow:0 0 0 1rpx rgba(201,162,75,0.06) inset; }
+.lk-cx.seen { border-color:#3a5c52; }
+.lk-cx-g { flex:none; align-self:flex-start; display:inline-flex; align-items:center; justify-content:center;
+  width:64rpx; height:64rpx; border-radius:50%; font-size:32rpx; font-weight:bold;
+  font-family:serif; }
+.lk-cx-body { flex:1; min-width:0; }
+.lk-cx-t { font-size:26rpx; font-weight:bold; color:#e8e0d2; margin-bottom:8rpx; letter-spacing:1rpx; }
+.lk-cx-d { font-size:21rpx; line-height:1.7; color:#b8ac98; white-space:pre-wrap; }
+.lk-cx-p { font-size:21rpx; color:#9ed4be; margin-top:8rpx; }
+
+.lk-empty { text-align:center; font-size:23rpx; color:#8a7e6c; padding:40rpx 16rpx; line-height:1.8; }
+.lk-hint { text-align:center; font-size:20rpx; color:#6a5e4c; margin-top:20rpx; letter-spacing:1rpx; }
+
+/* 选项引文（上一选择的旁白，作叙事承接） */
+.lk-prev { font-size:21rpx; color:#9ed4be; font-style:italic; text-align:center; letter-spacing:1rpx; margin:6rpx 16rpx 14rpx; line-height:1.6; opacity:.92; }
+/* 章末 · 心境小像 */
+.lk-review { border-color:#3a5c52; background:#141a17; }
+.lk-review-npcs { display:flex; flex-wrap:wrap; gap:14rpx 22rpx; justify-content:center; margin-top:18rpx; }
+.lk-rnpc { font-size:21rpx; color:#c9b48a; }
+/* 心境按钮（抽屉开合态） */
+.lk-btn.on { color:#14110f; background:linear-gradient(135deg,#9ed4be,#6fae86); }

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>小程序对战站位预览</title>
+<style>
+*{ box-sizing:border-box; margin:0; padding:0; }
+body{ background:#14110f; color:#e8e0d2; font-family:system-ui,-apple-system,sans-serif; height:100vh; overflow:hidden; }
+.game{ display:flex; flex-direction:column; height:100vh; background:radial-gradient(circle at 50% -10%, #2a2118 0%, #14110f 60%); }
+.topbar{ padding:8px 12px; background:rgba(20,17,15,.94); border-bottom:1px solid #3a2f23; }
+.turn-banner{ display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
+.phase{ font-size:14px; color:#c9a24b; font-weight:bold; }
+.turn{ font-size:18px; font-weight:bold; margin-left:auto; }
+.tfac{ font-size:13px; }
+.stepper{ display:flex; align-items:center; justify-content:center; gap:4px; width:100%; margin-top:4px; }
+.st{ font-size:11px; color:#7a6f5e; padding:2px 8px; border-radius:12px; background:#2a2118; }
+.st.on{ color:#14110f; background:#e8c66a; }
+.topctrl{ display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap; }
+.bg-btn{ font-size:13px; padding:5px 10px; border:1px solid #3a2f23; border-radius:6px; color:#c9a24b; }
+.btn{ font-size:14px; padding:7px 14px; border-radius:8px; background:#3a2f23; color:#e8e0d2; }
+
+.battlefield{ position:relative; flex:1; overflow:hidden; }
+.seat{ position:relative; background:#1d1712; border:2px solid #3a2f23; border-radius:12px; padding:6px; }
+.seat.clickable{ border-color:#e8c66a; box-shadow:0 0 10px rgba(232,198,106,.45); }
+.seat-portrait{ position:relative; width:80px; height:110px; border-radius:8px; overflow:hidden; background:#2a2118; }
+.seat-img{ width:100%; height:100%; object-fit:cover; }
+.seat-name{ position:absolute; left:0; bottom:0; width:100%; background:rgba(0,0,0,.6); font-size:13px; padding:3px 6px; color:#f0e8d2; }
+.seat-fac{ position:absolute; left:0; top:0; font-size:11px; padding:2px 6px; background:rgba(0,0,0,.5); color:#c0392b; }
+.seat-hp{ position:absolute; left:4px; bottom:28px; font-size:11px; padding:2px 6px; border-radius:4px; background:linear-gradient(180deg,#c0392b,#8e44ad); color:#fff; }
+.seat-thinking{ position:absolute; right:4px; top:4px; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:#e8c66a; color:#14110f; font-size:13px; font-weight:bold; }
+.seat-dead{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:26px; color:#fff; font-weight:900; letter-spacing:10px; background:rgba(0,0,0,.45); }
+
+.seat-top{ position:absolute; top:12px; left:50%; transform:translateX(-50%); z-index:10; }
+.seat-top .seat-scroll{ display:flex; gap:10px; }
+.seat-left{ position:absolute; top:50%; left:12px; transform:translateY(-50%); z-index:10; }
+.seat-right{ position:absolute; top:50%; right:12px; transform:translateY(-50%); z-index:10; }
+.seat-bottom{ position:absolute; left:12px; right:12px; bottom:12px; z-index:10; display:flex; gap:12px; align-items:flex-end; }
+
+.stage{ position:absolute; top:150px; left:110px; right:110px; bottom:200px; z-index:5; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.stage-hint{ text-align:center; margin-bottom:12px; }
+.stage-name{ font-family:"KaiTi","STKaiti",serif; font-size:28px; font-weight:bold; letter-spacing:2px; }
+.stage-tag{ display:block; font-size:14px; color:#b9ad8f; margin-top:3px; }
+.stage-center{ display:flex; gap:30px; align-items:center; justify-content:center; margin-bottom:12px; }
+.pile{ width:90px; height:120px; border-radius:10px; background:#211b16; border:1px solid #3a2f23; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.pile .n{ font-size:30px; font-weight:bold; color:#c9a24b; }
+.pile .l{ font-size:12px; color:#8a7e6c; margin-top:4px; }
+.stage-log{ width:100%; max-width:420px; background:rgba(0,0,0,.35); border-radius:10px; padding:10px 14px; }
+.stage-log .lg{ font-size:13px; line-height:1.5; color:#b8ac98; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+.my-card{ width:110px; flex:0 0 110px; background:#1d1712; border:2px solid #3a2f23; border-radius:12px; padding:8px; }
+.my-portrait{ position:relative; width:100%; height:150px; border-radius:8px; overflow:hidden; background:#2a2118; }
+.my-img{ width:100%; height:100%; object-fit:cover; }
+.my-name{ position:absolute; left:0; bottom:0; width:100%; background:rgba(0,0,0,.6); font-size:13px; padding:3px 6px; }
+.my-hp{ position:absolute; left:4px; bottom:28px; font-size:11px; padding:2px 6px; border-radius:4px; background:linear-gradient(180deg,#c0392b,#8e44ad); color:#fff; }
+.my-area{ flex:1; min-width:0; display:flex; flex-direction:column; gap:8px; }
+.my-title{ display:flex; align-items:center; gap:8px; font-size:13px; color:#c9a24b; flex-wrap:wrap; }
+.hand{ display:flex; gap:10px; overflow-x:auto; padding-bottom:6px; min-height:100px; align-items:flex-start; }
+.card{ flex:0 0 90px; width:90px; background:#211b16; border:2px solid #3a2f23; border-radius:10px; padding:6px; }
+.cf-head{ font-size:13px; font-weight:bold; display:flex; align-items:center; gap:3px; }
+.cf-point{ font-size:11px; background:#c9a24b; color:#14110f; border-radius:50%; width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center; }
+.cf-art{ height:46px; display:flex; align-items:center; justify-content:center; }
+.cf-sig{ font-size:22px; color:#9ed4be; }
+.cf-foot{ font-size:11px; color:#8a7e6c; text-align:center; }
+.skills{ display:flex; gap:8px; flex-wrap:wrap; }
+.skill{ background:#2a2118; border:1px solid #c9a24b; color:#e8c66a; padding:6px 12px; border-radius:8px; font-size:13px; }
+</style>
+</head>
+<body>
+<div class="game">
+  <div class="topbar">
+    <div class="turn-banner">
+      <span class="phase">第 18 轮</span>
+      <span class="turn" style="color:#c0392b">阮籍</span>
+      <span class="tfac" style="color:#c0392b">敌</span>
+      <div class="stepper">
+        <span class="st done">摸牌</span><span class="st">›</span>
+        <span class="st done">判定</span><span class="st">›</span>
+        <span class="st on">出牌</span><span class="st">›</span>
+        <span class="st">弃牌</span>
+      </div>
+    </div>
+    <div class="topctrl">
+      <span class="bg-btn">换景</span><span class="bg-btn">节奏 缓</span><span class="bg-btn">音 效</span><span class="bg-btn">托 管</span>
+      <span class="btn disabled">结束回合</span>
+    </div>
+  </div>
+
+  <div class="battlefield">
+    <div class="seat-top">
+      <div class="seat-scroll">
+        <div class="seat"><div class="seat-portrait"><img class="seat-img" src=""><div class="seat-name">王戎</div><div class="seat-fac" style="color:#c0392b">敌</div><div class="seat-hp">气血 0</div><div class="seat-dead">阵 亡</div></div></div>
+      </div>
+    </div>
+    <div class="seat-left">
+      <div class="seat clickable"><div class="seat-portrait"><img class="seat-img" src=""><div class="seat-name">阮籍</div><div class="seat-fac" style="color:#c0392b">敌</div><div class="seat-hp">气血 3</div><div class="seat-thinking">思</div></div></div>
+    </div>
+    <div class="seat-right">
+      <div class="seat"><div class="seat-portrait"><img class="seat-img" src=""><div class="seat-name">界貂蝉</div><div class="seat-fac" style="color:#2980b9">友</div><div class="seat-hp">气血 0</div><div class="seat-dead">阵 亡</div></div></div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-hint">
+        <div class="stage-name" style="color:#c0392b">阮籍</div>
+        <div class="stage-tag">行棋中</div>
+      </div>
+      <div class="stage-center">
+        <div class="pile"><div class="n">28</div><div class="l">牌库</div></div>
+        <div class="pile"><div class="n">12</div><div class="l">弃牌</div></div>
+      </div>
+      <div class="stage-log">
+        <div class="lg">阮籍发动咏怀，减少神吕布为桃园结义的目标</div>
+        <div class="lg">阮籍发动咏怀，视为使用桃园结义</div>
+      </div>
+    </div>
+
+    <div class="seat-bottom">
+      <div class="my-card"><div class="my-portrait"><img class="my-img" src=""><div class="my-name">神吕布</div><div class="my-hp">气血 2</div></div></div>
+      <div class="my-area">
+        <div class="my-title"><span>神吕布 的手牌</span><span style="color:#8a7e6c">上限 4 · 剑气 2/2</span></div>
+        <div class="hand">
+          <div class="card"><div class="cf-head"><span class="cf-point">J</span>杀</div><div class="cf-art"><span class="cf-sig">剑</span></div><div class="cf-foot">剑气</div></div>
+          <div class="card"><div class="cf-head"><span class="cf-point">4</span>杀</div><div class="cf-art"><span class="cf-sig">剑</span></div><div class="cf-foot">剑气</div></div>
+        </div>
+        <div class="skills"><span class="skill">无双</span><span class="skill">狂暴</span><span class="skill">无谋</span><span class="skill">神愤</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

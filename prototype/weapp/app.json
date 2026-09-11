@@ -1,0 +1,21 @@
+{
+  "pages": [
+    "pages/title/title",
+    "pages/setup/setup",
+    "pages/game/game",
+    "pages/codex/codex",
+    "pages/asklake/asklake",
+    "pages/sect/sect",
+    "pages/shenci/shenci",
+    "pages/wushipai/wushipai"
+  ],
+  "window": {
+    "navigationBarTitleText": "剑来 · 卡牌对战",
+    "navigationBarBackgroundColor": "#14110f",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#14110f",
+    "backgroundTextStyle": "dark"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

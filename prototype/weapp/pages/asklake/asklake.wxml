@@ -1,0 +1,157 @@
+<view class="lake">
+  <view class="lk-head">书 简 湖 · 问 心 局</view>
+  <view class="lk-seen" wx:if="{{v}}">已见结局 {{v.seen}} / {{v.total}}</view>
+
+  <!-- 来路 -->
+  <block wx:if="{{v.stage==='origin'}}">
+    <view class="lk-sub">你以何种来路，赴这一湖因果？</view>
+    <view class="lk-origins">
+      <view wx:for="{{v.origins}}" wx:key="k" class="lk-origin" bindtap="pickOrigin" data-k="{{item.k}}">
+        <view class="lk-omark">{{item.mark}}</view>
+        <view class="lk-ot">{{item.t}}</view>
+        <view class="lk-od">{{item.d}}</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 问心 -->
+  <block wx:elif="{{v.stage==='play'}}">
+    <view class="lk-progress">第 {{v.step+1}} 章 · 进度 {{v.node.prog}}%</view>
+    <view class="lk-card">
+      <view class="lk-ch">{{v.node.ch}}</view>
+      <view class="lk-prev" wx:if="{{v.node.prevNote}}">— {{v.node.prevNote}} —</view>
+      <view class="lk-qt">{{v.node.t}}</view>
+      <view class="lk-qd">{{v.node.d}}</view>
+      <view class="lk-line">湖上：{{v.node.lake}}</view>
+      <view class="lk-line">心境：{{v.node.mood}}</view>
+    </view>
+    <view class="lk-choices">
+      <view wx:for="{{v.choices}}" wx:key="idx" class="lk-choice {{item.locked?'locked':''}}" bindtap="choose" data-i="{{item.idx}}">
+        <text class="lk-ctxt">{{item.txt}}</text>
+        <view class="lk-lock" wx:if="{{item.locked}}">✕ {{item.why}}</view>
+      </view>
+    </view>
+
+    <!-- 底部固定工具栏 -->
+    <view class="lk-tools">
+      <view class="lk-tool {{v.moodOpen?'on':''}}" bindtap="toggleMood">心 境</view>
+      <view class="lk-tool" bindtap="openCodex">结 局 图 鉴</view>
+    </view>
+
+    <!-- 心境抽屉：fixed bottom sheet，始终渲染，靠 transform/opacity 隐藏 -->
+    <view class="lk-sheet" style="pointer-events:{{v.moodOpen?'auto':'none'}}">
+      <view class="lk-sheet-mask" style="opacity:{{v.moodOpen?1:0}}" bindtap="toggleMood"></view>
+      <view class="lk-sheet-body" style="transform:translateY({{v.moodOpen?0:100}}%)">
+        <view class="lk-sheet-handle" bindtap="toggleMood"><view class="lk-sheet-bar"></view></view>
+        <scroll-view scroll-y class="lk-sheet-scroll">
+          <view class="lk-side-title">五维心境</view>
+          <view wx:for="{{v.side.meters}}" wx:key="label" class="lk-meter">
+            <text class="lk-ml">{{item.label}}</text>
+            <view class="lk-mbar"><view class="lk-mfill" style="{{item.style}}"></view></view>
+          </view>
+          <view class="lk-side-title">根本</view>
+          <view wx:for="{{v.side.res}}" wx:key="label" class="lk-meter">
+            <text class="lk-ml">{{item.label}}</text>
+            <view class="lk-mbar"><view class="lk-mfill" style="{{item.style}}"></view></view>
+          </view>
+          <view class="lk-side-title">六方态度</view>
+          <view wx:for="{{v.side.npcs}}" wx:key="name" class="lk-npc">
+            <text class="lk-nl">{{item.name}}</text>
+            <view class="lk-nbar"><view class="lk-nfill" style="{{item.style}}"></view></view>
+          </view>
+          <view class="lk-flags" wx:if="{{v.side.flags.length}}">
+            <text wx:for="{{v.side.flags}}" wx:key="*this" wx:for-item="f" class="lk-flag">{{f}}</text>
+          </view>
+          <view class="lk-side-title">卷宗</view>
+          <view class="lk-trail">
+            <view wx:for="{{v.side.trail}}" wx:key="t" class="lk-trail-item {{item.il?'il':''}}">
+              <text class="lk-trail-t">[{{item.t}}]</text> {{item.c}}<text wx:if="{{item.note}}" class="lk-trail-n"> · {{item.note}}</text>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 插曲 -->
+  <block wx:elif="{{v.stage==='il'}}">
+    <view class="lk-card">
+      <image wx:if="{{v.il.img}}" class="lk-il-img" src="{{v.il.img}}" mode="widthFix"/>
+      <view class="lk-ch">湖 上 插 曲</view>
+      <view class="lk-qt">{{v.il.t}}</view>
+      <view class="lk-qd">{{v.il.d}}</view>
+    </view>
+    <view class="lk-btn" bindtap="ilNext">继 续</view>
+  </block>
+
+  <!-- 章末 · 心境小像 -->
+  <block wx:elif="{{v.stage==='review'}}">
+    <view class="lk-card lk-review">
+      <view class="lk-ch">卷 终 · {{v.ch}}</view>
+      <view class="lk-qd">{{v.lake}}</view>
+      <view class="lk-qd">{{v.mood}}</view>
+      <view class="lk-review-npcs">
+        <text wx:for="{{v.npcs}}" wx:key="name" class="lk-rnpc">{{item.name}} · {{item.lab}}</text>
+      </view>
+    </view>
+    <view class="lk-btn" bindtap="reviewNext">续 卷 →</view>
+  </block>
+
+  <!-- 终局 -->
+  <block wx:elif="{{v.stage==='end'}}">
+    <view class="lk-end">
+      <view class="lk-grade g-{{v.ending.gt}}"><image class="al-eico" src="{{v.ending.ico}}" mode="aspectFit"/></view>
+      <view class="lk-etitle">{{v.ending.title}}</view>
+      <view class="lk-ebody">{{v.ending.desc}}</view>
+      <view class="lk-poem">「{{v.ending.poem}}」</view>
+      <view class="lk-origin-line">来路 · {{v.ending.origin}}</view>
+
+      <view class="lk-flip">
+        <view class="lk-flip-h" bindtap="toggleEnd">
+          <text>回 看 这 一 路</text>
+          <text class="lk-flip-arr">{{flipEnd?'▾':'▸'}}</text>
+        </view>
+        <view class="lk-flip-body" wx:if="{{flipEnd}}">
+          <view class="lk-side-title">终 局 心 境</view>
+          <view wx:for="{{v.ending.meters}}" wx:key="label" class="lk-meter">
+            <text class="lk-ml">{{item.label}}</text>
+            <view class="lk-mbar"><view class="lk-mfill" style="{{item.style}}"></view></view>
+          </view>
+          <view class="lk-side-title">六 方 终 态</view>
+          <view wx:for="{{v.ending.npcs}}" wx:key="name" class="lk-npc">
+            <text class="lk-nl">{{item.name}}</text>
+            <view class="lk-nbar"><view class="lk-nfill" style="{{item.style}}"></view></view>
+          </view>
+          <view class="lk-side-title">卷 宗</view>
+          <view class="lk-trail">
+            <view wx:for="{{v.ending.trail}}" wx:key="i" class="lk-trail-item">
+              <text class="lk-trail-t">[{{item.t}}]</text> {{item.c}}<text wx:if="{{item.note}}" class="lk-trail-n"> · {{item.note}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="lk-btns">
+      <view class="lk-btn" bindtap="restart">再 问 一 次</view>
+      <view class="lk-btn ghost" bindtap="openCodex">结 局 图 鉴</view>
+    </view>
+  </block>
+
+  <!-- 图鉴（只展示已获得的） -->
+  <block wx:elif="{{v.stage==='codex'}}">
+    <view class="lk-sub">结局图鉴 · 已收 {{v.seen}} / {{v.total}}</view>
+    <view class="lk-codex">
+      <view wx:for="{{v.codex}}" wx:key="key" wx:if="{{item.seen}}" class="lk-cx seen">
+        <view class="lk-cx-g g-{{item.gt}}"><image class="al-eico" src="{{item.ico}}" mode="aspectFit"/></view>
+        <view class="lk-cx-body">
+          <view class="lk-cx-t">{{item.t}}</view>
+          <view class="lk-cx-d">{{item.d}}</view>
+          <view class="lk-cx-p" wx:if="{{item.poem}}">「{{item.poem}}」</view>
+        </view>
+      </view>
+    </view>
+    <view class="lk-empty" wx:if="{{v.seen===0}}">还没走过任何结局。挑一个来路，开始第一次。</view>
+    <view class="lk-hint" wx:if="{{v.seen>0}}">未见的结局，等下次来时再揭晓。</view>
+    <view class="lk-btn" bindtap="back">返 回</view>
+  </block>
+</view>

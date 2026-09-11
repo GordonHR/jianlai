@@ -1,0 +1,245 @@
+page { background:#14110f; }
+
+.sc{
+  color:#ece6d8; max-width:1080rpx; margin:0 auto; padding:18rpx 8rpx 28rpx;
+  background: radial-gradient(140% 60% at 50% 0%, rgba(232,198,106,.05), transparent 55%),
+              radial-gradient(120% 120% at 50% 100%, rgba(0,0,0,.30), transparent 60%);
+  border-radius:18rpx; box-shadow: inset 0 0 90rpx rgba(0,0,0,.28); overflow:hidden;
+  font-size:26rpx;
+}
+
+/* ---------- 通用按钮 ---------- */
+button::after{ border:none; }
+.sc-btn{
+  font-family:inherit; border:1px solid rgba(232,198,106,.4); background:rgba(232,198,106,.08);
+  color:#e8c66a; border-radius:10rpx; padding:10rpx 20rpx; font-size:24rpx; line-height:1.4;
+  min-height:88rpx; display:flex; align-items:center; justify-content:center; box-sizing:border-box;
+}
+.sc-btn.primary{ background:#e8c66a; color:#1a140c; font-weight:bold; border-color:#e8c66a; }
+.sc-btn.ghost{ background:transparent; color:#b9ad8f; border-color:rgba(232,198,106,.25); }
+.sc-btn.sm{ min-height:56rpx; padding:6rpx 16rpx; font-size:22rpx; }
+.sc-btn[disabled]{ opacity:.4; }
+.sc-btn.on{ background:#9ed4be; color:#14110f; border-color:transparent; font-weight:bold; }
+
+.sc-empty{ color:#8a8170; font-size:24rpx; padding:10rpx 0; }
+.sc-back{ margin-top:18rpx; text-align:center; }
+.sc-back .sc-btn{ margin:0 8rpx; }
+
+/* ---------- 择地 ---------- */
+.sc-pick{ padding:24rpx 10rpx; text-align:center; }
+.pk-title{ font-family:"KaiTi","STKaiti",serif; font-size:52rpx; color:#ece6d8; letter-spacing:14rpx; }
+.pk-rule{ width:120rpx; height:1px; background:rgba(232,198,106,.45); margin:14rpx auto 10rpx; }
+.pk-sub{ font-size:22rpx; color:#b9ad8f; letter-spacing:4rpx; margin-bottom:20rpx; }
+.pk-intro{ margin:0 auto 26rpx; max-width:640rpx; }
+.pk-intro .pi{ font-size:25rpx; color:#cabf9f; line-height:2; }
+
+.pk-cards{ display:flex; gap:16rpx; justify-content:center; margin-bottom:24rpx; }
+.pk-card{
+  flex:1; max-width:460rpx; background:rgba(20,17,15,.5);
+  border:1px solid rgba(232,198,106,.2); border-radius:14rpx; padding:26rpx 18rpx 22rpx;
+}
+.pk-card.on{ border-color:#e8c66a; background:rgba(232,198,106,.08); }
+.pk-seal{ width:80rpx; height:80rpx; margin:0 auto 14rpx; display:block; }
+.pk-name{ font-family:"KaiTi","STKaiti",serif; font-size:32rpx; color:#f0e8d2; letter-spacing:3rpx; margin-bottom:10rpx; }
+.pk-card.on .pk-name{ color:#e8c66a; }
+.pk-desc{ font-size:23rpx; color:#a99e84; line-height:1.8; white-space:pre-wrap; }
+.pk-origin{ font-size:21rpx; color:#cabf9f; line-height:1.7; white-space:pre-wrap;
+  margin-top:14rpx; padding-top:14rpx; border-top:1rpx dashed rgba(232,198,106,.25); }
+
+.pk-diffs{ display:flex; gap:12rpx; justify-content:center; margin-bottom:26rpx; }
+.pk-diff{
+  padding:8rpx 26rpx; border-radius:24rpx; font-size:24rpx; letter-spacing:2rpx;
+  border:1px solid rgba(232,198,106,.25); color:#b9ad8f; background:rgba(20,17,15,.4);
+}
+.pk-diff.on{ border-color:#e8c66a; color:#1a140c; background:#e8c66a; font-weight:bold; }
+
+/* ---------- 头部 ---------- */
+.sc-head{ display:flex; align-items:flex-start; gap:14rpx; border-bottom:1px solid rgba(232,198,106,.2); padding-bottom:12rpx; margin-bottom:12rpx; }
+.sc-seal{ width:64rpx; height:64rpx; flex:none; }
+.sc-headline{ flex:1; min-width:0; }
+.sc-dom{ font-family:"KaiTi","STKaiti",serif; font-size:30rpx; color:#f0e8d2; letter-spacing:2rpx; }
+.sc-rank{ font-size:22rpx; color:#e8c66a; margin-top:4rpx; letter-spacing:2rpx; }
+.sc-clock{ text-align:right; flex:none; }
+.sc-time{ font-size:23rpx; color:#cdb98a; }
+.sc-left{ font-size:21rpx; color:#8a8170; margin-top:2rpx; }
+.sc-ap{ font-size:21rpx; color:#b9ad8f; margin-top:2rpx; }
+.sc-ap.out{ color:#e0795f; }
+
+/* ---------- 资源 ---------- */
+.sc-res{ display:flex; justify-content:center; gap:18rpx; flex-wrap:wrap; margin:8rpx 0 10rpx; font-size:22rpx; color:#b9ad8f; }
+.sc-res-i{ display:inline-flex; align-items:center; gap:8rpx; }
+.sc-res-i .ico{ width:44rpx; height:44rpx; flex:0 0 44rpx; opacity:.92; }
+.sc-res-i .gauge{ width:6rpx; height:44rpx; background:#23302a; border-radius:3rpx; overflow:hidden; display:flex; align-items:flex-end; }
+.sc-res-i .gauge .fill{ width:100%; background:#b4453c; border-radius:3rpx; }
+.sc-res-i .gauge .fill.warn{ background:#e0795f; }
+.sc-res-i .gauge .fill.good{ background:#7fc79a; }
+.sc-res-i .txt{ display:flex; flex-direction:column; line-height:1.15; }
+.sc-res-i .k{ color:#8a8170; font-size:20rpx; }
+.sc-res-i .v{ color:#e8c66a; font-size:26rpx; font-weight:bold; }
+.sc-res-i .v.warn{ color:#e0795f; }
+.sc-res-i .v.good{ color:#7fc79a; }
+
+.sc-mood{ font-size:22rpx; color:#9ed4be; font-style:italic; text-align:center; letter-spacing:1rpx; margin:14rpx 24rpx 18rpx; line-height:1.8; opacity:.92; }
+
+/* ---------- 面板 / 本旬香火 ---------- */
+.sc-panel{ background:rgba(232,198,106,.04); border:1px solid rgba(232,198,106,.3); border-radius:12rpx; padding:16rpx 18rpx; margin-bottom:14rpx; }
+.sc-panel .h3{ margin:0 0 12rpx; font-family:"KaiTi","STKaiti",serif; font-size:30rpx; color:#e8c66a; letter-spacing:2rpx; border-left:6rpx solid #e8c66a; padding-left:14rpx; }
+
+.sc-wish{ background:rgba(40,33,24,.6); border:1px solid rgba(232,198,106,.32); border-radius:12rpx; padding:22rpx 24rpx; margin-bottom:22rpx; }
+.sc-wish-img{ display:block; width:100%; height:auto; margin:0 0 18rpx; border:1px solid rgba(232,198,106,.25); border-radius:10rpx; }
+.sc-wish:last-child{ margin-bottom:6rpx; }
+.sc-wish.urgent{ border-color:#e0795f; }
+.sc-wish.rite{ border-color:rgba(158,212,190,.6); }
+.sc-w-prog{ text-align:center; font-size:22rpx; color:#9b8f78; letter-spacing:2rpx; margin-bottom:14rpx; }
+.sc-w-prog b{ color:#e8c66a; font-weight:500; }
+.sc-w-more{ text-align:center; font-size:21rpx; color:#8a8170; letter-spacing:1rpx; margin-top:6rpx; font-style:italic; }
+.sw-who{ display:inline-block; font-size:21rpx; color:#8a8170; letter-spacing:2rpx; margin-bottom:6rpx; }
+.sw-title{ font-family:"KaiTi","STKaiti",serif; font-size:30rpx; color:#f3e8c8; letter-spacing:1rpx; margin-bottom:14rpx; padding-bottom:12rpx; border-bottom:1px solid rgba(232,198,106,.18); }
+.sw-desc{ font-size:26rpx; color:#cabf9f; line-height:1.9; white-space:pre-wrap; margin-bottom:14rpx; padding-bottom:14rpx; border-bottom:1px dashed rgba(255,255,255,.08); }
+
+/* 事件选项：与落魄山 .sect-opt 同规格（margin / padding / 字号 / 行高 / 最小高度 / 圆角 一致） */
+.sc-opt{ display:flex; align-items:flex-start; gap:8rpx; width:100%; max-width:100%; align-self:stretch; box-sizing:border-box; text-align:left; margin:14rpx 14rpx; padding:18rpx 16rpx; min-height:96rpx; border-radius:14rpx; border:1px solid rgba(232,198,106,.32); background:rgba(20,17,15,.5); color:#e8dec4; font-size:28rpx; line-height:1.55; }
+.sc-opt .sc-opt-ico{ width:44rpx; height:44rpx; flex-shrink:0; margin-top:2rpx; border:1px solid rgba(232,198,106,.42); border-radius:50%; background:rgba(20,17,15,.55); padding:8rpx; box-sizing:border-box; }
+.sc-opt.disabled .sc-opt-ico{ opacity:.45; }
+.sc-opt .ot{ font-size:29rpx; color:#f0e8d2; }
+.sc-opt .req{ font-size:24rpx; color:#e0795f; margin-top:6rpx; }
+/* 禁用态：不用整体 opacity 淡化（会连锁定原因一起吃掉），压暗底与边框，文字保留可读 */
+.sc-opt.disabled{ opacity:1; background:rgba(18,16,14,.66); border-color:rgba(232,198,106,.16); color:#9a9284; }
+.sc-opt.disabled .ot{ color:#9a9284; }
+.sc-opt.disabled .sc-opt-ico{ background:rgba(30,26,20,.4); color:#7a6a52; border-color:rgba(232,198,106,.1); }
+.sc-opt.disabled .req{ color:#e8916a; }
+
+.sc-opt-hover{ background:rgba(232,198,106,.12) !important; }
+/* 不应/搁置：与正常选项同长宽、同图标圆章，仅压暗边框/底以示「暂缓」语义 */
+.sc-opt.skip-opt{ border-color:rgba(232,198,106,.16); background:rgba(20,17,15,.38); }
+.sc-opt.skip-opt .ot{ color:#b9ad8f; }
+
+/* ---------- 祠务 FAB + bottom sheet ---------- */
+.sc-fab{ position:fixed; right:28rpx; bottom:44rpx; width:104rpx; height:104rpx; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, rgba(232,198,106,.24), rgba(20,17,15,.9) 70%);
+  border:1px solid rgba(232,198,106,.55); box-shadow:0 6rpx 20rpx rgba(0,0,0,.5), 0 0 0 6rpx rgba(232,198,106,.05);
+  display:flex; align-items:center; justify-content:center; z-index:65; }
+.sc-fab-img{ width:58rpx; height:58rpx; }
+.sc-fab-hover{ transform:scale(.93); background:radial-gradient(circle at 35% 30%, rgba(232,198,106,.36), rgba(20,17,15,.94) 70%); }
+
+.sc-sheet-mask{ position:fixed; inset:0; background:rgba(6,10,8,.62); z-index:70; animation:scMaskIn .26s ease-out both; }
+.sc-sheet{ position:fixed; left:0; right:0; bottom:0; height:92vh; max-height:1200rpx; z-index:71;
+  background:linear-gradient(180deg, rgba(30,25,18,.985), rgba(17,14,11,.995));
+  border-top:1px solid rgba(232,198,106,.42); border-radius:26rpx 26rpx 0 0;
+  box-shadow:0 -12rpx 44rpx rgba(0,0,0,.6); display:flex; flex-direction:column;
+  animation:scSheetUp .32s cubic-bezier(.2,.8,.3,1) both; overflow:hidden; }
+.sc-sheet-handle{ width:76rpx; height:8rpx; border-radius:4rpx; background:rgba(232,198,106,.4); margin:18rpx auto 6rpx; }
+.sc-sheet-bar{ display:flex; align-items:center; justify-content:space-between; padding:8rpx 24rpx 14rpx; border-bottom:1px solid rgba(232,198,106,.18); }
+.sc-sheet-body{ flex:1; min-height:0; overflow-y:auto; padding:20rpx 22rpx calc(40rpx + env(safe-area-inset-bottom)); }
+.sc-drawer-title{ font-family:"KaiTi","STKaiti",serif; font-size:32rpx; color:#e8c66a; letter-spacing:6rpx; }
+.sc-rank-desc{ font-size:28rpx; color:#a99e84; line-height:1.7; margin-bottom:10rpx; }
+.sc-stat{ font-size:28rpx; color:#cabf9f; line-height:1.9; }
+.sc-need{ font-size:28rpx; color:#8a8170; margin-bottom:12rpx; }
+.sc-tip{ font-size:26rpx; color:#e0795f; margin-top:10rpx; }
+.lg{ font-size:28rpx; color:#cabf9f; padding:8rpx 0; border-bottom:1px solid rgba(255,255,255,.05); }
+.sc-trail{ font-size:28rpx; line-height:1.9; }
+@keyframes scMaskIn{ from{ opacity:0 } to{ opacity:1 } }
+@keyframes scSheetUp{ from{ transform:translateY(100%) } to{ transform:translateY(0) } }
+
+.sc-need .nd.ok{ color:#7fc79a; }
+.sc-acts{ display:flex; gap:12rpx; flex-wrap:wrap; }
+.sc-acts .sc-btn{ flex:1; min-width:200rpx; }
+
+.sc-log{ padding:4rpx 0; }
+.lg.big{ color:#e8c66a; font-weight:bold; }
+.lg.good{ color:#7fc79a; }
+.lg.bad{ color:#e0795f; }
+
+.tr{ padding:2rpx 0; }
+
+/* ---------- 结局 ---------- */
+.sc-ending{ text-align:center; padding:40rpx 20rpx; }
+.sc-ending .grade{ display:inline-block; font-family:"KaiTi","STKaiti",serif; font-size:96rpx; font-weight:bold; color:#e8c66a; letter-spacing:6rpx; margin-bottom:10rpx; }
+.grade.S{ color:#e8c66a; }
+.grade.A{ color:#9ed4be; }
+.grade.B{ color:#c9b07a; }
+.grade.C{ color:#b9ad8f; }
+.grade.D{ color:#9a8f78; }
+.sc-ending .et{ font-family:"KaiTi","STKaiti",serif; font-size:44rpx; color:#f0e8d2; letter-spacing:3rpx; margin-bottom:18rpx; }
+.sc-ending .ed{ font-size:27rpx; color:#cabf9f; line-height:2; white-space:pre-wrap; max-width:640rpx; margin:0 auto 16rpx; }
+.sc-ending .ep{ font-size:28rpx; color:#e8c66a; margin-bottom:18rpx; }
+.sc-ending .recap{ font-size:24rpx; color:#cdb98a; line-height:1.9; white-space:pre-wrap; max-width:640rpx; margin:0 auto 24rpx; }
+
+/* ---------- 本旬中转页 ---------- */
+.sc-settle{ text-align:center; padding:48rpx 24rpx 40rpx; }
+.st-head{ font-family:"KaiTi","STKaiti",serif; font-size:52rpx; color:#e8c66a; letter-spacing:10rpx; margin-bottom:8rpx; }
+.st-sub{ font-size:24rpx; color:#9ed4be; letter-spacing:3rpx; margin-bottom:32rpx; }
+.st-ledger{ max-width:560rpx; margin:0 auto 24rpx; border:1px solid #4a3a22; border-radius:14rpx; background:rgba(36,30,22,.5); overflow:hidden; }
+.st-row{ display:flex; align-items:center; gap:16rpx; padding:18rpx 28rpx; border-bottom:1rpx solid #1f1a16; }
+.st-row:last-child{ border-bottom:none; }
+.st-ico{ width:44rpx; height:44rpx; flex:0 0 44rpx; opacity:.92; }
+.st-k{ flex:1; text-align:left; font-size:27rpx; color:#cabf9f; letter-spacing:2rpx; }
+.st-v{ display:flex; flex-direction:column; align-items:flex-end; gap:4rpx; text-align:right; }
+.sv-net{ font-family:"KaiTi","STKaiti",serif; font-size:32rpx; font-weight:bold; line-height:1.1; color:#b9ad8f; }
+.sv-sub{ font-family:"KaiTi","STKaiti",serif; font-size:19rpx; line-height:1.15; color:#8c8266; letter-spacing:1rpx; }
+.st-row.up .sv-net{ color:#7fc79a; }
+.st-row.down .sv-net{ color:#e0795f; }
+.st-notes{ max-width:600rpx; margin:0 auto 18rpx; }
+.st-note{ font-size:23rpx; color:#a99e84; line-height:1.8; font-style:italic; }
+.st-backlog{ font-size:23rpx; color:#e0795f; margin-bottom:24rpx; }
+.st-label{ font-size:23rpx; letter-spacing:8rpx; color:#7e8d83; text-align:center; margin:6rpx auto 14rpx; }
+.st-stats{ display:flex; gap:14rpx; max-width:600rpx; margin:0 auto 24rpx; justify-content:center; flex-wrap:wrap; }
+.st-stat{ flex:1 1 0; min-width:120rpx; border:1px solid rgba(232,198,106,.22); background:rgba(18,26,22,.5); border-radius:12rpx; padding:16rpx 8rpx 14rpx; text-align:center; display:flex; flex-direction:column; align-items:center; }
+.st-sico{ width:36rpx; height:36rpx; opacity:.92; margin-bottom:6rpx; }
+.st-stat .b{ display:block; font-family:"KaiTi","STKaiti",serif; font-size:38rpx; color:#b9ad8f; }
+.st-stat .t{ display:block; font-size:21rpx; color:#8fa098; letter-spacing:3rpx; margin-top:6rpx; }
+.st-stat.up .b{ color:#7fc79a; }
+.st-stat.down .b{ color:#e0795f; }
+.st-stat.gold .b{ color:#e8c66a; }
+.sc-settle .sc-btn.primary{ max-width:480rpx; margin:0 auto; }
+
+/* ---- 本旬中转 · 入场动效：卷轴铺开，逐行落账 ---- */
+@keyframes stSeal{
+  0%  { opacity:0; transform:scale(1.14); letter-spacing:28rpx; filter:blur(6rpx); }
+  60% { opacity:1; }
+  100%{ opacity:1; transform:scale(1); letter-spacing:10rpx; filter:blur(0); }
+}
+@keyframes stFadeUp{ from{ opacity:0; transform:translateY(16rpx); } to{ opacity:1; transform:translateY(0); } }
+@keyframes stUnroll{ 0% { opacity:0; transform:scaleY(.62); } 100%{ opacity:1; transform:scaleY(1); } }
+@keyframes stRowIn{
+  0%  { opacity:0; transform:translateX(-16rpx); filter:blur(3rpx); }
+  100%{ opacity:1; transform:translateX(0); filter:blur(0); }
+}
+@keyframes stNumIn{ 0%{ opacity:0; transform:scale(1.16); } 70%{ opacity:1; } 100%{ opacity:1; transform:scale(1); } }
+.sc-settle .st-head{ animation:stSeal .56s cubic-bezier(.2,.8,.3,1) both; }
+.sc-settle .st-sub{ animation:stFadeUp .46s ease-out .20s both; }
+.sc-settle .st-label{ animation:stFadeUp .40s ease-out both; }
+.sc-settle .st-label.ledger-l{ animation-delay:.30s; }
+.sc-settle .st-ledger{ transform-origin:top center; animation:stUnroll .42s cubic-bezier(.2,.8,.3,1) .32s both; }
+.sc-settle .st-row{ animation:stRowIn .32s ease-out both; }
+.sc-settle .st-v{ animation:stNumIn .26s ease-out both; }
+.sc-settle .st-row:nth-child(1){ animation-delay:.42s } .sc-settle .st-row:nth-child(1) .st-v{ animation-delay:.50s }
+.sc-settle .st-row:nth-child(2){ animation-delay:.49s } .sc-settle .st-row:nth-child(2) .st-v{ animation-delay:.57s }
+.sc-settle .st-row:nth-child(3){ animation-delay:.56s } .sc-settle .st-row:nth-child(3) .st-v{ animation-delay:.64s }
+.sc-settle .st-row:nth-child(4){ animation-delay:.63s } .sc-settle .st-row:nth-child(4) .st-v{ animation-delay:.71s }
+.sc-settle .st-row:nth-child(5){ animation-delay:.70s } .sc-settle .st-row:nth-child(5) .st-v{ animation-delay:.78s }
+.sc-settle .st-row:nth-child(6){ animation-delay:.77s } .sc-settle .st-row:nth-child(6) .st-v{ animation-delay:.85s }
+.sc-settle .st-label.stats-l{ animation-delay:.84s; }
+.sc-settle .st-stats{ animation:stFadeUp .42s ease-out .88s both; }
+.sc-settle .st-notes{ animation:stFadeUp .42s ease-out .94s both; }
+.sc-settle .st-backlog{ animation:stFadeUp .42s ease-out .98s both; }
+.sc-settle .sc-btn.primary{ animation:stFadeUp .44s ease-out 1.02s both; max-width:480rpx; margin:0 auto; }
+
+/* ===================== 演出层：回合横幅 + 资源飘字（覆盖屏幕，不拦截点击） ===================== */
+.sc-fx{ position:fixed; inset:0; pointer-events:none; z-index:60; overflow:hidden; }
+.sc-float{ position:absolute; left:50%; top:52%; font-size:42rpx; font-weight:bold; letter-spacing:2rpx; white-space:nowrap; opacity:0; transform:translate(-50%,0); text-shadow:0 4rpx 16rpx rgba(0,0,0,.7); animation:sc-float-up 1.5s ease-out forwards; }
+.sc-float.bad{ color:#d98b6a; } .sc-float.neutral{ color:#e8cf8f; }
+@keyframes sc-float-up{
+  0%{ opacity:0; transform:translate(-50%,0) scale(.9); }
+  15%{ opacity:1; transform:translate(-50%,-16rpx) scale(1); }
+  100%{ opacity:0; transform:translate(-50%,-104rpx) scale(1); }
+}
+.sc-banner{ position:absolute; left:50%; top:34%; transform:translateX(-50%); text-align:center; animation:sc-banner-in 1.9s ease-out forwards; pointer-events:none; }
+.sc-banner .bt{ font-family:"KaiTi","STKaiti",serif; font-size:60rpx; font-weight:bold; letter-spacing:16rpx; color:#e8b45f; text-shadow:0 4rpx 36rpx rgba(0,0,0,.8), 0 0 44rpx rgba(232,180,95,.5); }
+.sc-banner .bs{ font-size:24rpx; letter-spacing:8rpx; color:#9fb0a6; margin-top:12rpx; }
+@keyframes sc-banner-in{
+  0%{ opacity:0; transform:translateX(-50%) scale(.94); letter-spacing:4rpx; filter:blur(6rpx); }
+  18%{ opacity:1; transform:translateX(-50%) scale(1); letter-spacing:16rpx; filter:blur(0); }
+  78%{ opacity:1; }
+  100%{ opacity:0; transform:translateX(-50%) scale(1.04); }
+}

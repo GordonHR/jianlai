@@ -1,0 +1,52 @@
+# 剑来卡牌 — 本地 Git 忽略规则
+
+# ── 临时 / 草稿 / 回收站 ──────────────────────────
+_tmp_card/
+.workbuddy/_trash/
+prototype/art/tmp_*
+prototype/_pf_smoke_out.txt
+**/tmp_*.png
+**/tmp_*.jpg
+**/tmp_*.jpeg
+**/tmp_*.webp
+
+# ── 可再生成的预览图（体积大、可重跑脚本产出）────
+generated-images/
+
+# ── 大体积美术资源（文件保留在磁盘，只是不进 Git）──
+# 本地做代码/文档版本管理足够；若以后要备份美术，
+# 用移动硬盘/网盘或 Git LFS，不要塞进普通仓库。
+prototype/art/
+prototype/bg/
+
+# ── 本地工具二进制（不要进仓库）───────────────────
+prototype/art/resvg.exe
+**/resvg.exe
+**/resvg.zip
+
+# ── 系统 / 编辑器垃圾 ─────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.swp
+*~
+
+# ── 依赖与构建产物（若以后引入）───────────────────
+node_modules/
+dist/
+build/
+.cache/
+*.log
+
+# ── 密钥 / 本地私密配置（严禁提交）────────────────
+.env
+.env.*
+*.pem
+*.key
+secrets.json
+credentials.json
+
+# 微信小程序本地私有配置可保留（无密钥）；
+# 若以后写入 appid/token 等敏感信息，再取消下面这行：
+# prototype/weapp/project.private.config.json
