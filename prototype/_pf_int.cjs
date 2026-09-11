@@ -64,7 +64,7 @@ T('01 顶层求值 + profile 函数齐全', function(){
 
 T('02 首屏含行迹录修士卡', function(){
   render();
-  if(app.innerHTML.indexOf('行 迹 录')<0) throw new Error('标题屏缺少行迹录卡片');
+  if(app.innerHTML.indexOf('行迹录')<0) throw new Error('标题屏缺少行迹录卡片');
 });
 
 T('03 开档案 -> 未择道显示择道界面', function(){
@@ -110,7 +110,7 @@ T('07 匣斋拣漏入行迹', function(){
 T('08 返回标题仍显示修士卡（含境界进度）', function(){
   openProfileBack();
   render();
-  if(app.innerHTML.indexOf('行 迹 录')<0) throw new Error('返回标题丢失修士卡');
+  if(app.innerHTML.indexOf('行迹录')<0) throw new Error('返回标题丢失修士卡');
   if(app.innerHTML.indexOf('道行')<0) throw new Error('修士卡无道行');
 });
 

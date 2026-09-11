@@ -7,7 +7,8 @@
     "pages/asklake/asklake",
     "pages/sect/sect",
     "pages/shenci/shenci",
-    "pages/wushipai/wushipai"
+    "pages/wushipai/wushipai",
+    "pages/fulu/fulu"
   ],
   "window": {
     "navigationBarTitleText": "剑来 · 卡牌对战",

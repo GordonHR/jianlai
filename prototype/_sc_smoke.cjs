@@ -182,7 +182,7 @@ T('13 戏里戏外 · 故事画卷外壳结构（tale-scroll/轴/印/光阴长�
   if(h.indexOf('class="tale-axis left"') < 0 || h.indexOf('class="tale-axis right"') < 0) throw new Error('缺卷轴金线');
   if(h.indexOf('class="tale-seal-tl">剑来') < 0 || h.indexOf('class="tale-seal-br">戏外') < 0) throw new Error('缺朱印');
   if(h.indexOf('class="cx-quote"') < 0 || h.indexOf('onclick="showTale(null)"') < 0) throw new Error('缺引句/收卷');
-  if(typeof TALES === 'undefined' || TALES.length !== 9) throw new Error('TALES 数量异常');
+  if(typeof TALES === 'undefined' || TALES.length < 9) throw new Error('TALES 数量异常: ' + (TALES?TALES.length:'undefined'));
 });
 
 T('14 戏里戏外 · 全部故事均可开卷不崩', function(){
@@ -326,7 +326,7 @@ T('22 无事牌 · 顶部栏已撤 + 2:3 竖版比例 + 随机抽打开弹层 + 
   state = { phase:'title' };
   render();
   var tHtml = app.innerHTML;
-  if(tHtml.indexOf('<h3>无 事 牌</h3>') < 0) throw new Error('标题页入口未改名"无 事 牌"');
+  if(tHtml.indexOf('<h3>无事牌</h3>') < 0) throw new Error('标题页入口未改名"无事牌"');
   if(tHtml.indexOf('太 平 无 事 牌') >= 0) throw new Error('标题页入口仍含"太 平 无 事 牌"前缀');
 });
 

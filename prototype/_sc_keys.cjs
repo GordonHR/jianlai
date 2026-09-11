@@ -97,7 +97,10 @@ if (K.PATH.length) pass = rep('CHARS vs CHAR_PATH (PC)', K.CHARS, K.PATH) && pas
 console.log('--- PC vs weapp ---');
 // PC 端先行、小程序暂未移植的角色（用户明确「只做 PC，不要影响小程序」时在此登记，
 // 移植到 weapp 后请从名单移除，否则此处的差异将被永久豁免）
-const PC_ONLY_KEYS = ['石柔'];
+// 石柔 为 PC-only 角色（用户曾明确「只做 PC，不要影响小程序」）。
+// 石柔 现已双端齐备（PC game.js CHARS/SKILLS/CHAR_PATH + briefs；weapp data.js CHARS/SKILLS + briefs.js），
+// 故从豁免名单移除，恢复双端严格对账。
+const PC_ONLY_KEYS = [];
 const C_FOR_WX = K.CHARS.filter(k => !PC_ONLY_KEYS.includes(k));
 const B_FOR_WX = K.BRIEFS.filter(k => !PC_ONLY_KEYS.includes(k));
 if (PC_ONLY_KEYS.length) console.log('NOTE  PC-only（尚未移植小程序，已豁免）: ' + JSON.stringify(PC_ONLY_KEYS));

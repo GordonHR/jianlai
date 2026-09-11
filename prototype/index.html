@@ -803,6 +803,28 @@
   .codex-head h1 { margin:0; text-align:left; letter-spacing:6px; }
   .codex-stat { color:#8d8574; font-size:12px; letter-spacing:1px; }
   .codex-stat b { color:var(--gold); }
+  /* 符箓图鉴 */
+  .fulu-sys { margin:6px 0 18px; padding:14px 16px; background:rgba(20,17,15,.5); border:1px solid rgba(232,198,106,.22); border-radius:6px; }
+  .fulu-sys-h { font-family:var(--kai); letter-spacing:4px; color:var(--gold); margin-bottom:8px; font-size:14px; }
+  .fulu-sys p { margin:0 0 8px; font-size:12.5px; line-height:1.7; color:#c3bdac; }
+  .fulu-sys p b { color:#e8cf8f; margin-right:6px; }
+  .fulu-sys-note { color:#9a917f; font-size:11.5px; font-style:italic; }
+  .fulu-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(132px,1fr)); gap:12px; }
+  .fulu-card { background:linear-gradient(180deg,#221c26,#151119); border:1px solid #5a4a2e; border-radius:8px; padding:8px; cursor:pointer; transition:transform .16s, box-shadow .16s; }
+  .fulu-card:hover { transform:translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,.6),0 0 12px rgba(232,198,106,.25); }
+  .fulu-thumb { height:150px; background:#1a1410; border-radius:4px; overflow:hidden; display:flex; align-items:center; justify-content:center; }
+  .fulu-thumb img { width:100%; height:100%; object-fit:cover; }
+  .fulu-thumb.noimg { background:repeating-linear-gradient(45deg,#1a1410,#1a1410 8px,#221a14 8px,#221a14 16px); }
+  .fulu-cap { font-family:var(--kai); font-size:14px; letter-spacing:2px; color:#e8cf8f; margin-top:7px; text-align:center; }
+  .fulu-alias { font-size:10px; color:#9a917f; margin-left:5px; letter-spacing:0; }
+  .fulu-type { font-size:10.5px; color:#8d8574; text-align:center; margin-top:2px; }
+  .fulu-detail { display:flex; gap:20px; flex-wrap:wrap; }
+  .fulu-art { width:240px; height:320px; background:#1a1410; border:1px solid #5a4a2e; border-radius:6px; overflow:hidden; flex:none; }
+  .fulu-art img { width:100%; height:100%; object-fit:cover; }
+  .fulu-info { flex:1; min-width:260px; }
+  .fulu-row { font-size:13px; line-height:1.8; color:#d4cdba; margin:0 0 12px; }
+  .fulu-row b { color:#e8cf8f; display:inline-block; min-width:42px; margin-right:8px; }
+  .fulu-src span, .fulu-graph span { color:#9a917f; font-size:12px; }
   .codex-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:11px; }
   .codex-card { position:relative; background:linear-gradient(180deg,#2a2533,#1a1620); border:2px solid #6a5a3a;
                 border-radius:10px; overflow:hidden; cursor:pointer; transition:transform .18s, box-shadow .18s;
@@ -1740,6 +1762,7 @@
 <script src="shenci.js?v=20260909a"></script>
 <script src="wushipai.js?v=20260909a"></script>
 <script src="baofuzhai.js?v=20260909a"></script>
+<script src="fulu.js?v=20260911a"></script>
 <script src="profile.js?v=20260910a"></script>
 </body>
 </html>

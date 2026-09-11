@@ -106,6 +106,14 @@
         <text class="p">剑气长城酒铺一面木墙，挂满木牌。出城杀妖前留一句话，当作最后的声音，也收录书中人物的对白与箴言。点牌即放大翻开，有对应人物者以模糊立绘做底。</text>
         <text class="md-meta">八十面 · 箴言匣</text>
       </view>
+      <view class="ts-mode" bindtap="goFulu">
+        <view class="ts-mode-head">
+          <text class="h3">符 箓 图 鉴</text>
+          <image class="mode-ico" src="/assets/icon/mode-fulu.svg" mode="aspectFit"/>
+        </view>
+        <text class="p">不涉战局，只翻阅符箓：缩地、破障、镇妖、求雨、雷符……名、功效、来历与出处皆依《剑来》原著，并附据古法符箓体例绘制的图样（PC 端可见）。</text>
+        <text class="md-meta">原著符箓</text>
+      </view>
     </view>
   </view>
 

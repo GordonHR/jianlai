@@ -47,11 +47,11 @@ const CHARS = {
     txt:'【剑心】你打出的「剑气」不可被「守心」抵消（仍可被装备/神通抵）；【镇蛮】你对蛮荒天下角色伤害 +1' },
   aliang:      { name:'阿良', faction:'剑气长城', hp:4, realm:'飞升', skills:['问剑','无忧'], flagship:true,
     txt:'【问剑】出牌阶段指定一名角色，其直到回合结束不能使用「守心」；【无忧】受伤害时展示手牌，若全为「剑气」则免伤并摸一' },
-  miyu:        { name:'米裕', faction:'剑气长城', hp:3, realm:'止境', skills:['米','杀力'], flagship:true,
+  miyu:        { name:'米裕', faction:'剑气长城', hp:3, realm:'玉璞境', skills:['米','杀力'], flagship:true,
     txt:'【米】你的「剑气」基础伤害视为 2；【杀力】你对蛮荒天下角色伤害再 +1' },
   chenqingdu:  { name:'陈清都', faction:'剑气长城', hp:4, realm:'飞升', skills:['一剑','长城'], flagship:true,
     txt:'【一剑】出牌阶段弃所有手牌，对一名角色造 X 伤（X=弃牌数且≥其气血一半），每局限一次；【长城】非剑气长城角色须先击败另一名剑气长城角色，才能以你为攻击目标' },
-  baiye:       { name:'白也', faction:'剑气长城', hp:3, realm:'止境', skills:['诗剑','青衫'], flagship:true,
+  baiye:       { name:'白也', faction:'剑气长城', hp:3, realm:'十四境·合道', skills:['诗剑','青衫'], flagship:true,
     txt:'【诗剑】每打出一张「锦囊」，本回合剑气伤害 +1（可叠加）；【青衫】无视距离使用「剑气」' },
   qijingchun:  { name:'齐静春', faction:'中土文庙', hp:3, realm:'玉璞境', skills:['教化','护道'], flagship:true,
     txt:'【教化】回合结束给一名队友一张牌；若其为儒修额外摸一；【护道】一名阵营角色即将受伤时，你可弃一牌替其承 1 点' },
@@ -176,14 +176,14 @@ const CHARS = {
   'liulaocheng': { name:'刘老成', faction:'散修', hp:3, realm:'止境', skills:['书简湖','老成'], txt:'【书简湖】书简湖一脉老辈，胸有丘壑；【老成】久历世事，判定点数 +1', talent:'机缘' },
 
   // 新增：原著真实人物补全（第二批）
-  xunyuan:      { name:'荀渊', faction:'中土文庙', hp:3, realm:'止境', skills:['渊','静'], txt:'【渊】你的「讲道理」判定 +1；【静】一名儒修队友受到伤害时，你可弃一牌替其承 1 点', talent:'耕读' },
+  xunyuan:      { name:'荀渊', faction:'散修', hp:3, realm:'飞升境', skills:['一尺枪','余家贫'], txt:'【一尺枪】你的「剑气」伤害 +1（一尺枪，一寸短一寸险）；【余家贫】每回合限一次，受到伤害 -1', talent:'锋芒' },
   xieshi:       { name:'谢时', faction:'中土文庙', hp:3, realm:'止境', skills:['君子','礼剑'], txt:'【君子】你的「剑气」不可被「守心」抵消（仍可被装备/神通抵）；【礼剑】出牌阶段限一次额外打出一张「剑气」', talent:'耕读' },
   laojiao:      { name:'老蛟', faction:'蛮荒天下', hp:4, realm:'止境', skills:['古','执拗'], txt:'【古】你的判定点数 +1；【执拗】每局限一次受到伤害 -1', talent:'嗜血' },
   xianzhu:      { name:'仙珠', faction:'散修', hp:3, realm:'练气', skills:['邻','暖'], txt:'【邻】出牌阶段给一名队友一张牌（每回合限一次）；【暖】陈平安在场时你手牌上限 +1', talent:'机缘' },
-  liujinglong:  { name:'刘景龙', faction:'剑气长城', hp:4, realm:'止境', skills:['规矩','守序'], txt:'【规矩】你的「剑气」无视距离；【守序】一名剑气长城队友受伤时，你可替其承 1 点', talent:'锋芒' },
+  liujinglong:  { name:'刘景龙', faction:'剑气长城', hp:4, realm:'飞升境', skills:['规矩','守序'], txt:'【规矩】你的「剑气」无视距离；【守序】一名剑气长城队友受伤时，你可替其承 1 点', talent:'锋芒' },
   // 勘误：于樾本命飞剑为「惊鸟」「百花」（原著第792章明载），原挂的「北斗」「抱朴」实为陆芝之剑。
   // 原著：流霞洲老剑修（老玉璞），皑皑洲密云谢氏首席客卿、落魄山记名供奉（化名于倒悬）；非剑气长城出身，仅金丹境游历三年。
-  yuyue:        { name:'于樾', faction:'散修', hp:3, realm:'止境', skills:['惊鸟','百花'], txt:'【惊鸟】以风驰电掣著称，你的攻击范围 +1；【百花】出牌阶段限一次，额外打出一张「剑气」', talent:'锋芒' },
+  yuyue:        { name:'于樾', faction:'散修', hp:3, realm:'玉璞境', skills:['惊鸟','百花'], txt:'【惊鸟】以风驰电掣著称，你的攻击范围 +1；【百花】出牌阶段限一次，额外打出一张「剑气」', talent:'锋芒' },
 
   '曹晴朗': { name:'曹晴朗', faction:'散修', hp:3, realm:'金丹境', skills:['三元','读书'], txt:'【三元】摸牌阶段多摸一（南苑国科举连中三元、大骊科举榜眼，厚积薄发）；【读书】判定 +1（文圣一脉真正的读书种子）' },
   '赵树下': { name:'赵树下', faction:'散修', hp:4, realm:'五境武夫', skills:['百万拳','走桩'], txt:'【百万拳】你打出的「剑气」伤害 +1（两百万次基础拳法打下的底子）；【走桩】摸牌阶段多摸一（六步走桩，走满十万遍）' },
@@ -332,7 +332,7 @@ function pathLabel(p){
 /* 修行路径与境界（依《剑来》原著；realm=null 表示原著未载，游戏显示「境界未载」） */
 const CHAR_PATH = {
   'aliang': { path:'jianxiu', realm:'飞升境', src:'推定', note:'剑气长城飞升境剑修' },
-  'baiye': { path:'jianxiu', realm:'飞升境', src:'推定', note:'读书人合道诗篇证道，持仙剑太白飞升' },
+  'baiye': { path:'jianxiu', realm:'十四境·合道', src:'原著', note:'读书人合道诗篇证道（十四境·合道），持仙剑太白；诗不尽，剑不绝。太白为仙剑，非本命飞剑' },
   'baize': { path:'yaozu', realm:'止境', src:'推定', note:'蛮荒大妖，通晓万物' },
   'caoci': { path:'wufu', realm:'止境武夫', src:'原著', note:'武神曹慈，武道止境' },
   'chenpingan': { path:'wufu', realm:'止境武夫', src:'原著', note:'止境武夫 + 剑道证道大剑仙，飞升前最强武夫之一' },
@@ -343,7 +343,7 @@ const CHAR_PATH = {
   'liulaocheng': { path:'lianqi', realm:'玉璞境', src:'推定', note:'书简湖老辈，湖底最沉的那双眼' },
   'longhushan': { path:'lianqi', realm:null, src:'地标', note:'龙虎山是地名，非人物，跳过' },
   'mihu': { path:'jianxiu', realm:'止境', src:'推定', note:'米裕之兄，止境剑修' },
-  'miyu': { path:'jianxiu', realm:'止境', src:'推定', note:'剑气长城十人之一，止境剑修' },
+  'miyu': { path:'jianxiu', realm:'玉璞境', src:'原著', note:'剑气长城十人之一，玉璞境剑仙，本命飞剑「霞满天」；青萍剑宗首席供奉，曾破境仙人境' },
   'nalanyexing': { path:'jianxiu', realm:'玉璞境', src:'原著', note:'剑气长城宁府老管事，最擅隐匿刺杀的剑仙之一；为护宁姚重伤，自仙人境跌回玉璞境，末战殉城' },
   'ningyao': { path:'jianxiu', realm:'飞升境', src:'原著', note:'剑气长城新一代魁首，持仙剑「天真」' },
   'qijingchun': { path:'lianqi', realm:'玉璞境', src:'原著', note:'老秀才关门弟子，宝瓶洲罕见玉璞境修士，曾跨境斩杀飞升境妖族' },
@@ -447,11 +447,11 @@ const CHAR_PATH = {
   '齐景龙': { path:'jianxiu', realm:'止境', src:'推定', note:'北俱芦洲止境剑修' },
   '龙君': { path:'yaozu', realm:'止境', src:'推定', note:'蛟龙之属大妖，止境' },
   // —— 补齐此前遗漏的九位，使 CHARS / CHAR_PATH / BRIEFS / PLOTS 四表 key 对齐 ——
-  'xunyuan':     { path:'lianqi', realm:'止境', src:'推定', note:'文圣一脉后学儒生，中土文庙，止境' },
-  'xieshi':      { path:'jianxiu', realm:'止境', src:'推定', note:'文庙礼圣一脉剑修，君子之剑，止境' },
+  'xunyuan':     { path:'lianqi', realm:'飞升境', src:'原著', note:'桐叶洲玉圭宗老宗主，飞升境大修士；本命枪法「一尺枪」，常书「余家贫」三字。与姜尚真亦师亦友，蛮荒入侵桐叶洲时战死' },
+  'xieshi':      { path:'jianxiu', realm:'止境', src:'推定', note:'中土文庙礼圣一脉剑修，君子之剑，止境（出处待核：暂未坐实「谢时」为独立原著角色，依现有设定补全）' },
   'laojiao':     { path:'yaozu', realm:'止境', src:'推定', note:'蛮荒旧龙族余孽，妖龙之属，止境' },
   'xianzhu':     { path:'lianqi', realm:'练气', src:'推定', note:'骊珠洞天泥瓶巷寻常女子，未入修行' },
-  'liujinglong': { path:'jianxiu', realm:'止境', src:'原著', note:'剑气长城剑修，本命飞剑「规矩」，止境' },
+  'liujinglong': { path:'jianxiu', realm:'飞升境', src:'原著', note:'剑气长城剑修，本命飞剑「规矩」，飞升境' },
   'yuyue':       { path:'jianxiu', realm:'玉璞境', src:'原著', note:'流霞洲老剑修，本命飞剑「惊鸟」「百花」，玉璞境瓶颈' },
 
   '曹晴朗': { path:'lianqi', realm:'金丹境', src:'原著', note:'藕花福地南苑国读书种子，南苑国科举连中三元、大骊科举榜眼；金丹境练气士，文圣一脉真正的读书人，青萍剑宗未来宗主' },
@@ -846,8 +846,8 @@ const SKILLS = {
                {n:'老成',k:'judge',v:1,q:'老成，是活出来的。',f:'scroll'}],
   liujinglong:[{n:'规矩',k:'nodist',q:'规矩既定，剑不可挡。',f:'sword'},
                {n:'守序',k:'taunt',q:'同袍有难，我来。',f:'aura'}],
-  xunyuan:[{n:'渊',k:'judge',v:1,q:'讲道理，我从未输过。',f:'scroll'},
-           {n:'静',k:'reduce',v:1,o:'turn',q:'静以护道。',f:'shield'}],
+  xunyuan:[{n:'一尺枪',k:'atk',v:1,q:'一尺枪，一寸短一寸险。',f:'sword'},
+           {n:'余家贫',k:'reduce',v:1,o:'turn',q:'余家贫，守得住。',f:'shield'}],
   /* ---------- 以下为补齐「描述有技能却未注册」的白板角色（忠于原著设定） ---------- */
   xieshi:[{n:'君子',k:'nododge',q:'礼圣门下，剑不可挡。',f:'sword'},
           {n:'礼剑',k:'hand',v:1,q:'礼者，立人也。',f:'scroll'}],
@@ -3126,6 +3126,7 @@ function render(){
     if(state.phase==='codex'){ renderCodex(app); return; }
     if(state.phase==='asklake'){ renderAskLake(app); return; }
     if(state.phase==='sect'){ renderSect(app); return; }
+    if(state.phase==='fulu'){ renderFulu(app); return; }
     if(state.phase==='shenci'){ renderShenci(app); return; }
     if(state.phase==='baofu'){ renderBaofu(app); return; }
     if(state.phase==='profile'){ renderProfile(app); return; }
@@ -3380,7 +3381,7 @@ function renderTitle(app){
     +       '<p>不做剑客，做神明。辖一方水土、享一方香火，不能下山也不能出手，只能应或不应。香火养你，也绑住你；往上走一步，脚下的土就薄一寸。</p>'
     +       '<div class="md-meta">单人神道 · 香火经营 · 7 结局</div></div>'
     +     '<div class="ts-mode" onclick="openBaofu()">' +
-        '<div class="ts-mode-head"><h3>包 袱 斋</h3><div class="ts-mode-ico"><svg viewBox="0 0 30 30" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M15 7 L23 13 L23 24 Q23 26 21 26 L9 26 Q7 26 7 24 L7 13 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 13 Q15 16 21 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M12 9 Q15 5 18 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M15 5 L15 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div></div>'
+        '<div class="ts-mode-head"><h3>包袱斋</h3><div class="ts-mode-ico"><svg viewBox="0 0 30 30" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M15 7 L23 13 L23 24 Q23 26 21 26 L9 26 Q7 26 7 24 L7 13 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 13 Q15 16 21 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M12 9 Q15 5 18 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M15 5 L15 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div></div>'
     +       '<p>不做剑客，做行商。老祖师的和气斋有九十九间屋子，一间只卖一物；没有落脚地儿的散修摊子，才最考眼力——捡漏还是打眼，全凭你读过几本书。</p>'
     +       '<div class="md-meta">行商 · 拣漏 · 悟道 · 赊欠</div></div>'
     +   '</div>'
@@ -3390,17 +3391,21 @@ function renderTitle(app){
     +   '<div class="ts-group-title">阅 览</div>'
     +   '<div class="mode-grid">'
     +     '<div class="ts-mode" onclick="openCodex()">' +
-        '<div class="ts-mode-head"><h3>人 物 志</h3><div class="ts-mode-ico"><svg viewBox="0 0 30 30" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 6 Q5 6 5 9 L5 21 Q5 24 8 24 L22 24 Q25 24 25 21 L25 9 Q25 6 22 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><path d="M8 6 L22 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 11 L19 11 M11 15 L19 15 M11 19 L16 19" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-opacity=".55"/></svg></div></div>'
+        '<div class="ts-mode-head"><h3>人物志</h3><div class="ts-mode-ico"><svg viewBox="0 0 30 30" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 6 Q5 6 5 9 L5 21 Q5 24 8 24 L22 24 Q25 24 25 21 L25 9 Q25 6 22 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><path d="M8 6 L22 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 11 L19 11 M11 15 L19 15 M11 19 L16 19" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-opacity=".55"/></svg></div></div>'
     +       '<p>不涉战局，只翻阅群英：立绘、阵营、境界、技能与原著简报。</p>'
     +       '<div class="md-meta">共 '+total+' 人</div></div>'
     +       '<div class="ts-mode" onclick="openTales()">'
-    +         '<div class="ts-mode-head"><h3>戏 里 戏 外</h3><div class="ts-mode-ico"><svg viewBox="0 0 30 30" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M15 7 C11 4 7 5 5 7 L5 22 C7 20 11 19 15 22 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><path d="M15 7 C19 4 23 5 25 7 L25 22 C23 20 19 19 15 22 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><path d="M15 7 L15 22" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-opacity=".55"/></svg></div></div>'
+    +         '<div class="ts-mode-head"><h3>戏里戏外</h3><div class="ts-mode-ico"><svg viewBox="0 0 30 30" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M15 7 C11 4 7 5 5 7 L5 22 C7 20 11 19 15 22 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><path d="M15 7 C19 4 23 5 25 7 L25 22 C23 20 19 19 15 22 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><path d="M15 7 L15 22" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-opacity=".55"/></svg></div></div>'
     +         '<p>原著里的闲笔与回响：杨晃夫妇、齐静春称圣、阿良、崔瀺、宁姚……取《剑来》本意，不杜撰。</p>'
     +         '<div class="md-meta">原著小记 共 '+((typeof TALES!=='undefined')?TALES.length:0)+' 则</div></div>'
     +       '<div class="ts-mode" onclick="openWushipai()">'
-    +         '<div class="ts-mode-head"><h3>无 事 牌</h3><div class="ts-mode-ico"><svg viewBox="0 0 30 30" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="9" y="5.5" width="12" height="21" rx="2.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="15" cy="9" r="1.5" fill="currentColor"/><path d="M11 13.5 H19 M11 17.5 H19 M13 21.5 H17" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-opacity=".5"/></svg></div></div>'
+    +         '<div class="ts-mode-head"><h3>无事牌</h3><div class="ts-mode-ico"><svg viewBox="0 0 30 30" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="9" y="5.5" width="12" height="21" rx="2.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="15" cy="9" r="1.5" fill="currentColor"/><path d="M11 13.5 H19 M11 17.5 H19 M13 21.5 H17" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-opacity=".5"/></svg></div></div>'
     +         '<p>剑气长城酒铺那面木墙：剑修出城前留一句"最后的声音"，也收录书中人物的对白与箴言。翻八十块，看他们来过、爱过、憾过。</p>'
     +         '<div class="md-meta">八十面 · 箴言匣</div></div>'
+    +       '<div class="ts-mode" onclick="openFulu()">'
+    +         '<div class="ts-mode-head"><h3>符箓图鉴</h3><div class="ts-mode-ico"><svg viewBox="0 0 30 30" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="8" y="4" width="14" height="22" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 8 H19 M11 12 H19 M11 16 H19 M11 20 H16" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-opacity=".6"/><circle cx="15" cy="6.5" r="1.2" fill="currentColor" fill-opacity=".5"/></svg></div></div>'
+    +         '<p>不涉战局，只翻阅符箓：缩地、破障、镇妖、求雨、雷符……名、功效、来历与出处，并附据古法符箓体例绘制的图样。</p>'
+    +         '<div class="md-meta">原著符箓 共 '+((typeof FULU!=='undefined')?FULU.length:0)+' 种</div></div>'
     +   '</div>'
     + '</div>'
 
@@ -3443,7 +3448,7 @@ function pfTitleCard(){
       + '<circle cx="15" cy="13" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7"/>'
       + '<path d="M9.5 21.5 Q15 16.5 20.5 21.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'
       + '</svg>';
-    const head = '<div class="ts-mode-head"><h3>行 迹 录</h3><div class="ts-mode-ico">'+ICO+'</div></div>';
+    const head = '<div class="ts-mode-head"><h3>行迹录</h3><div class="ts-mode-ico">'+ICO+'</div></div>';
 
     if(!PF.path){
       return '<div class="ts-group"><div class="ts-group-title">修 士</div><div class="mode-grid">'
@@ -3477,6 +3482,11 @@ function openCodex(){
 function openTales(){
   SFX.set(true); SFX.click();
   state = { phase:'codex', mode:'codex', sel:[], filter:'全部', q:'', log:[], codexTab:'tales', selTale:null };
+  render();
+}
+function openFulu(){
+  SFX.set(true); SFX.click();
+  state = { phase:'fulu', mode:'fulu', sel:[], log:[], selFulu:null };
   render();
 }
 

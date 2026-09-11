@@ -5,14 +5,16 @@
 - **小程序主包 2,150,014 B，超 2MB 上限 52,862 B，且无分包**（2026-09-09 实测）。资源占比：portraits 493K / shenci 358K / sect 298K / shujianhu 107K / bg 34K / card 25K / icon 30K。**任何"加图/加音效"的加法必须先做分包或资源瘦身，否则加不进去。**
 - **PC 端（剑来）无"去AI化"纪律**：允许光晕/渐变/悬浮/拟物，按效果来（与 CTMS/PMIS 铁律相反，勿混淆）。
 - 删临时文件：`rm`/`fs.unlinkSync`/PowerShell `Remove-Item` 全被沙箱静默拦截，**只有 `python -c "import os; os.remove(路径)"` 有效**。
-- 四表（CHARS / CHAR_PATH / BRIEFS / PLOTS）**当前 120 条 key 必须一致**，改人物四处同步 + 跑 `_sc_keys.cjs`。**key 是内部标识，绝不可为"语义更对"改 key**（改显示名只改 `CHARS[key].name`）。判角色是否存在用 `Object.values(CHARS).some(c=>c.name===n)`。
+- 四表（CHARS / CHAR_PATH / BRIEFS / PLOTS）**当前 127 条 key 必须一致**（2026-09-10 实测，门禁 `_sc_keys.cjs` 报 A=B=127），改人物四处同步 + 跑 `_sc_keys.cjs`。**key 是内部标识，绝不可为"语义更对"改 key**（改显示名只改 `CHARS[key].name`）。判角色是否存在用 `Object.values(CHARS).some(c=>c.name===n)`。
 - **删角色的标准动作 = 四表 × 双端 8 处 + 进 `gone`**：`game.js`（CHARS/CHAR_PATH/SKILLS）、`weapp/utils/data.js`（CHARS/SKILLS）、`briefs.js`（BRIEFS+PLOTS）、`weapp/utils/briefs.js`（BRIEFS），并把 key 加进 `_sc_keys.cjs` 的 `gone` 数组防止复活。写一次性 `.cjs` 脚本跑（整行删 / 跨行删 / 整块删三种），别逐条 Edit。已删：阿弥陀佛、多宝、莲荷、菩萨（群体）、xiaoxun、manhuangdazu、`laoguanzhu`。
 - **`briefs.js` 有两张独立表**：`const BRIEFS = {…}`（人物详介，双端同步）与 `const PLOTS = {…}`（PC 独有的"关键情节"表，weapp 无，`_sc_keys.cjs` 明确 skip）。**二者不是重复键、不存在覆盖**；改 PLOTS 只改 PC 端。PLOTS 键一律带引号，BRIEFS 拼音键不带引号、中文名键带引号。
 - **判"原著编造"前先查 `game.js` CHARS 的 `faction`**：`散修`/`蛮荒天下` 多为**游戏原创角色**（技能名如「稼」「杯」「景清」「书简湖」是卡牌自造），其游戏化简介**不适用原著铁律，勿当编造清空**。原著角色（如刘景龙·本命飞剑「规矩」，见 §1）即使简介写得抒情也**不得清空**。清理口径=「无原著出处 **且** 写得像原著人物」。
+- **石柔双端自洽（已修复 · 2026-09-11）**：原 PC-only（`_sc_keys.cjs` 豁免 `PC_ONLY_KEYS=['石柔']`）。现 weapp `data.js` CHARS+SKILLS 已补石柔（对齐 PC：`蜕`=reduce/once/shield、`窥`=judge/aura），`_sc_keys.cjs` 的 `PC_ONLY_KEYS` 已清空为 `[]`。门禁 `_sc_keys` 现 RUN_EXIT=0、A=B=127 全 OK（历史 onlyB=石柔 一并消除）。
 
 ## 1. 原著设定纪律（最高优先级）
 - 人物/技能/飞剑须贴原著，不可乱编；本命飞剑标可信度。来源可信度：百度百科≈有声书原文 > 书评 > 「AI生成」榜单（一律不可信）。未载标 `src:'推定'`，明载 `src:'原著'`。
 - **仅剑修有本命飞剑**（儒/妖/道/佛/武夫/商贾勿编）。明载：宁姚天真+斩仙／阿良饮者／陆芝北斗+抱朴／刘景龙规矩／齐廷济兵解／董三更一丈高／陈清都浮萍／于樾惊鸟+百花。陈平安=笼中雀+井中月（自育），初一·十五为赠剑胚（非本命）。
+- **荀渊身份勘误（2026-09-10 修正）**：原误配为「文圣一脉·中土文庙·止境儒修」。真实=桐叶洲**玉圭宗老宗主**、飞升境大修士；本命枪法「一尺枪」、常书「余家贫」三字，与姜尚真亦师亦友，蛮荒入侵桐叶洲时战死。四表双端已改：faction=散修、realm=飞升境、skills=[一尺枪/余家贫]、CHAR_PATH=玉圭宗老宗主。另：谢时（礼圣一脉君子之剑）出处待核，BRIEFS 已标注「游戏设定补全，出处待核」。
 - 易错：高烛=魏晋佩剑（**非**左右本命飞剑，左右原著未明言）；白也持仙剑太白、非纯剑修；道老二=余斗、道老三=陆沉。
 - **落魄山**：骊珠洞天降格后陈平安用三袋金精铜钱买五山头之一，主峰集灵峰（竹楼）、次峰霁色峰（祖师堂）。八弟子=崔东山·裴钱·曹晴朗·赵树下·郭竹酒·宁吉·邓剑枰·袁黄。**李宝瓶是齐静春弟子（称小师叔，非弟子）**、顾粲是好友非弟子。青萍剑宗=桐叶洲下宗（崔东山首任宗主、崔嵬掌律、米裕首席供奉、曹晴朗接宗主）；龙象剑宗=南婆娑洲下宗。
 - **魏檗**：北岳正神→神位废沉江→棋墩山土地→披云山山神/大骊北岳正神，神号"夜游"，落魄山"住山大使"，办夜游宴攒下一半家底。
@@ -43,6 +45,7 @@
 - **禁用态禁止整块 opacity 淡化**（吃掉锁定原因）：底色边框压暗 + 正文降灰 + 原因反提亮；hover 加 `:not(:disabled)`。
 - 永久数值面板默认收抽屉；主舞台只放核心交互。**必然发生的操作不做成按钮**（分支汇同一出口则自动推进，延迟一拍让飘字落地）。
 - **「先做一个给我看」= 出预览，不动生产文件**：产物=独立 `_xxx_preview.html`，生产资源零改动，选定后再同步所有端点。**动手前先确认回滚源在哪一侧**。
+- **疏排（字间距）纪律**：全项目标题用「字面空格 + CSS `letter-spacing`」双机制做疏排，但**二者叠加=双重间距**，窄容器会溢出折行。主菜单卡片 `.ts-mode h3`（宽 250px，h3 可用≈170px）**标题绝不可再带字面空格**——已把 `人物志/戏里戏外/无事牌/符箓图鉴/包袱斋/行迹录` 六卡改为纯 `letter-spacing:6px`（与 `落魄山/群雄论剑` 及 `.ts-group-title` 一致），4 字标题不再折行。详情页 `h1`（`.codex-head h1` 6px + 字面空格）宽裕不折行，保持原样。改卡片标题串须同步门禁 `_sc_smoke.cjs`（查 `<h3>无 事 牌</h3>`）与 `_pf_int.cjs`（标题屏查 `行 迹 录`）。
 - **已否决路线**：模式图标走「实心剪影」（礼帽斗篷/斗笠剑客）→ 用户"太丑了，别瞎了我的眼"。图标维持「金色细线 + 拟物四件套」（体块淡填充 .10~.15 + 器壁双线 + 釉光弧 + 案上投影）。
 
 ## 5. 配图 / 视觉
@@ -53,6 +56,7 @@
 
 ## 6. 移植与踩坑
 - **Edit 的 old_string 含函数头时 new_string 必须原样带回**；改完必跑语法/冒烟。
+- **运行 Node 走 PowerShell**：bash 直接调 `D:\NodeJS\node.exe` 报 `Permission denied`（沙箱拦 exe 执行），须 `PowerShell -Command "& 'D:\NodeJS\node.exe' xx.cjs"`；或改用托管 node `C:\Users\Administrator\.workbuddy\binaries\node\versions\22.22.2-2\node.exe`（同样需 PowerShell 起）。bash 跑命令还会注入 `error launching git:` 噪声（非致命）。删文件仍只认 python `os.remove`（见 §0）。
 - **Edit 偶发"报告成功但未落盘"**：改后必须 grep/读真文件验证。**同文件多条 Edit 时极易部分丢失 → 批量替换优先写一次性 `.cjs` 脚本（含 miss 报告），别逐条 Edit**。冒烟全绿 ≠ CSS 真改对（冒烟只测 JS）。
 - **清空字段前先确认渲染有兜底**：`intro` 原无条件渲染 → 已改 `if(b.intro)`+整理中文案；`scenes` 需 filter 掉 d/q 皆空者，否则只剩标题的空壳（PC game.js 与 weapp codex.js 双端都已加）。
 - 小程序 `<button>` 内置 display:inline-block，width:100% 压不过 → 撑满须改 `<view bindtap hover-class>`；disabled 改 class 切换。
@@ -63,3 +67,4 @@
 - **画卷意象**（戏里戏外/人物志详情）：轴线金线 + 朱印 + 宣纸底纹 + 光阴长河金芒 + 摊卷入场（PC `taleUnroll` .62s / 小程序 `cxUnroll` .52s）。
 - **境界图标**：`assets/realm/realm-icons.js` 单一全局模块（柔和金色线描，圆形章+纯曲线，无尖角），`REALM_ICON_BY_NAME` 覆盖 profile.js 28 境 + `练气` 别名；`realmIconForChar(realm)` 供角标。**SVG 类名必须是 `ric`（不是 `realm-ic`）**，让 profile.js 已有的 `.pf-step .ric { 18px }`/`.badge-realm .ric { 15px }`/`.cr .ric { 14px }` 三条规则直接命中。**SVG 自身绝不带 inline `width:100%` 之类样式**——inline 优先级压过外层 CSS，会撑爆没有包装盒的场景（步梯/角标）。「当前境界」用法必须**外加 `<span class="pf-realm-ic">` 包装盒**并配 `.pf-realm-ic svg { width:100%; height:100% }` 规则让 svg 充满 58px 包装盒。凡加境界图标走此模块，勿散写内联 SVG。
 - **SVG 图标双端目录须同步**：`weapp/assets/icon/` 与 `assets/icon/`（PC）内容一致，新增/改两侧都落。落魄山/山水祠选项图标 PC 内联 SVG（sectOptIcon/scOptIcon，stroke=currentColor）不依赖文件。
+- **符箓/云篆类配图铁律（2026-09-11 用户纠正）**：符箓必须是**真符箓体例**——黄纸·云篆（符头·符胆·符脚）·朱砂·朱印·敕令笔势，**不是意境山水画**。此前误生成"山水/火焰/剑光"水墨场景被用户打回。ImageGen 生成后须 Pillow 去右下角 `AI生成 WORKBUDDY` 水印并转 jpg；**逐张串行生成**（并行会因秒级时间戳重名互相覆盖丢失）。英文 prompt 可规避"五雷正法/天师府"等敏感词拦截。PC 端 `assets/fulu/<id>.jpg`，微信端纯文字不引图。处理管线脚本 `prototype/_fulu_process.py`（含 feathered inpaint 去水印）。

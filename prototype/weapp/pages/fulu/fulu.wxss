@@ -1,0 +1,39 @@
+/* 符箓图鉴 · 小程序端（纯文字，无图） */
+.fulu { padding:22rpx 24rpx 40rpx; background:#1c1610; border:1px solid #3a2f23;
+        border-radius:20rpx; margin:18rpx 20rpx; box-sizing:border-box; }
+
+.fl-bar { display:flex; align-items:center; justify-content:space-between; margin:6rpx 0 14rpx; }
+.fl-bar .btn { padding:10rpx 30rpx; font-size:26rpx; border-radius:10rpx; letter-spacing:4rpx; }
+.fl-count { font-family:var(--kai); font-size:22rpx; color:#8a7e6c; letter-spacing:1rpx; }
+
+.fl-hint { font-size:23rpx; line-height:1.7; color:#9a8f7c; margin:0 0 16rpx; }
+
+.fl-sys { margin:6rpx 0 18rpx; padding:16rpx 18rpx; background:rgba(20,17,15,.5);
+          border:1px solid rgba(232,198,106,.22); border-radius:10rpx; }
+.fl-sys-h { font-family:var(--kai); letter-spacing:6rpx; color:#e8cf8f; margin-bottom:10rpx; font-size:26rpx; }
+.fl-sys-p { font-size:22rpx; line-height:1.75; color:#c3bdac; margin:0 0 10rpx; }
+.fl-sys-p .fl-b { color:#e8cf8f; margin-right:10rpx; }
+.fl-sys-note { font-size:20rpx; color:#9a917f; font-style:italic; line-height:1.7; }
+
+.fl-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18rpx 16rpx; }
+.fl-card { background:linear-gradient(180deg,#221c26,#151119); border:1px solid #5a4a2e;
+           border-radius:10rpx; padding:18rpx 12rpx; text-align:center; }
+.fl-name { font-family:var(--kai); font-size:28rpx; letter-spacing:3rpx; color:#e8cf8f; }
+.fl-alias { font-size:18rpx; color:#9a917f; margin-left:8rpx; letter-spacing:0; }
+.fl-type { font-size:19rpx; color:#8d8574; margin-top:8rpx; }
+
+/* 详情层 */
+.fl-dt { position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; }
+.fl-dt-scrim { position:absolute; inset:0; background:rgba(10,8,6,.74); }
+.fl-dt-card { position:relative; width:80%; max-width:640rpx; max-height:82%; overflow-y:auto;
+              border-radius:18rpx; padding:34rpx 32rpx 36rpx; box-sizing:border-box;
+              background:linear-gradient(168deg,#2a2330,#171320);
+              border:2rpx solid rgba(232,198,106,.5);
+              box-shadow:0 26rpx 70rpx rgba(0,0,0,.62), inset 0 0 26rpx 6rpx rgba(255,222,150,.18); }
+.fl-dt-name { font-family:var(--kai); font-size:40rpx; letter-spacing:5rpx; color:#e8cf8f; text-align:center; }
+.fl-dt-alias { font-size:22rpx; color:#9a917f; margin-left:12rpx; letter-spacing:0; }
+.fl-dt-type { text-align:center; font-size:21rpx; color:#8d8574; margin:8rpx 0 20rpx; }
+.fl-dt-row { display:flex; font-size:24rpx; line-height:1.8; color:#d4cdba; margin:0 0 16rpx; }
+.fl-dt-b { color:#e8cf8f; flex:none; min-width:64rpx; margin-right:14rpx; }
+.fl-dt-v { flex:1; }
+.fl-dt-src { color:#9a917f; font-size:21rpx; }
