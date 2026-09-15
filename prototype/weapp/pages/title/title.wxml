@@ -111,7 +111,7 @@
           <text class="h3">符 箓 图 鉴</text>
           <image class="mode-ico" src="/assets/icon/mode-fulu.svg" mode="aspectFit"/>
         </view>
-        <text class="p">不涉战局，只翻阅符箓：缩地、破障、镇妖、求雨、雷符……名、功效、来历与出处皆依《剑来》原著，并附据古法符箓体例绘制的图样（PC 端可见）。</text>
+        <text class="p">不涉战局，只翻阅符箓：缩地、破障、镇妖、求雨、雷符……名、功效、来历与出处皆依《剑来》原著，并附据古法符箓体例绘制的云篆图样（仅 PC 端可见）。</text>
         <text class="md-meta">原著符箓</text>
       </view>
     </view>

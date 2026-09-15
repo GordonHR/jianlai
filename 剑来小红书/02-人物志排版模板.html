@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>剑来人物志 · 小红书排版模板</title>
+<!--
+  ============ 使用方法 ============
+  1. 改 <img class="note-img"> 的 src 换成你的立绘（建议竖图 3:4，高度铺满）。
+  2. 改 .note-title 里的序号与角色名。
+  3. 改 .pill 三个标签（身份 / 境界 / 阵营）。
+  4. 改 .quote 里的原著台词/名场面。
+  5. 改 .bio 三行小传。
+  6. 改 .hook 的「下期猜谁」与 .hashtags 标签。
+  7. 浏览器全屏后，截图 .note 整个卡片区域即可发布。
+  ==================================
+-->
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#e9e0cd; font-family:"STKaiti","KaiTi","STSong","SimSun",serif; display:flex; justify-content:center; padding:30px; }
+  .note { width:380px; background:#fffdf8; border-radius:18px; overflow:hidden; box-shadow:0 8px 30px rgba(0,0,0,.18); border:1px solid #e3d6b6; }
+  .note-img { width:380px; height:506px; object-fit:cover; display:block; background:#d9cfb4; }
+  .note-body { padding:18px 20px 22px; }
+  .note-title { font-size:19px; font-weight:bold; color:#1f1a14; line-height:1.4; letter-spacing:1px; }
+  .tags { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0; }
+  .pill { font-size:12px; color:#9e2b25; background:#fbf1e0; border:1px solid #e4c98f; border-radius:20px; padding:4px 11px; }
+  .quote { border-left:4px solid #9e2b25; background:#fbf3e6; padding:10px 12px; font-size:14px; color:#4a3f2e; font-style:italic; line-height:1.7; margin:12px 0; }
+  .bio { font-size:14px; color:#3a342b; line-height:1.85; }
+  .hook { margin-top:14px; background:#9e2b25; color:#fff; border-radius:12px; padding:11px 14px; font-size:14px; line-height:1.7; text-align:center; letter-spacing:1px; }
+  .hashtags { margin-top:14px; font-size:13px; color:#7a6a4f; line-height:1.9; }
+</style>
+</head>
+<body>
+  <div class="note">
+    <!-- ① 换立绘：把 src 改成你的图片路径 -->
+    <img class="note-img" src="file:///C:/Users/Administrator/Desktop/jianlai/prototype/weapp/assets/portraits/chenpingan.jpg" alt="角色立绘">
+
+    <div class="note-body">
+      <!-- ② 换标题 -->
+      <div class="note-title">剑来人物志 0X｜角色名：一句话人设</div>
+
+      <!-- ③ 换三个标签 -->
+      <div class="tags">
+        <span class="pill">身份标签</span>
+        <span class="pill">境界标签</span>
+        <span class="pill">阵营标签</span>
+      </div>
+
+      <!-- ④ 换原著台词/名场面（原著向，不确定就写「人设向」） -->
+      <div class="quote">「一句能立人设的原著台词或名场面。」</div>
+
+      <!-- ⑤ 换三行小传 -->
+      <div class="bio">
+        第一行：出身与关键经历。<br>
+        第二行：性格与核心追求。<br>
+        第三行：在主线中的高光定位。
+      </div>
+
+      <!-- ⑥ 换互动钩子 -->
+      <div class="hook">下期猜谁？评论区留下你最想看的角色</div>
+
+      <!-- ⑦ 换标签 -->
+      <div class="hashtags">#剑来 #国风 #角色立绘 #烽火戏诸侯 #古风人物 #剑来人物志</div>
+    </div>
+  </div>
+</body>
+</html>

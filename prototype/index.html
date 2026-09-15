@@ -232,17 +232,25 @@
 
   .bf-main { display:grid; grid-template-columns:minmax(0,1fr) 264px; gap:10px; min-height:0; }
   .bf-field { display:grid; grid-template-rows:auto minmax(0,1fr); gap:10px; min-height:0; min-width:0; }
-  .bf-enemies { min-height:0; overflow:visible; display:flex; flex-direction:column; gap:6px;
+  .bf-enemies { min-height:0; overflow:visible; display:flex; flex-direction:column; gap:6px; position:relative; z-index:1;
                 padding:8px 10px 10px;
                 background:linear-gradient(180deg,rgba(72,28,36,.18),rgba(18,16,24,.5));
                 border:1px solid rgba(255,138,122,.18); border-radius:10px; }
   .enemies { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; align-items:flex-start; }
   .bf-board { display:grid; grid-template-columns:92px minmax(0,1fr) 92px; align-items:center;
-              gap:10px; min-height:0; }
+              gap:10px; min-height:0; position:relative; z-index:1; }
+  /* 牌桌：战场化为一张圆桌，敌我在桌两侧落座（三国杀式围坐感） */
+  .bf-field { position:relative; }
+  .bf-field::before { content:""; position:absolute; inset:4px; z-index:0; border-radius:20px; pointer-events:none;
+                       background:radial-gradient(ellipse 118% 86% at 50% 52%, rgba(46,38,50,.42), rgba(20,16,24,.05) 70%, transparent 78%); }
+  .bf-stage { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; min-height:0; position:relative; }
+  .bf-stage::before { content:""; position:absolute; left:-8px; right:-8px; top:-16px; bottom:-16px; z-index:0; border-radius:50%;
+                       background:radial-gradient(ellipse at center, rgba(64,50,40,.55), rgba(30,22,32,.12) 68%, transparent 80%);
+                       border:1px solid rgba(232,198,106,.12); box-shadow:inset 0 0 38px rgba(0,0,0,.42); }
+  .bf-stage > * { position:relative; z-index:1; }
   .bf-pile { text-align:center; font-size:11px; color:#9a917f; align-self:center;
              background:rgba(18,16,24,.55); border:1px dashed rgba(232,198,106,.24); border-radius:10px; padding:10px 4px; }
   .bf-pile b { display:block; font-size:22px; color:var(--gold); }
-  .bf-stage { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; min-height:0; }
   .stg-empty { font-family:var(--kai); font-size:22px; letter-spacing:8px; color:rgba(232,198,106,.3); }
   .stg-card { width:112px; height:162px; position:relative; border-radius:9px; display:flex; flex-direction:column;
               overflow:hidden; color:#2b2114; font-family:var(--kai);
@@ -314,6 +322,11 @@
   .player.cur { border-color:var(--col); box-shadow:0 0 0 2px var(--col), 0 6px 24px color-mix(in srgb, var(--col) 50%, transparent); }
   .player.clickable { cursor:pointer; border-color:var(--gold); animation:tgtpulse 1.2s ease-in-out infinite; }
   @keyframes tgtpulse { 0%,100%{ box-shadow:0 0 0 2px rgba(232,198,106,.5);} 50%{ box-shadow:0 0 18px rgba(232,198,106,.85);} }
+  /* 选目标期间：非目标角色压暗，焦点集中在可点击者（仿三国杀「指定」态） */
+  .battlefield.awaiting .player:not(.clickable),
+  .battlefield.awaiting .hero:not(.clickable){ opacity:.4; filter:grayscale(.45) brightness(.82); transition:opacity .2s, filter .2s; }
+  .battlefield.awaiting .player.clickable,
+  .battlefield.awaiting .hero.clickable{ position:relative; z-index:2; }
   .player.dead { opacity:.35; filter:grayscale(1); }
   .player.dead .pwrap { filter:grayscale(1) brightness(.55); }
   /* 阵亡大字覆盖（参考图杀牌桌游：白字压立绘中央、字字留影） */
@@ -345,12 +358,14 @@
   .tag { font-size:10px; margin-top:3px; font-weight:bold; }
   .tag.tgt { color:var(--gold); text-shadow:0 0 6px rgba(232,198,106,.6); }
 
-  .hpbar { position:relative; height:15px; background:#3a1414; border:1px solid rgba(0,0,0,.45);
-           border-radius:9px; overflow:hidden; margin:3px 0; }
-  .hpbar .fill { height:100%; background:linear-gradient(90deg,#d6533f,#ff8a6b);
-                 box-shadow:inset 0 0 10px rgba(214,83,63,.6); transition:width .4s ease; }
-  .hpbar .txt { position:absolute; inset:0; text-align:center; line-height:15px; font-size:10.5px;
-                color:#fff; font-weight:bold; text-shadow:0 1px 2px #000; }
+  /* 气血：三国杀式血量点（实心=现有，空心=已失） */
+  .hppips { display:flex; align-items:center; gap:4px; justify-content:center; margin:4px 0 3px; flex-wrap:nowrap; }
+  .hppips .pip { width:13px; height:13px; border-radius:50%; flex:0 0 auto;
+                 background:radial-gradient(circle at 36% 30%, rgba(255,255,255,.14), rgba(0,0,0,.28));
+                 border:1px solid rgba(214,83,63,.5); box-shadow:inset 0 0 4px rgba(0,0,0,.4); }
+  .hppips .pip.on { background:radial-gradient(circle at 36% 30%, #ff9a82, #d6533f 58%, #a8331f);
+                 border-color:#e8765c; box-shadow:0 0 6px rgba(214,83,63,.55), inset 0 1px 2px rgba(255,255,255,.4); }
+  .hppips .hpcnt { font-size:10px; color:#c9b98f; margin-left:6px; font-weight:bold; letter-spacing:.5px; white-space:nowrap; }
 
   /* 我方武将：竖版小卡，与手牌等高 */
   .hero { display:flex; flex-direction:column; gap:0; position:relative; width:184px;
@@ -368,8 +383,9 @@
                 box-shadow:0 0 12px rgba(232,198,106,.6); }
   .hero-info { flex:1; display:flex; flex-direction:column; justify-content:center; gap:4px; min-width:0; padding:7px 9px 8px; }
   .hero-fac { font-size:11px; font-weight:bold; }
-  .hero-info .hpbar { height:17px; }
-  .hero-info .hpbar .txt { line-height:17px; font-size:11px; }
+  .hero-info .hppips { margin:5px 0 4px; }
+  .hero-info .hppips .pip { width:16px; height:16px; }
+  .hero-info .hppips .hpcnt { font-size:11.5px; }
   .hero-info .pskills.big { font-size:10.5px; line-height:1.5; max-height:44px; overflow:auto; }
   .hero.dead { opacity:.4; filter:grayscale(1); }
 
@@ -397,6 +413,8 @@
   .confirm-bar .cb-info { flex:1; min-width:0; }
   .confirm-bar .cb-name { font-size:13px; color:var(--gold); letter-spacing:1px; }
   .confirm-bar .cb-desc { font-size:11.5px; color:#b9b09c; line-height:1.5; margin-top:2px; }
+  .confirm-bar .cb-hint { font-size:11px; color:#8d8574; margin-top:4px; letter-spacing:.5px; }
+  .confirm-bar .cb-key { font-size:11px; opacity:.7; margin-left:3px; }
   .confirm-bar .btn { padding:8px 18px; }
   /* PC 专属：装备 · 状态坞 */
   .status-strip { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:6px 0 2px; padding-top:7px; border-top:1px solid rgba(232,198,106,.16); }

@@ -1,4 +1,4 @@
-/* 符箓图鉴 · 小程序端（纯文字，无图） */
+/* 符箓图鉴 · 小程序端（纯文字，无图；与 PC fulu.js 数据 1:1） */
 .fulu { padding:22rpx 24rpx 40rpx; background:#1c1610; border:1px solid #3a2f23;
         border-radius:20rpx; margin:18rpx 20rpx; box-sizing:border-box; }
 
@@ -17,7 +17,7 @@
 
 .fl-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18rpx 16rpx; }
 .fl-card { background:linear-gradient(180deg,#221c26,#151119); border:1px solid #5a4a2e;
-           border-radius:10rpx; padding:18rpx 12rpx; text-align:center; }
+           border-radius:10rpx; padding:14rpx 10rpx 16rpx; text-align:center; }
 .fl-name { font-family:var(--kai); font-size:28rpx; letter-spacing:3rpx; color:#e8cf8f; }
 .fl-alias { font-size:18rpx; color:#9a917f; margin-left:8rpx; letter-spacing:0; }
 .fl-type { font-size:19rpx; color:#8d8574; margin-top:8rpx; }

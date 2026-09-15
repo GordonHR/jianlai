@@ -1979,7 +1979,7 @@ async function playCard(p, card){
     flyCard(card.uid, t.id);
     p.attackUsed++;
     removeFromHand(p, card); state.discard.push(card);
-    log(p.name+' 一剑递向 '+t.name+'。', '');
+    log(p.name+' 一剑递向 '+t.name+'。', 'hit');
     shoutCard(p, card, pickShout(SHOUTS.attack), '#ff8a6b'); fxCardPlay(p, card);
     await bladeFx(p, t);
     await resolveAttack(p, t);
@@ -4564,10 +4564,15 @@ function doStart(){
 }
 
 /* ---------- 对战 ---------- */
+/* 气血：三国杀式「血量点」——实心=现有，空心=已失，一眼看清还剩几口 */
 function hpBar(pl){
-  const pct = Math.max(0, pl.hp)/pl.maxHp*100;
-  return '<div class="hpbar"><div class="fill" style="width:'+pct+'%"></div>'
-       + '<div class="txt">'+Math.max(0,pl.hp)+' / '+pl.maxHp+' · '+realmTag(pl)+'</div></div>';
+  const hp = Math.max(0, pl.hp), max = pl.maxHp || pl.hp || 1;
+  let pips = '';
+  for(let i=0;i<max;i++) pips += '<span class="pip'+(i<hp?' on':'')+'"></span>';
+  return '<div class="hppips" title="气血 '+hp+' / '+max+' · '+realmTag(pl)+'">'
+       +   pips
+       +   '<span class="hpcnt">'+hp+' / '+max+'</span>'
+       + '</div>';
 }
 function portraitHtml(pl, key){
   return '<img class="portrait" src="art/'+key+'.png" onerror="this.style.display=\'none\'">';
@@ -4636,6 +4641,7 @@ function heroBody(p){
     +   '<div class="pequip">'+(p.equip?'飞剑 · '+p.equip.name:'未祭飞剑')+' · 手牌 '+p.hand.length+'</div>'
     +   '<div class="pskills big">'+((p.skills||[]).map(s=>skTag(p,s)).join(' '))+'</div>'
     +   '<div class="tag">'+(hasAlly(p)?'齐心 · ':'')+'剑气 '+p.attackUsed+' / '+attackLimit(p)+'</div>'
+    + (state.await && state.await.allowSelf && p.alive ? '<div class="tag tgt">▼ 可选</div>' : '')
     + '</div>';
 }
 function skTag(p, n){
@@ -4694,8 +4700,9 @@ function confirmBarHtml(p){
     +   '<div class="cf-foot">'+CARD_KIND[card.type]+'</div>'
     + '</div>'
     + '<div class="cb-info"><div class="cb-name">'+card.name+' · '+CARD_KIND[card.type]+'</div>'
-    +   '<div class="cb-desc">'+cardDesc(card)+'</div></div>'
-    + '<button class="btn primary" onclick="playSelected()">出 牌</button>'
+    +   '<div class="cb-desc">'+cardDesc(card)+'</div>'
+    +   '<div class="cb-hint">回车出牌 · 再点卡牌亦可 · Esc 取消</div></div>'
+    + '<button class="btn primary" onclick="playSelected()">出 牌 <span class="cb-key">↵</span></button>'
     + '<button class="btn ghost" onclick="onCancelSel()">取 消</button>'
     + '</div>';
 }
@@ -4762,7 +4769,7 @@ function renderGame(app){
      siege/boss 多队友不再被误判成"敌人" */
   const mates = state.players.filter(pl=>pl.id!==state.current && isMyTeam(pl));
   const opps  = state.players.filter(pl=>pl.id!==state.current && !isMyTeam(pl));
-  let html = '<div class="battlefield">';
+  let html = '<div class="battlefield'+(state.await?' awaiting':'')+'">';
 
   /* ---------- 顶栏 ---------- */
   html += '<div class="bf-top"><div class="topbar">';
@@ -5159,6 +5166,17 @@ window.addEventListener('DOMContentLoaded', ()=>{
   // 首次交互解锁音频
   const unlock = ()=>{ SFX.set(SFX.isOn()); document.removeEventListener('pointerdown', unlock); };
   document.addEventListener('pointerdown', unlock);
-  // ESC 取消当前目标选择
-  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && state && state.phase==='game') cancelAwait(); });
+  // 键盘交互：Esc 取消目标选择；回车出牌；数字 1-9 选中手牌（复用两步出牌）
+  document.addEventListener('keydown', (e)=>{
+    if(!state || state.phase!=='game' || state.over) return;
+    if(e.key==='Escape'){ cancelAwait(); return; }
+    if(state.await) return;                       // 选目标期间只响应 Esc
+    const p = current();
+    if(isAI(p) || state.busy) return;
+    if(e.key==='Enter'){ if(state.selUid!=null) playSelected(); return; }
+    if(/^[1-9]$/.test(e.key)){
+      const card = p.hand[parseInt(e.key,10)-1];
+      if(card) onCardClick(card.uid);             // 数字键=选中/再按=打出
+    }
+  });
 });
