@@ -147,6 +147,10 @@
         <line x1="11" y1="20" x2="11" y2="31" stroke="#7a5a32" stroke-width="1.4"/>
         <line x1="29" y1="20" x2="29" y2="31" stroke="#7a5a32" stroke-width="1.4"/>
         <path d="M5,30 Q20,14 35,30" fill="none" stroke="#5a3f22" stroke-width="0.6" opacity="0.5"/>
+        <!-- 锁龙井：桥底碧绿深潭·老剑条镇压（原著：囚真龙残魂所化骊珠） -->
+        <ellipse cx="20" cy="40" rx="16" ry="5.5" fill="#3f6a6a" opacity="0.55" stroke="#2f5a5a" stroke-width="0.9"/>
+        <line x1="20" y1="40" x2="13" y2="29" stroke="#6a6a6a" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M13,29 l-2,3 M13,29 l3,1" stroke="#5a5a5a" stroke-width="1"/>
       </g>
       <g id="shrine">
         <rect x="7" y="20" width="26" height="20" fill="#c9b48a" stroke="#3a2f1e" stroke-width="1.2"/>
@@ -171,6 +175,37 @@
         <ellipse cx="20" cy="20" rx="15" ry="11" fill="#cfc3a4" stroke="#3a2f1e" stroke-width="1.2"/>
         <ellipse cx="20" cy="20" rx="9" ry="6.5" fill="#3a2f1e"/>
         <path d="M6,16 L34,16 M6,24 L34,24" stroke="#5a5040" stroke-width="0.6" opacity="0.6"/>
+        <!-- 铁锁井：井口铁锁·缚妖索（原著：拽铁锁出井口每出一尺折寿一年） -->
+        <path d="M20,9 L20,20" stroke="#2f2f2f" stroke-width="1.6" stroke-linecap="round"/>
+        <rect x="16.5" y="18" width="7" height="6" rx="1" fill="#2f2f2f"/>
+        <path d="M16.5,21 L16.5,23 M23.5,21 L23.5,23" stroke="#2f2f2f" stroke-width="1"/>
+      </g>
+      <g id="shenfen">
+        <!-- 半圆坟冢 -->
+        <path d="M3,30 Q15,14 27,30 Z" fill="#b8a884" stroke="#3a2f1e" stroke-width="1.2"/>
+        <path d="M11,30 L11,22 M15,30 L15,21 M19,30 L19,22" stroke="#5a5040" stroke-width="0.5" opacity="0.5"/>
+        <!-- 四方斩龙台（红虚线方台） -->
+        <rect x="1" y="30" width="38" height="9" fill="none" stroke="#9c3b2e" stroke-width="1.2" stroke-dasharray="3 2"/>
+        <!-- 披甲神人（五彩泥塑·踏斩龙台） -->
+        <path d="M19,9 q4,0 4,3.5 l-8,0 q0,-3.5 4,-3.5 z" fill="#3a2f1e"/>
+        <path d="M15,13 L23,13 L25,27 L13,27 Z" fill="#c2a878" stroke="#3a2f1e" stroke-width="1"/>
+        <path d="M14,27 L14,30 M22,27 L22,30" stroke="#3a2f1e" stroke-width="1.4" fill="none"/>
+        <path d="M15,16 L23,16 M14,21 L24,21" stroke="#5a5040" stroke-width="0.6" opacity="0.7" fill="none"/>
+        <!-- 五彩：红蓝细线（呼应五彩泥塑） -->
+        <path d="M15,14.5 L23,14.5" stroke="#9c3b2e" stroke-width="0.9" opacity="0.6"/>
+        <path d="M14,19 L24,19" stroke="#3f6a8a" stroke-width="0.8" opacity="0.5"/>
+        <!-- 持长兵（戟） -->
+        <line x1="27" y1="5" x2="27" y2="30" stroke="#3a2f1e" stroke-width="1.4"/>
+        <path d="M27,6 l5,2 M27,6 l-2,4" stroke="#3a2f1e" stroke-width="1"/>
+      </g>
+      <g id="qingniu">
+        <!-- 青色石崖 -->
+        <path d="M2,34 L9,14 Q13,8 22,12 L37,30 L29,34 Z" fill="#5a7a6a" stroke="#2f4a3a" stroke-width="1.2"/>
+        <path d="M9,14 Q14,18 22,18" fill="none" stroke="#3f5a4a" stroke-width="0.7" opacity="0.6"/>
+        <!-- 上古月宫镜（圆辉·炼化得当是半仙兵） -->
+        <circle cx="22" cy="11" r="7" fill="#d4ecec" stroke="#3f6a6a" stroke-width="1"/>
+        <circle cx="22" cy="11" r="7" fill="none" stroke="#bfe0e0" stroke-width="1.4" opacity="0.5"/>
+        <path d="M22,4 L22,18 M15,11 L29,11" stroke="#9acaca" stroke-width="0.6" opacity="0.6"/>
       </g>
     </defs>
 
@@ -193,25 +228,6 @@
       <path d="M25,27 Q700,21 1375,27 Q1382,500 1375,973 Q700,980 25,973 Q18,500 25,27 Z" stroke="#9a7b2e" stroke-width="1" filter="url(#rough)"/>
     </g>
 
-    <!-- 题匾 -->
-    <g><rect x="498" y="34" width="404" height="56" rx="4" fill="#3a2f1e" stroke="#9a7b2e" stroke-width="2"/>
-      <text x="700" y="72" text-anchor="middle" font-size="28" letter-spacing="10" fill="#e9dcbe" font-weight="bold">骊珠洞天舆图</text></g>
-    <!-- 朱印（点击查看全图考据） -->
-    <g class="trigger" data-legend="1" tabindex="0" role="button" aria-label="点击展开洞天考据" transform="translate(1232,150)">
-      <rect x="0" y="0" width="54" height="54" rx="3" fill="#9c3b2e" stroke="#6e271d" stroke-width="1.5"/>
-      <text x="27" y="22" text-anchor="middle" font-size="18" fill="#f1e6c9" font-weight="bold">骊珠</text>
-      <text x="27" y="44" text-anchor="middle" font-size="18" fill="#f1e6c9" font-weight="bold">洞天</text>
-    </g>
-    <!-- 方位盘 -->
-    <g transform="translate(1300,90)" stroke="#6b5f49" fill="none">
-      <circle r="28" stroke-width="1.5"/>
-      <path d="M0,-24 L7,3 L0,-1 L-7,3 Z" fill="#9c3b2e" stroke="none"/>
-      <path d="M0,24 L7,-3 L0,1 L-7,-3 Z" fill="#5a5040" stroke="none"/>
-      <text x="0" y="-32" font-size="13" fill="#2f2a20" text-anchor="middle" stroke="none">北</text>
-      <text x="0" y="44" font-size="12" fill="#2f2a20" text-anchor="middle" stroke="none">南</text>
-      <text x="36" y="5" font-size="12" fill="#2f2a20" text-anchor="middle" stroke="none">东</text>
-      <text x="-36" y="5" font-size="12" fill="#2f2a20" text-anchor="middle" stroke="none">西</text>
-    </g>
 
     <!-- ======== 远山雾层（最背景，淡墨晕染，不套 rough） ======== -->
     <g opacity="0.55" filter="url(#haze)">
@@ -248,6 +264,12 @@
       <g stroke="#5f7f84" stroke-width="0.8" opacity="0.5" fill="none">
         <path d="M360,742 q10,-4 20,0"/><path d="M520,772 q10,-4 20,0"/><path d="M700,808 q10,-4 20,0"/><path d="M880,840 q10,-4 20,0"/><path d="M430,756 q10,-4 20,0"/>
       </g>
+      <!-- 龙须溪源头：西边大山泉眼（原著：源出西边大山，本名浯溪） -->
+      <g transform="translate(232,706)">
+        <ellipse cx="0" cy="0" rx="6" ry="3.2" fill="#bfe0e0" stroke="#3f6a6a" stroke-width="1"/>
+        <path d="M-11,-4 q11,-4 22,0 M-11,4 q11,4 22,0" stroke="#7ba39c" stroke-width="0.8" fill="none" opacity="0.7"/>
+      </g>
+      <text x="244" y="700" font-size="10" fill="#3f5a5e" opacity="0.85">龙须溪·源</text>
 
       <!-- 小镇围垣：手绘不规则双线 -->
       <path d="M300,250
@@ -265,14 +287,14 @@
       <!-- 街巷与交通路网：主街/福禄街更亮更宽，巷弄明显收窄，交通路清晰 -->
       <g class="roads" filter="url(#rough)" stroke-linejoin="round" stroke-linecap="round">
         <!-- 主街（显·龙须）：南北向宽石板街，自北市井贯至南巷区、接廊桥 -->
-        <path d="M700,200 C702,360 700,520 712,690 C716,730 720,760 720,768"
-              fill="none" stroke="#f1e4c4" stroke-width="16" opacity="0.92"/>
-        <path d="M700,200 C702,360 700,520 712,690 C716,730 720,760 720,768"
+        <path d="M700,206 C700,330 706,430 709,520 C711,600 700,682 690,742 C678,748 642,766 614,780"
+              fill="none" stroke="#f1e4c4" stroke-width="17" opacity="0.92"/>
+        <path d="M700,206 C700,330 706,430 709,520 C711,600 700,682 690,742 C678,748 642,766 614,780"
               fill="none" stroke="#caa86a" stroke-width="1.4" opacity="0.6"/>
-        <!-- 福禄街（龙颈）：东西向宽街，四姓十族→东门 -->
-        <path d="M520,300 C720,290 920,300 1078,452"
+        <!-- 福禄街（龙颈）：东西主横，东门→四姓→市井→西 -->
+        <path d="M1080,452 C920,332 760,302 540,300 C470,300 392,302 320,300"
               fill="none" stroke="#f1e4c4" stroke-width="15" opacity="0.92"/>
-        <path d="M520,300 C720,290 920,300 1078,452"
+        <path d="M1080,452 C920,332 760,302 540,300 C470,300 392,302 320,300"
               fill="none" stroke="#caa86a" stroke-width="1.4" opacity="0.6"/>
 
         <!-- 主街石板缝（竖向） -->
@@ -286,23 +308,30 @@
           <path d="M900,300 L900,316"/><path d="M1000,322 L1000,338"/>
         </g>
 
-        <!-- 巷弄（明显收窄，串起院落） -->
-        <path d="M312,236 C310,360 314,470 320,540" fill="none" stroke="#7a5a32" stroke-width="2.6" opacity="0.68"/>
-        <path d="M520,560 C512,610 506,650 504,690" fill="none" stroke="#7a5a32" stroke-width="2.6" opacity="0.64"/>
-        <path d="M500,648 C520,672 540,690 560,700" fill="none" stroke="#7a5a32" stroke-width="2.3" opacity="0.6"/>
-        <path d="M612,628 C620,656 628,684 640,706" fill="none" stroke="#7a5a32" stroke-width="2.3" opacity="0.6"/>
-        <path d="M772,646 C780,678 788,706 796,728" fill="none" stroke="#7a5a32" stroke-width="2.3" opacity="0.6"/>
-        <path d="M560,452 C600,470 660,470 700,452" fill="none" stroke="#7a5a32" stroke-width="2.2" opacity="0.5"/>
+        <!-- 西巷（泥瓶巷）：福禄街西端分出，北接泥瓶巷口、南串各院落达无名巷 -->
+        <path d="M320,300 C314,250 312,240 312,232" fill="none" stroke="#7a5a32" stroke-width="3" opacity="0.7"/>
+        <path d="M320,300 C316,362 350,432 432,470 C452,482 470,512 484,544"
+              fill="none" stroke="#7a5a32" stroke-width="3" opacity="0.7"/>
 
-        <!-- 骑龙巷台阶纹（一二〇级台阶 · 示意） -->
+        <!-- 市井横连街（中）：主街→骑龙巷/扁担巷→东连桃叶巷 -->
+        <path d="M709,520 C620,560 560,600 500,640 C492,652 488,668 488,700"
+              fill="none" stroke="#8a6a3a" stroke-width="4.2" opacity="0.72"/>
+        <path d="M709,520 C800,580 850,620 900,560"
+              fill="none" stroke="#8a6a3a" stroke-width="4.2" opacity="0.72"/>
+        <!-- 东横街：杏花巷←→二郎巷 -->
+        <path d="M560,648 C680,664 740,664 792,664" fill="none" stroke="#7a5a32" stroke-width="2.6" opacity="0.66"/>
+        <!-- 杏花巷（龙脊余脉·黄泥路）：自东横街向南接铁锁井 -->
+        <path d="M612,664 C616,676 616,686 614,694" fill="none" stroke="#7a5a32" stroke-width="2.6" opacity="0.62"/>
+
+        <!-- 骑龙巷台阶纹（一二〇级台阶 · 示意）：沿市井横连街→扁担巷 -->
         <g stroke="#8a6a3a" stroke-width="0.9" opacity="0.55" fill="none">
-          <path d="M514,576 L526,574"/><path d="M513,592 L525,590"/><path d="M512,608 L524,606"/>
-          <path d="M511,624 L523,622"/><path d="M510,640 L522,638"/><path d="M509,656 L521,654"/>
-          <path d="M508,672 L520,670"/><path d="M507,688 L519,686"/>
+          <path d="M500,560 L512,558"/><path d="M500,576 L512,574"/><path d="M500,592 L512,590"/>
+          <path d="M500,608 L512,606"/><path d="M500,624 L512,622"/><path d="M500,640 L512,638"/>
+          <path d="M500,656 L512,654"/><path d="M500,672 L512,670"/><path d="M500,688 L512,686"/>
         </g>
 
-        <!-- 桃叶巷（龙脊）：南北向巷，林·魏·谢沿巷而居 -->
-        <path d="M900,330 C905,420 898,500 900,580" fill="none" stroke="#b07a3a" stroke-width="3.4" opacity="0.64"/>
+        <!-- 桃叶巷（龙脊）：北接福禄街，南接市井东横街（林·魏·谢沿巷而居） -->
+        <path d="M900,318 C905,420 898,500 900,560" fill="none" stroke="#b07a3a" stroke-width="3.4" opacity="0.66"/>
         <!-- 困龙钉：桃叶巷每株桃树根须入地，如一颗困龙钉（原著） -->
         <g fill="#6b4a2a" opacity="0.72">
           <path d="M900,358 l3,5 l-3,5 l-3,-5 z"/><path d="M903,408 l3,5 l-3,5 l-3,-5 z"/>
@@ -316,14 +345,13 @@
         <!-- 交通：龙须溪南岸路（西→东，经青牛背·廊桥·铁匠铺） -->
         <path d="M300,792 C470,800 600,812 740,818 C840,822 980,834 1104,844"
              fill="none" stroke="#caa86a" stroke-width="5.5" opacity="0.72"/>
-        <!-- 交通：镇南黄泥小路（市井南→小庙→父母坟） -->
-        <path d="M640,766 C560,800 500,840 474,884 C450,910 432,912 420,912"
+        <!-- 交通：镇南黄泥小路（廊桥南→小庙→父母坟） -->
+        <path d="M614,800 C560,840 500,862 474,884 C450,910 432,912 420,912"
              fill="none" stroke="#b9925a" stroke-width="4.2" opacity="0.7"/>
         <!-- 交通：西边大山山道（泥瓶巷西→进山） -->
-        <path d="M300,500 C220,500 150,520 90,560 C60,580 40,620 28,662"
+        <path d="M312,232 C240,300 160,440 90,560 C60,600 40,630 28,662"
              fill="none" stroke="#caa86a" stroke-width="5" opacity="0.68"/>
-        <!-- 廊桥接驳：溪南岸路连廊桥桥口 -->
-        <path d="M615,808 L615,820" stroke="#caa86a" stroke-width="5" opacity="0.7"/>
+        <!-- 主街南端已直连廊桥（见上），此处不再另设接驳线 -->
       </g>
 
       <!-- 北：老瓷山（残瓷堆积） -->
@@ -349,9 +377,9 @@
       <use href="#house" transform="translate(560,288) scale(0.85)"/>
       <use href="#house" transform="translate(560,452) scale(0.85)"/>
       <use href="#house" transform="translate(520,560) scale(0.8)"/><use href="#house" transform="translate(560,598) scale(0.8)"/>
-      <use href="#house" transform="translate(540,648) scale(0.8)"/><use href="#house" transform="translate(580,680) scale(0.8)"/>
-      <use href="#house" transform="translate(500,608) scale(0.8)"/><use href="#house" transform="translate(540,638) scale(0.8)"/><use href="#house" transform="translate(580,664) scale(0.8)"/>
-      <use href="#well" transform="translate(585,676) scale(0.9)"/>
+      <use href="#house" transform="translate(540,648) scale(0.8)"/><use href="#house" transform="translate(558,690) scale(0.8)"/>
+      <use href="#house" transform="translate(500,608) scale(0.8)"/><use href="#house" transform="translate(540,638) scale(0.8)"/>
+      <use href="#well" transform="translate(602,694) scale(0.9)"/>
       <use href="#house" transform="translate(700,648) scale(0.8)"/><use href="#house" transform="translate(740,680) scale(0.8)"/>
       <use href="#house" transform="translate(850,262) scale(0.82)"/>
       <use href="#house" transform="translate(900,272) scale(0.82)"/>
@@ -363,22 +391,23 @@
       <use href="#house" transform="translate(950,452) scale(0.82)"/>
       <use href="#gate" transform="translate(1058,430) scale(1.0)"/>
       <use href="#house" transform="translate(1006,398) scale(0.8)"/>
-      <use href="#rock" transform="translate(520,832)"/>
-      <use href="#bridge" transform="translate(596,826) scale(1.05)"/>
+      <use href="#qingniu" transform="translate(512,828) scale(1.05)"/>
+      <use href="#bridge" transform="translate(594,756) scale(1.1)"/>
+      <text x="556" y="804" font-size="10" fill="#2f6a6a" opacity="0.9" text-anchor="end">锁龙井</text>
       <use href="#kiln" transform="translate(792,852) scale(0.95)"/>
       <use href="#shrine" transform="translate(430,866) scale(0.95)"/>
       <use href="#tomb" transform="translate(376,892) scale(0.95)"/>
       <use href="#tree" transform="translate(463,838) scale(0.7)"/>
-      <use href="#shrine" transform="translate(908,876) scale(0.95)"/>
+      <use href="#shenfen" transform="translate(904,872) scale(1.05)"/>
 
       <!-- 龙形堪舆·困龙局（原著：龙须溪+主街=二龙须；福禄街=龙颈；桃叶巷=龙脊，桃根=困龙钉） -->
       <g class="kan" filter="url(#rough)" fill="none" stroke-linecap="round">
         <!-- 龙颈·福禄街 -->
-        <path d="M520,300 C720,290 920,300 1078,452" stroke="#9c3b2e" stroke-width="1.7" stroke-dasharray="7 6" opacity="0.5"/>
+        <path d="M1080,452 C920,332 760,302 540,300 C470,300 392,302 320,300" stroke="#9c3b2e" stroke-width="1.7" stroke-dasharray="7 6" opacity="0.5"/>
         <!-- 龙脊·桃叶巷 -->
-        <path d="M900,330 C905,420 898,500 900,580" stroke="#9c3b2e" stroke-width="1.7" stroke-dasharray="7 6" opacity="0.5"/>
+        <path d="M900,318 C905,420 898,500 900,560" stroke="#9c3b2e" stroke-width="1.7" stroke-dasharray="7 6" opacity="0.5"/>
         <!-- 龙须·主街（显） -->
-        <path d="M700,200 C702,360 700,520 712,690 C716,730 720,760 720,768" stroke="#9c3b2e" stroke-width="1.7" stroke-dasharray="7 6" opacity="0.42"/>
+        <path d="M700,206 C700,330 706,430 709,520 C711,600 700,682 690,742 C678,748 642,766 614,780" stroke="#9c3b2e" stroke-width="1.7" stroke-dasharray="7 6" opacity="0.42"/>
         <!-- 龙须·龙须溪（隐，沿河流走向） -->
         <path d="M228,704 C420,726 560,764 700,802 C842,840 980,860 1112,872" stroke="#9c3b2e" stroke-width="1.4" stroke-dasharray="4 7" opacity="0.34"/>
       </g>
@@ -421,6 +450,14 @@
       <g class="poi" data-key="yuanmu" tabindex="0" role="button"><text class="lbl" x="256" y="272">远幕峰</text><rect class="hit" x="254" y="260" width="78" height="18"/></g>
       <g class="poi" data-key="huanghu" tabindex="0" role="button"><text class="lbl" x="256" y="296">黄湖山</text><rect class="hit" x="254" y="284" width="78" height="18"/></g>
       <g class="poi" data-key="xiancao" tabindex="0" role="button"><text class="lbl" x="256" y="320">仙草山</text><rect class="hit" x="254" y="308" width="78" height="18"/></g>
+      <g class="poi" data-key="dizhen" tabindex="0" role="button"><text class="lbl" x="252" y="344">地真山</text><rect class="hit" x="250" y="332" width="46" height="18"/></g>
+      <g class="poi" data-key="tiaodeng" tabindex="0" role="button"><text class="lbl" x="252" y="368">挑灯山</text><rect class="hit" x="250" y="356" width="46" height="18"/></g>
+      <g class="poi" data-key="hengshuo" tabindex="0" role="button"><text class="lbl" x="252" y="392">横槊峰</text><rect class="hit" x="250" y="380" width="46" height="18"/></g>
+      <g class="poi" data-key="dengxin" tabindex="0" role="button"><text class="lbl" x="252" y="416">灯芯台</text><rect class="hit" x="250" y="404" width="46" height="18"/></g>
+      <g class="poi" data-key="baolu" tabindex="0" role="button"><text class="lbl" x="252" y="440">宝箓山</text><rect class="hit" x="250" y="428" width="46" height="18"/></g>
+      <g class="poi" data-key="niujiao" tabindex="0" role="button"><text class="lbl" x="252" y="464">牛角山</text><rect class="hit" x="250" y="452" width="46" height="18"/></g>
+      <g class="poi" data-key="wutong" tabindex="0" role="button"><text class="lbl" x="252" y="488">梧桐山</text><rect class="hit" x="250" y="476" width="46" height="18"/></g>
+      <g class="poi" data-key="caiyun" tabindex="0" role="button"><text class="lbl" x="252" y="512">彩云峰</text><rect class="hit" x="250" y="500" width="46" height="18"/></g>
       <g class="poi" data-key="longxuxi" tabindex="0" role="button"><text class="lbl" x="300" y="700" fill="#3f5a5e">龙须溪</text><rect class="hit" x="296" y="688" width="90" height="20"/></g>
 
       <g class="poi" data-key="lipingxiang" tabindex="0" role="button"><text class="lbl" x="312" y="232" font-weight="bold" fill="#3a4a2e">泥瓶巷</text><rect class="hit" x="308" y="220" width="80" height="20"/></g>
@@ -439,7 +476,7 @@
       <g class="poi" data-key="qilong" tabindex="0" role="button"><text class="lbl" x="500" y="592">骑龙巷</text><rect class="hit" x="498" y="556" width="76" height="40"/></g>
       <g class="poi" data-key="biandan" tabindex="0" role="button"><text class="lbl" x="500" y="700">扁担巷</text><rect class="hit" x="498" y="646" width="76" height="40"/></g>
       <g class="poi" data-key="xinghua" tabindex="0" role="button"><text class="lbl" x="612" y="640">杏花巷</text><rect class="hit" x="610" y="626" width="76" height="24"/></g>
-      <g class="poi" data-key="tiesuo" tabindex="0" role="button"><circle cx="600" cy="688" r="5" fill="#9c3b2e"/><text class="lbl" x="612" y="692" fill="#9c3b2e" font-weight="bold">铁锁井</text><rect class="hit" x="598" y="676" width="78" height="24"/></g>
+      <g class="poi" data-key="tiesuo" tabindex="0" role="button"><circle cx="608" cy="698" r="5" fill="#9c3b2e"/><text class="lbl" x="640" y="700" fill="#9c3b2e" font-weight="bold">铁锁井</text><rect class="hit" x="602" y="686" width="86" height="46"/></g>
       <g class="poi" data-key="erlang" tabindex="0" role="button"><text class="lbl" x="772" y="668">二郎巷</text><rect class="hit" x="770" y="646" width="76" height="40"/></g>
 
       <g class="poi" data-key="lu" tabindex="0" role="button"><text class="lbl" x="888" y="278">卢家</text><rect class="hit" x="848" y="261" width="62" height="24"/></g>
@@ -458,7 +495,7 @@
       <g class="poi" data-key="longyao" tabindex="0" role="button"><text class="lbl" x="700" y="128" fill="#7a5a2a" font-weight="bold">龙窑</text><rect class="hit" x="696" y="110" width="64" height="44"/></g>
 
       <g class="poi" data-key="qingniu" tabindex="0" role="button"><text class="lbl" x="470" y="852" text-anchor="end">青牛背</text><rect class="hit" x="430" y="828" width="80" height="26"/></g>
-      <g class="poi" data-key="langqiao" tabindex="0" role="button"><text class="lbl" x="615" y="816" fill="#9c3b2e" font-weight="bold">廊桥</text><rect class="hit" x="592" y="808" width="64" height="72"/></g>
+      <g class="poi" data-key="langqiao" tabindex="0" role="button"><text class="lbl" x="612" y="814" fill="#9c3b2e" font-weight="bold">廊桥</text><rect class="hit" x="588" y="758" width="68" height="56"/></g>
       <g class="poi" data-key="tiejiang" tabindex="0" role="button"><text class="lbl" x="836" y="872">铁匠铺</text><rect class="hit" x="790" y="848" width="90" height="30"/></g>
       <g class="poi" data-key="xiaomiao" tabindex="0" role="button"><text class="lbl" x="474" y="884">小庙</text><rect class="hit" x="428" y="862" width="64" height="28"/></g>
       <g class="poi" data-key="fumu" tabindex="0" role="button"><text class="lbl" x="420" y="910">父母坟</text><rect class="hit" x="374" y="888" width="78" height="28"/></g>
@@ -468,25 +505,49 @@
 
     <!-- 交通路名（淡墨小字） -->
     <g font-size="11" fill="#6b5f49" opacity="0.92">
+      <text x="726" y="430" transform="rotate(90 726 430)">主街</text>
       <text x="556" y="296" transform="rotate(-2 556 296)">福禄街</text>
       <text x="1156" y="404" transform="rotate(-16 1156 404)">云梯路·出镇</text>
-      <text x="104" y="566" transform="rotate(-14 104 566)">入山道</text>
+      <text x="150" y="470" transform="rotate(-52 150 470)">入山道</text>
       <text x="352" y="806" transform="rotate(6 352 806)">溪畔路</text>
-      <text x="596" y="796" transform="rotate(-50 596 796)">南下黄泥路</text>
+      <text x="560" y="828" transform="rotate(-28 560 828)">南下黄泥路</text>
     </g>
 
-    <!-- 图例（点击展开全图考据） -->
-    <g class="trigger" data-legend="1" tabindex="0" role="button" aria-label="点击展开图例与洞天考据" transform="translate(40,856)">
-      <rect x="0" y="0" width="232" height="112" rx="4" fill="#efe4c8" stroke="#6b5f49" stroke-width="1" opacity="0.94"/>
-      <text x="10" y="18" font-size="13" fill="#9a7b2e" font-weight="bold">图　例</text>
-      <use href="#house" transform="translate(10,26) scale(0.55)"/><text x="36" y="42" font-size="11" fill="#2f2a20">院落·铺肆</text>
-      <use href="#tree" transform="translate(120,26) scale(0.55)"/><text x="146" y="42" font-size="11" fill="#2f2a20">古树</text>
-      <use href="#kiln" transform="translate(10,56) scale(0.55)"/><text x="36" y="72" font-size="11" fill="#2f2a20">龙窑</text>
-      <use href="#gate" transform="translate(120,56) scale(0.55)"/><text x="146" y="72" font-size="11" fill="#2f2a20">城门</text>
-      <use href="#shrine" transform="translate(10,84) scale(0.5)"/><text x="36" y="100" font-size="11" fill="#2f2a20">祠庙·坟</text>
-      <path d="M120,90 q10,-8 20,0 q10,8 20,0" fill="none" stroke="#5f7f84" stroke-width="3"/><text x="170" y="94" font-size="11" fill="#2f2a20">水</text>
-      <text x="10" y="108" font-size="9.5" fill="#9c3b2e">▸ 点击此处 · 右上朱印，展开全图考据</text>
     </g>
+
+    <!-- ======== 固定 UI 覆盖层（不随地图缩放/平移，钉在画面四角） ======== -->
+    <g id="ui-fixed">
+      <!-- 题匾 -->
+      <g><rect x="498" y="34" width="404" height="56" rx="4" fill="#3a2f1e" stroke="#9a7b2e" stroke-width="2"/>
+        <text x="700" y="72" text-anchor="middle" font-size="28" letter-spacing="10" fill="#e9dcbe" font-weight="bold">骊珠洞天舆图</text></g>
+      <!-- 朱印（点击查看全图考据） -->
+      <g class="trigger" data-legend="1" tabindex="0" role="button" aria-label="点击展开洞天考据" transform="translate(1232,150)">
+        <rect x="0" y="0" width="54" height="54" rx="3" fill="#9c3b2e" stroke="#6e271d" stroke-width="1.5"/>
+        <text x="27" y="22" text-anchor="middle" font-size="18" fill="#f1e6c9" font-weight="bold">骊珠</text>
+        <text x="27" y="44" text-anchor="middle" font-size="18" fill="#f1e6c9" font-weight="bold">洞天</text>
+      </g>
+      <!-- 方位盘 -->
+      <g transform="translate(1300,90)" stroke="#6b5f49" fill="none">
+        <circle r="28" stroke-width="1.5"/>
+        <path d="M0,-24 L7,3 L0,-1 L-7,3 Z" fill="#9c3b2e" stroke="none"/>
+        <path d="M0,24 L7,-3 L0,1 L-7,-3 Z" fill="#5a5040" stroke="none"/>
+        <text x="0" y="-32" font-size="13" fill="#2f2a20" text-anchor="middle" stroke="none">北</text>
+        <text x="0" y="44" font-size="12" fill="#2f2a20" text-anchor="middle" stroke="none">南</text>
+        <text x="36" y="5" font-size="12" fill="#2f2a20" text-anchor="middle" stroke="none">东</text>
+        <text x="-36" y="5" font-size="12" fill="#2f2a20" text-anchor="middle" stroke="none">西</text>
+      </g>
+      <!-- 图例（点击展开全图考据） -->
+      <g class="trigger" data-legend="1" tabindex="0" role="button" aria-label="点击展开图例与洞天考据" transform="translate(40,856)">
+        <rect x="0" y="0" width="232" height="112" rx="4" fill="#efe4c8" stroke="#6b5f49" stroke-width="1" opacity="0.94"/>
+        <text x="10" y="18" font-size="13" fill="#9a7b2e" font-weight="bold">图　例</text>
+        <use href="#house" transform="translate(10,26) scale(0.55)"/><text x="36" y="42" font-size="11" fill="#2f2a20">院落·铺肆</text>
+        <use href="#tree" transform="translate(120,26) scale(0.55)"/><text x="146" y="42" font-size="11" fill="#2f2a20">古树</text>
+        <use href="#kiln" transform="translate(10,56) scale(0.55)"/><text x="36" y="72" font-size="11" fill="#2f2a20">龙窑</text>
+        <use href="#gate" transform="translate(120,56) scale(0.55)"/><text x="146" y="72" font-size="11" fill="#2f2a20">城门</text>
+        <use href="#shrine" transform="translate(10,84) scale(0.5)"/><text x="36" y="100" font-size="11" fill="#2f2a20">祠庙·坟</text>
+        <path d="M120,90 q10,-8 20,0 q10,8 20,0" fill="none" stroke="#5f7f84" stroke-width="3"/><text x="170" y="94" font-size="11" fill="#2f2a20">水</text>
+        <text x="10" y="108" font-size="9.5" fill="#9c3b2e">▸ 点击此处 · 右上朱印，展开全图考据</text>
+      </g>
     </g>
   </svg>
     <div class="zoom">
@@ -573,9 +634,11 @@
           <li>千年窑火于真龙王朱如油锅业火；<b>东边无龙窑、无田地</b>。</li>
         </ul>
 
-        <h2>七、西边大山（六十二峰·节选）</h2>
+        <h2>七、西边大山（六十二峰·有名可考者）</h2>
         <ul>
-          <li><b>真珠山</b>（骊珠所在）、<b>披云山</b>（最神圣）、<b>神秀山</b>（天开神秀）、<b>远幕峰</b>（云海·古松）、<b>黄湖山</b>（小湖·蟒蛇泓下）、<b>仙草山</b>（草木精魅）。</li>
+          <li><b>真珠山</b>（沂山·骊珠所在）、<b>披云山</b>（最高峰·最神圣·北岳）、<b>神秀山</b>（天开神秀）、<b>远幕峰</b>（云海·千年古松）、<b>黄湖山</b>（山腰小湖·蟒蛇泓下）、<b>仙草山</b>（草木精魅）。</li>
+          <li><b>地真山</b>（远幕峰一带，早年几被掏空）、<b>挑灯山</b>（神秀山西·瀑布深潭）、<b>横槊峰</b>（神秀山北·掎角之势）、<b>灯芯台</b>、<b>宝箓山</b>（占地极大·规模仅次披云神秀）、<b>牛角山</b>（临近神秀·敦厚）、<b>梧桐山</b>（隔宝箓牛角与神秀相邻）、<b>彩云峰</b>（小而高·风景秀美）。</li>
+          <li>六十二峰中，仅此十四座于原著明载其名；其余山头无专名，地图上不臆造。</li>
         </ul>
 
         <h2 id="kan">八、龙形堪舆·困龙局</h2>
@@ -624,7 +687,7 @@ const DESC = {
   erlang:{tag:"中·市井",name:"二郎巷",text:"紧挨着杏花巷。二郎巷与杏花巷没住大富大贵人家，比上不足比下绰绰有余。袁家祖宅大门贴两张崭新彩绘门神（一持短戟银甲、金鸡独立作金刚怒目状），不大却精致，头顶开方正天井、地上凿水池、通风极好，二楼设美人靠。胡沣家距离大骊上柱国袁氏祖宅不远。"},
   qingniu:{tag:"南·小镇外",name:"青牛背",text:"出小镇往南，位于廊桥三十步外的溪畔。青色石崖，能站十多人，表面坑坑洼洼，以前小镇孩子来此凫水摸鱼各有挑选好的「座位」。本是一块上古月宫镜，如炼化得当，会是件半仙兵。"},
   longxuxi:{tag:"南·水系",name:"龙须溪",text:"源头在西边大山中，为东南流向。廊桥附近水位多及膝，稍高处及腰，偶有人等高小水坑。小镇水源只有这一条。最早是条小溪涧，名浯溪；早年的浯溪陈氏，曾是骊珠洞天的头等大姓。龙须溪与小镇主街，被堪舆家视为隐显的两条「龙须」。"},
-  langqiao:{tag:"南·小镇外",name:"廊桥·风生水起",text:"位于小镇外南边，前身是一座横跨小溪的石拱桥。后大骊为求国祚绵长、国势风生水起，由宋煜章奉命在石拱桥外包裹一层木制廊桥，主要梁柱木头来自西边大山。廊桥悬一块金字匾额，四字极大——「风生水起」。建造时此地埋入一只等人高的大瓷罐，罐中葬着凄惨枉死的大骊宋氏龙子龙孙。廊桥下偶有成群鲤鱼（红青两色，曾有一条金色）；老剑条悬挂桥下，被圣人用来镇压锁龙井出口（即桥底碧绿深潭），防龙气流溢过快将小洞天撑破。小镇三千年来不管发多大洪水，龙须溪最高水位从未高过老剑条剑尖。骊珠洞天下坠后，恢复成老旧石拱桥。"},
+  langqiao:{tag:"南·小镇外",name:"廊桥·风生水起",text:"位于小镇外南边，前身是一座横跨小溪的石拱桥。后大骊为求国祚绵长、国势风生水起，由宋煜章奉命在石拱桥外包裹一层木制廊桥，主要梁柱木头来自西边大山。廊桥悬一块金字匾额，四字极大——「风生水起」。建造时此地埋入一只等人高的大瓷罐，罐中葬着凄惨枉死的大骊宋氏龙子龙孙。廊桥下偶有成群鲤鱼（红青两色，曾有一条金色）；老剑条悬挂桥下，被圣人用来镇压锁龙井出口（即桥底碧绿深潭），防龙气流溢过快将小洞天撑破。小镇三千年来不管发多大洪水，龙须溪最高水位从未高过老剑条剑尖。骊珠洞天下坠后，恢复成老旧石拱桥。（注意：锁龙井即桥底那口碧绿深潭，囚着真龙残魂所化的骊珠；它与杏花巷的「铁锁井」并非一处——铁锁井中铁链乃缚妖索，系真龙王朱的一口生气所在，二者不可混淆。）"},
   tiejiang:{tag:"南·小镇外",name:"阮家铁匠铺",text:"廊桥再走三四里路的溪畔，是阮家父女开办的铁匠铺，搭建黄泥屋和茅舍七八栋。打造有七口水井，井口留轱辘架子和围栏。此地土壤为火性土最后一种，按姚老头说法叫「七月流火壤」，土性自行转温凉、可塑性强。七口水井除蕴含七元解厄、承担一些佛家因果外，实与真龙尸骸遥遥呼应，是争珠之势（压胜之意更多）。洞天坠地后形势翻转，加大骊龙泉剑宗选的几座西边大山为阵眼，牵引气运反哺祖师堂所在神秀山。"},
   xiaomiao:{tag:"南·小镇外",name:"小庙",text:"小镇南边黄泥小路，两侧是百姓稻田庄稼地，小路半道有座破败白墙黑瓦小庙，供百姓歇脚。庙内破败墙壁满是稚童炭笔涂鸦，大多是人名，低处斑驳不清或被人涂抹，高些处清晰可见：宋集薪、稚圭、赵繇、谢实、曹曦……刘羡阳和陈平安、顾粲三人的名字聚在左上角最高处。小庙里头写上名字的小镇孩子大多陨落，活下来的无一例外都是雄踞一方的豪杰枭雄（如谢实、曹曦）。杨老头如收租般，后来把小庙搬走。"},
   fumu:{tag:"南·小镇外",name:"陈平安父母坟",text:"位于小庙再往南一处小山岭的半山腰，周围是多年不种庄稼的荒芜田地。"},
@@ -632,13 +695,21 @@ const DESC = {
   shenxianfen:{tag:"南·小镇外",name:"神仙坟",text:"位于小镇东南方向。人迹罕至，周围是一座座早已无后人祭拜的坟茔，以及破败不堪的泥塑神像。有一尊五彩泥塑神像为披甲神人，大髯，铠甲铮铮、鳞片连绵，甲片边缘饰两条珠线、联珠颗粒饱满；神像踩踏在一座四方斩龙台上，《撼山》谱中的剑炉可能脱胎于此神像。骊珠洞天坠地后此处神像皆炸裂；后大骊朝廷出资修建为规格很高的武庙。三尊神像「肚内」既有市井铜钱，又有金精供养钱。"},
   laocishan:{tag:"北·小镇外",name:"老瓷山",text:"位于小镇外北边，堆积着历朝历代被督造官亲笔判定为残次品的瓷器碎片；小镇本命瓷的碎片也在此处。"},
   longyao:{tag:"北·小镇外",name:"龙窑（三十余口）",text:"除小镇东边外，小镇共有三十几座烧造瓷器的龙窑。它们建在那条真龙尸骸之上，以一处脊柱关键窍穴打造窑口，故每座龙窑烧造的本命瓷先天身负不同本命神通（如文昌窑、武隆窑、冲霄窑、拱璧窑、宝溪窑等）。龙窑号称千年窑火不熄，对于真龙王朱来说宛如油锅业火，不断灼烧其魂魄，亦压制人间蛟龙气运。此等布置与寻常堪舆多为对冲，却以天理压地理。东边没有龙窑、也没有田地。"},
-  xibiandashan:{tag:"西·群山",name:"西边大山（六十二峰）",text:"小镇西边群山，总计六十二座山头，早年陆陆续续被朝廷派来的督造官下令变成一座座封禁之山。自北而南有：真珠山（骊珠所在）、披云山（最神圣）、神秀山（天开神秀）、远幕峰（云海·千年古松）、黄湖山（山腰小湖·蟒蛇泓下）、仙草山（草木精魅）、挑灯山（瀑布深潭）、横槊峰（与神秀山掎角之势）等。小镇到挑灯山、横槊峰一带往返最少半月、最多一月。"},
+  xibiandashan:{tag:"西·群山",name:"西边大山（六十二峰）",text:"小镇西边群山，总计六十二座山头，早年陆陆续续被朝廷派来的督造官下令变成一座座封禁之山。原著明载其名者十四座：真珠山（骊珠所在·沂山）、披云山（最高峰·最神圣·北岳）、神秀山（天开神秀）、远幕峰（云海·千年古松）、黄湖山（山腰小湖·蟒蛇泓下）、仙草山（草木精魅）、地真山（远幕峰一带早年几被掏空）、挑灯山（神秀山西·瀑布深潭）、横槊峰（神秀山北·掎角之势）、灯芯台、宝箓山（占地极大·规模仅次披云神秀）、牛角山（临近神秀·敦厚）、梧桐山（隔宝箓牛角与神秀相邻）、彩云峰（小而高·风景秀美）。其余山头原著未赋专名，图上不臆造。小镇到挑灯山、横槊峰一带往返最少半月、最多一月。"},
   zhenzhu:{tag:"西·大山",name:"真珠山（沂山）",text:"在窑务督造署官衙档案上记载叫沂山，位于小镇和西边大山接壤处，是真龙所衔「骊珠」所在，土味最全。入山先杂草丛生，后一片竹林。"},
-  piyun:{tag:"西·大山",name:"披云山",text:"高度仅次于披云山者众，此处为骊珠洞天最为神圣之地。"},
+  piyun:{tag:"西·大山",name:"披云山",text:"西边大山最高峰，亦为骊珠洞天最为神圣之地（人称北岳），山势宏伟。"},
   shenxiu:{tag:"西·大山",name:"神秀山",text:"高度仅次于披云山，有一面陡峭山壁刻四个大字——「天开神秀」。挑灯山、横槊峰与其呈掎角之势。"},
   yuanmu:{tag:"西·大山",name:"远幕峰",text:"云海比落魄山稍胜一筹；有一座极高崖壁，有棵至少千年的古松，松间藤接树连壁，蜿蜒如大螈。"},
   huanghu:{tag:"西·大山",name:"黄湖山",text:"半山腰有一座小湖泊，远观湖水泛黄、近看极清澈。盘踞着一条井口粗细的蟒蛇泓下，在与小泥鳅的「争水之战」中落败。"},
-  xiancao:{tag:"西·大山",name:"仙草山",text:"只比真珠山大上一筹，山势矮小但草木格外茂盛、参天大树颇多，是群山中唯一一座有望诞生草木精魅的风水宝地（只惜地方太小，即便出现一位，根脚品相也不会太好）。"}
+  xiancao:{tag:"西·大山",name:"仙草山",text:"只比真珠山大上一筹，山势矮小但草木格外茂盛、参天大树颇多，是群山中唯一一座有望诞生草木精魅的风水宝地（只惜地方太小，即便出现一位，根脚品相也不会太好）。"},
+  dizhen:{tag:"西·大山",name:"地真山",text:"早年和远幕峰这一带几座山峰，几乎已被掏空采掘，一直到真珠山一带才有所好转。"},
+  tiaodeng:{tag:"西·大山",name:"挑灯山",text:"位于神秀山西方，隔着约莫十余里路。山中有一条大瀑布，瀑布之下有深潭。"},
+  hengshuo:{tag:"西·大山",name:"横槊峰",text:"位于神秀山北方，隔着约莫十余里路。与挑灯山、神秀山呈掎角之势，如同三尊巨人各立一方。小镇往返此地一带，最少半月、最多一月。"},
+  dengxin:{tag:"西·大山",name:"灯芯台",text:"与神秀山、黄湖山、宝箓山、彩云峰、仙草山同处「一峰两山」周围百里之内；灯芯台为其中较大的山头之一。"},
+  baolu:{tag:"西·大山",name:"宝箓山",text:"占地极大，在六十余座山头中名列前茅，且非空架子；云深山高水长，规模仅次于披云山与神秀山。陈平安曾买下此山。"},
+  niujiao:{tag:"西·大山",name:"牛角山",text:"临近神秀峰，山势不高、敦厚。"},
+  wutong:{tag:"西·大山",name:"梧桐山",text:"和神秀山之间，隔着宝箓山与牛角山。"},
+  caiyun:{tag:"西·大山",name:"彩云峰",text:"与仙草山、黄湖山、灯芯台、宝箓山同处「一峰两山」周围。山头较小而高、风景秀美（陈平安曾买下三座山头：仙草山小、宝箓山大、彩云峰高）。"}
 };
 
 const drawer = document.getElementById('drawer');
