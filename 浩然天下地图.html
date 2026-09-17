@@ -1,0 +1,1142 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>浩然天下堪舆总图</title>
+<style>
+  :root{
+    --paper:#e9dcbe; --ink:#2f2a20; --gold:#9a7b2e; --red:#9c3b2e; --side:#efe5cb;
+    /* 默认画风：青绿山水（石绿陆地·石青山峰·青绿海水） */
+    --land:#5a9b6e; --land-stroke:#2e5538; --sea:#bcd6d2;
+    --ocean0:#dcebe7; --ocean1:#a9cbc6; --wave:#7fb0ad;
+    --mtn-f:#356f8c; --mtn-s:#1d4560; --mtn-in:#16384e; --river:#5b86a8; --line:#5a6b52;
+  }
+  /* 水墨淡彩：宣纸留白·焦墨皴山·极淡青绿 */
+  .mapstage[data-style="shuimo"]{
+    --land:#e7e1d2; --land-stroke:#6b5f49; --sea:#e3e8e5;
+    --ocean0:#eef2ef; --ocean1:#d3dbd7; --wave:#9fb2ad;
+    --mtn-f:#5d594e; --mtn-s:#2e2a22; --mtn-in:#231f18; --river:#8fa6ac; --line:#6b5f49;
+  }
+  /* 金碧：泥金勾边·深石青海·富丽 */
+  .mapstage[data-style="jinbi"]{
+    --land:#4f9a6e; --land-stroke:#b5892f; --sea:#2f7d92;
+    --ocean0:#3f93a8; --ocean1:#1c5263; --wave:#9fd4e0;
+    --mtn-f:#2e6f96; --mtn-s:#b5892f; --mtn-in:#16384e; --river:#3f93b0; --line:#8a6a2e;
+  }
+  /* 浅绛山水：文人淡水彩·赭石山·花青轻罩·焦墨勾边 */
+  .mapstage[data-style="qianjiang"]{
+    --land:#e7dcc2; --land-stroke:#7a5a3a; --sea:#e6e3d8;
+    --ocean0:#efeae0; --ocean1:#d8d1bf; --wave:#b9a07e;
+    --mtn-f:#a9743f; --mtn-s:#6e3f1e; --mtn-in:#4a2a14; --river:#8a9ba0; --line:#7a5a3a;
+  }
+  /* 月夜图：靛蓝夜海·月白岛屿·朱砂最跳 */
+  .mapstage[data-style="yeyue"]{
+    --land:#cdd6e0; --land-stroke:#3a4a6a; --sea:#16243c;
+    --ocean0:#24395c; --ocean1:#0d182c; --wave:#5a7aa8;
+    --mtn-f:#3d5a82; --mtn-s:#1d2f4d; --mtn-in:#13203a; --river:#7e9ec4; --line:#3a4a6a;
+  }
+  /* 秋山：暖赭金林·枫朱秋意 */
+  .mapstage[data-style="qiushan"]{
+    --land:#9c8a4e; --land-stroke:#6e4a22; --sea:#cdbfa0;
+    --ocean0:#d8cba8; --ocean1:#bba982; --wave:#b08a52;
+    --mtn-f:#b5652e; --mtn-s:#7a3d18; --mtn-in:#54280f; --river:#8a9a8a; --line:#6e4a22;
+  }
+  /* 画风仅保留 6 套传统设色 + 写实绘卷底图 */
+  /* 写实绘卷：底图为生成堪舆图，SVG 陆地轮廓隐去，保留交互点与路网 */
+  .mapstage[data-style="huijuan"] .landfill{ fill:transparent !important; stroke:transparent !important; filter:none !important; }
+  .mapstage[data-style="huijuan"] #mtn,
+  .mapstage[data-style="huijuan"] #mtnS,
+  .mapstage[data-style="huijuan"] .mtnG{ display:none !important; }
+  .mapstage[data-style="huijuan"] #sea{ opacity:.15; }
+  .mapstage[data-style="huijuan"] .cont-name{
+    fill:#f3e8c8; stroke:#1a2430; stroke-width:3.5px; font-size:16px;
+  }
+  .mapstage[data-style="huijuan"] .pl{
+    fill:#f0e6c4; stroke:#1a2430; stroke-width:3.2px;
+  }
+  .mapstage[data-style="huijuan"] .road{
+    stroke:#e8c66a !important; opacity:.92;
+  }
+  .mapstage[data-style="huijuan"] .road:hover,
+  .mapstage[data-style="huijuan"] .road.on{
+    stroke:#ffb4a0 !important;
+  }
+  .painted-bg{ pointer-events:none; }
+  /* 画风：把 SVG 元素绑定到 CSS 变量（随 data-style 实时切换） */
+  #ocean stop:nth-child(1){stop-color:var(--ocean0)}
+  #ocean stop:nth-child(2){stop-color:var(--ocean1)}
+  #sea path{stroke:var(--wave)}
+  #mtn>path:first-child{fill:var(--mtn-f);stroke:var(--mtn-s)}
+  #mtn>path:last-child{stroke:var(--mtn-in);fill:none}
+  #mtnS>path{fill:var(--mtn-f);stroke:var(--mtn-s)}
+  .landfill{stroke:var(--land-stroke)}
+  .stylebar{position:fixed;left:16px;bottom:16px;z-index:30;display:flex;align-items:center;gap:6px;
+    background:rgba(239,229,203,.92);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+  .stylebar .lbl{font-size:13px;color:#6b5f49;margin-right:2px}
+  .stylebar select{font-family:inherit;font-size:13px;color:var(--ink);background:var(--side);
+    border:1px solid var(--line);border-radius:6px;padding:5px 8px;cursor:pointer}
+  .stylebar select:hover{background:#f3ecd6}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#1c1812;font-family:"KaiTi","STKaiti","Songti SC","SimSun",serif;color:var(--ink)}
+  .mapstage{position:fixed;inset:0;cursor:grab;background:#2a2419;overflow:hidden}
+  .mapstage:active{cursor:grabbing}
+  #map{width:100%;height:100%;display:block;touch-action:none}
+  .zoom{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:6px;z-index:30}
+  .zoom button{width:38px;height:38px;font-size:20px;line-height:1;border:1px solid var(--line);
+    background:var(--side);color:var(--ink);border-radius:6px;cursor:pointer;font-family:inherit}
+  .zoom button:hover{background:#f3ecd6}
+  .zoom .pct{font-size:12px;text-align:center;color:#6b5f49;background:rgba(239,229,203,.85);border-radius:6px;padding:2px 0}
+  .sidecol{position:fixed;top:0;right:0;height:100%;width:340px;max-width:86vw;background:var(--side);
+    box-shadow:-6px 0 24px rgba(0,0,0,.35);transform:translateX(102%);transition:transform .28s ease;z-index:40;
+    display:flex;flex-direction:column}
+  .sidecol.open{transform:translateX(0)}
+  .sidecol .hd{padding:16px 16px 8px;border-bottom:2px solid var(--gold);position:relative}
+  .sidecol .hd .tag{display:inline-block;font-size:12px;color:#fff;background:var(--gold);padding:1px 8px;border-radius:10px}
+  .sidecol .hd h2{margin:8px 0 2px;font-size:21px}
+  .sidecol .hd .sub{font-size:12px;color:#6b5f49}
+  .sidecol .bd{padding:12px 16px 20px;overflow:auto;font-size:14px;line-height:1.7}
+  .sidecol .bd p{margin:0 0 10px}
+  .sidecol .src{margin-top:14px;font-size:12px;color:#8a785a;border-top:1px dashed var(--line);padding-top:10px}
+  .sidecol .x{position:absolute;top:12px;right:12px;width:26px;height:26px;border:1px solid var(--line);
+    background:#e3d6b4;color:var(--ink);border-radius:6px;cursor:pointer;font-size:15px;line-height:22px;text-align:center}
+  .cont{cursor:pointer}
+  .cont:hover .landfill{filter:brightness(1.07)}
+  .cont-name{font-size:15px;fill:var(--ink);font-weight:bold;paint-order:stroke;stroke:#efe5cb;stroke-width:3px}
+  .pl{font-size:19px;fill:var(--ink);font-weight:bold;paint-order:stroke;stroke:#efe5cb;stroke-width:3.4px}
+  #lizhuBox{position:fixed;inset:0;background:#1c1812;z-index:50;display:none}
+  #lizhuBox.open{display:block}
+  #lizhuBox iframe{width:100%;height:100%;border:0}
+  #lizhuBox .back{position:fixed;top:14px;left:14px;z-index:60;padding:8px 14px;border:1px solid var(--gold);
+    background:var(--side);color:var(--ink);border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px}
+  .crumb{position:fixed;top:14px;left:14px;z-index:30;display:flex;gap:10px;align-items:center;
+    font-size:14px;color:#e8dcc0; letter-spacing:1px}
+  .crumb button{border:1px solid rgba(232,198,106,.45);background:rgba(20,17,15,.72);color:#e8c66a;
+    border-radius:8px;padding:8px 14px;cursor:pointer;font-family:inherit;font-size:13px;letter-spacing:1px}
+  .crumb button:hover{background:rgba(50,40,25,.85);border-color:#e8c66a}
+  .crumb .here{font-family:var(--kai, "KaiTi","STKaiti",serif); font-size:18px; color:#f0e6c4;
+    letter-spacing:3px; text-shadow:0 1px 6px rgba(0,0,0,.75)}
+  .crumb .hint{font-size:12px; color:#a89b80; opacity:.85}
+  /* 路网层 */
+  .road{cursor:pointer; transition:stroke .15s, stroke-width .15s, opacity .15s}
+  .road:hover, .road.on{stroke:#9c3b2e !important; stroke-width:4.2 !important; opacity:1 !important;
+    filter:drop-shadow(0 0 4px rgba(156,59,46,.55))}
+  .road-hit{stroke:transparent; stroke-width:14; fill:none; cursor:pointer}
+  .road-lbl{font-size:11px; fill:#6b3a30; paint-order:stroke; stroke:#efe5cb; stroke-width:3px; pointer-events:none; opacity:.72}
+  .road.on + .road-hit + .road-lbl, .road-lbl.show{opacity:1; fill:#9c3b2e}
+  .layerbar{position:fixed;left:16px;bottom:56px;z-index:30;display:flex;gap:6px;flex-wrap:wrap;align-items:center;
+    background:rgba(239,229,203,.92);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+  .layerbar .lbl{font-size:13px;color:#6b5f49;margin-right:2px;align-self:center}
+  .layerbar button{font-family:inherit;font-size:12px;color:var(--ink);background:var(--side);
+    border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  .layerbar button.on{background:#9c3b2e;color:#f5efe0;border-color:#7a2e24}
+  .layerbar button:hover{background:#f3ecd6}
+  .layerbar button.on:hover{background:#8a3428}
+  .layerbar input[type=search]{font-family:inherit;font-size:12px;color:var(--ink);background:var(--side);
+    border:1px solid var(--line);border-radius:6px;padding:5px 8px;width:120px;outline:none}
+  .layerbar input[type=search]:focus{border-color:var(--gold)}
+  .relrow{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+  .relrow button{font-family:inherit;font-size:12px;border:1px solid var(--line);background:#e3d6b4;
+    color:var(--ink);border-radius:10px;padding:3px 10px;cursor:pointer}
+  .relrow button:hover{background:#f3ecd6;border-color:var(--gold)}
+  .hitlist{margin:0;padding:0;list-style:none;max-height:180px;overflow:auto}
+  .hitlist li{padding:4px 2px;cursor:pointer;border-bottom:1px dashed rgba(90,107,82,.25)}
+  .hitlist li:hover{background:#e3d6b4}
+  .realm{cursor:pointer; transition:opacity .15s}
+  .realm:hover{opacity:.28 !important}
+  .realm-lbl{font-size:13px; font-weight:700; letter-spacing:2px; pointer-events:none;
+    paint-order:stroke; stroke:#efe5cb; stroke-width:3px; opacity:.85}
+  .charsec{margin:12px 0 4px;padding-top:8px;border-top:1px dashed var(--line)}
+  .charsec h4{margin:0 0 8px;font-size:13px;color:#8a785a;font-weight:600;letter-spacing:1px}
+  .charrow{display:flex;flex-wrap:wrap;gap:8px}
+  .charcard{display:flex;align-items:center;gap:8px;min-width:120px;max-width:100%;cursor:pointer;
+    background:#e8dcb8;border:1px solid var(--line);border-radius:8px;padding:6px 8px;
+    transition:background .15s,border-color .15s}
+  .charcard:hover{background:#f3ecd6;border-color:var(--gold)}
+  .charcard img,.charcard .ph{width:36px;height:36px;border-radius:50%;object-fit:cover;flex:0 0 36px;
+    border:1px solid var(--gold);background:#c9b88a}
+  .charcard .ph{display:flex;align-items:center;justify-content:center;font-size:16px;color:#3a2e1c;font-weight:700}
+  .charcard .meta{min-width:0;line-height:1.25}
+  .charcard .nm{font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .charcard .sub{font-size:11px;color:#6b5f49;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chardetail .por{width:96px;height:96px;border-radius:10px;object-fit:cover;border:1px solid var(--gold);
+    float:right;margin:0 0 8px 10px;background:#c9b88a}
+  .chardetail .por.ph{display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:700;color:#3a2e1c}
+</style>
+</head>
+<body>
+<div class="mapstage">
+  <svg id="map" viewBox="0 0 1600 1100" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="7" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="2.4"/></filter>
+      <pattern id="sea" width="46" height="24" patternUnits="userSpaceOnUse">
+        <path d="M0,12 q11,-8 23,0 t23,0" fill="none" stroke="#7fb0ad" stroke-width="1" opacity="0.55"/>
+      </pattern>
+      <radialGradient id="ocean" cx="50%" cy="46%" r="70%">
+        <stop offset="0%" stop-color="#dcebe7"/><stop offset="100%" stop-color="#a9cbc6"/>
+      </radialGradient>
+      <g id="mtn"><path d="M0,0 L9,-15 L16,-5 L25,-18 L34,0 Z" fill="#356f8c" stroke="#1d4560" stroke-width="1" stroke-linejoin="round"/>
+        <path d="M6,-4 L13,-11 M17,-6 L24,-13" stroke="#16384e" stroke-width=".6" opacity=".5" fill="none"/></g>
+      <g id="mtnS"><path d="M0,0 L7,-11 L13,-4 L20,-13 L27,0 Z" fill="#356f8c" stroke="#1d4560" stroke-width="1" stroke-linejoin="round"/></g>
+      <g id="city"><circle r="6" fill="#caa86a" stroke="#5a4a2a" stroke-width="1.3"/><circle r="2.4" fill="#5a4a2a"/></g>
+      <g id="capital"><rect x="-9" y="-9" width="18" height="18" rx="2" fill="#b5892f" stroke="#5a3f12" stroke-width="1.4"/><rect x="-3" y="-3" width="6" height="6" fill="#f1e4c4"/></g>
+      <g id="sect"><path d="M0,-13 L11,3 L-11,3 Z" fill="#8a6aa0" stroke="#4a2a5a" stroke-width="1.1"/><rect x="-3" y="3" width="6" height="9" fill="#6a4a7a"/></g>
+      <!-- 中土神州：中央最大，海岸曲折，南侧附小岛链 -->
+      <path id="land-zhongtu" d="M150,400 C176,342 214,300 286,282 C336,268 372,252 430,262 C470,272 486,248 524,240 C578,228 636,244 682,262 C746,282 812,292 872,320 C918,344 948,392 952,446 C956,498 924,548 872,578 C816,608 748,614 686,606 C640,600 604,616 556,618 C498,620 434,616 380,600 C316,580 258,544 214,494 C176,450 128,446 150,400 Z M404,646 C430,634 462,640 468,662 C474,684 444,700 420,690 C398,682 384,660 404,646 Z M506,668 C528,660 550,668 552,686 C554,704 528,714 510,704 C494,696 488,676 506,668 Z M604,650 C624,642 646,650 648,668 C650,686 626,696 608,686 C592,678 586,658 604,650 Z"/>
+      <!-- 东宝瓶洲：瓶形，细颈广腹束底；东侧附二岛 -->
+      <path id="land-bao" d="M500,96 C470,96 456,116 456,140 C456,168 468,184 464,202 C420,220 340,268 318,344 C300,412 320,486 372,546 C400,578 424,610 440,644 C446,656 452,666 458,674 L542,674 C548,666 554,656 560,644 C576,610 600,578 628,546 C680,486 700,412 682,344 C660,268 580,220 536,202 C532,184 544,168 544,140 C544,116 530,96 500,96 Z M632,524 C690,506 734,530 730,578 C726,626 666,646 634,618 C608,594 610,540 632,524 Z"/>
+      <!-- 北俱芦洲：东北大块，北岸多峡湾，东北附屿 -->
+      <path id="land-beiju" d="M212,362 C236,330 268,306 316,292 C344,284 366,268 396,276 C420,282 436,262 464,258 C500,252 524,268 556,262 C596,254 628,268 654,292 C684,318 712,340 730,372 C748,404 744,442 722,470 C700,498 664,510 626,506 C594,502 570,514 538,518 C496,524 452,518 412,506 C366,492 322,470 288,440 C254,410 222,398 212,362 Z M700,318 C720,308 740,320 738,340 C736,360 712,368 698,354 C686,342 686,328 700,318 Z M746,392 C764,384 780,394 778,412 C776,430 756,436 744,424 C734,414 734,402 746,392 Z"/>
+      <!-- 皑皑洲：横长冰原，北侧浮冰 -->
+      <path id="land-aiai" d="M208,346 C244,306 306,286 380,282 C458,278 538,276 612,288 C676,296 726,314 756,344 C784,374 774,420 742,442 C702,466 638,474 562,470 C488,466 410,456 338,438 C276,422 228,408 208,380 C198,364 200,356 208,346 Z M222,240 C240,230 260,240 258,258 C256,276 232,284 220,270 C210,258 210,246 222,240 Z M700,238 C722,228 742,240 740,262 C738,284 712,292 700,276 C690,264 690,246 700,238 Z"/>
+      <!-- 流霞洲：西北，西南拖长尾，附屿 -->
+      <path id="land-liuxia" d="M230,346 C256,312 296,292 344,288 C388,284 420,296 448,310 C480,326 512,318 544,322 C578,326 606,340 618,368 C632,396 620,432 590,450 C566,464 530,464 500,458 C470,452 448,468 424,482 C400,494 370,490 352,470 C330,458 322,442 318,428 C304,408 266,398 246,392 C216,382 212,364 230,346 Z M236,444 C254,436 272,446 268,462 C264,478 242,482 232,468 C224,456 224,450 236,444 Z"/>
+      <!-- 金甲洲：正西大块，西北出岬，南岸缓 -->
+      <path id="land-jinjia" d="M186,340 C202,306 228,292 254,300 C280,308 292,282 320,278 C356,272 386,282 414,286 C452,292 500,286 534,300 C574,318 596,360 592,404 C588,450 560,486 516,502 C470,520 420,528 372,522 C324,516 278,492 246,458 C214,424 196,392 182,372 C168,352 172,344 186,340 Z M256,540 C274,530 292,540 288,556 C284,572 262,576 252,562 C244,550 246,546 256,540 Z"/>
+      <!-- 扶摇洲：西南狭长倾斜，附屿 -->
+      <path id="land-fuyao" d="M264,392 C284,358 318,342 356,344 C390,346 414,332 446,338 C486,342 518,354 544,378 C568,402 574,440 558,468 C542,494 506,510 466,508 C426,506 392,514 358,506 C320,496 288,468 272,436 C260,414 256,402 264,392 Z M486,532 C502,524 518,534 514,548 C510,562 490,566 482,554 C474,544 476,538 486,532 Z"/>
+      <!-- 桐叶洲：原著"状如桐叶"——宽大阔卵形，左（西）叶基宽圆、右（东）收成尖长叶尖，下带叶柄 -->
+      <path id="land-tongye" d="M326,356 C424,324 540,322 616,350 C660,366 690,402 698,436 C690,468 660,492 606,492 C520,508 424,504 342,472 C314,464 302,442 304,416 C304,392 312,368 326,356 Z M308,408 C290,414 276,422 266,430 C274,438 288,440 308,436 Z"/>
+      <!-- 南婆娑洲：正南大块，西侧岛链 -->
+      <path id="land-posuo" d="M340,398 C360,368 396,354 434,354 C470,354 496,342 528,348 C570,354 606,376 622,406 C640,436 638,472 614,494 C586,516 550,522 514,520 C478,518 452,528 420,526 C384,524 348,508 328,478 C310,452 316,418 340,398 Z M262,410 C280,402 296,412 292,428 C288,444 266,448 256,434 C248,424 250,416 262,410 Z M206,440 C222,434 236,444 232,458 C228,472 208,476 200,464 C192,454 196,446 206,440 Z"/>
+    </defs>
+
+    <g id="ui-fixed">
+      <g class="seal" transform="translate(1492,56)">
+        <rect x="-26" y="-26" width="52" height="52" rx="4" fill="none" stroke="#9c3b2e" stroke-width="2.4"/>
+        <text x="0" y="-4" text-anchor="middle" font-size="15" fill="#9c3b2e" font-weight="bold">剑来</text>
+        <text x="0" y="16" text-anchor="middle" font-size="13" fill="#9c3b2e">舆地</text>
+      </g>
+      <g class="compass" transform="translate(1492,1010)">
+        <circle r="30" fill="#efe5cb" stroke="#9a7b2e" stroke-width="1.6"/>
+        <path d="M0,-26 L6,0 L0,26 L-6,0 Z" fill="#9c3b2e"/>
+        <path d="M-26,0 L0,-6 L26,0 L0,6 Z" fill="#bcae86"/>
+        <text x="0" y="-32" text-anchor="middle" font-size="12" fill="#2f2a20">北</text>
+      </g>
+      <g class="legend" transform="translate(40,980)">
+        <rect x="0" y="0" width="200" height="92" rx="5" fill="#efe5cb" stroke="#9a7b2e" stroke-width="1.4"/>
+        <text x="12" y="20" font-size="13" fill="#2f2a20" font-weight="bold">图例</text>
+        <use href="#capital" transform="translate(22,42) scale(.8)"/><text x="38" y="46" font-size="12" fill="#2f2a20">王朝/国都</text>
+        <use href="#city" transform="translate(22,64) scale(.8)"/><text x="38" y="68" font-size="12" fill="#2f2a20">城邑</text>
+        <use href="#sect" transform="translate(120,42) scale(.8)"/><text x="136" y="46" font-size="12" fill="#2f2a20">宗门</text>
+        <use href="#mtn" transform="translate(120,64) scale(.7)"/><text x="150" y="68" font-size="12" fill="#2f2a20">山脉</text>
+      </g>
+    </g>
+
+    <g id="scene"></g>
+  </svg>
+</div>
+
+<div class="crumb" id="crumb"></div>
+<div class="zoom">
+  <div class="pct" id="pct">100%</div>
+  <button id="zin" title="放大">＋</button>
+  <button id="zout" title="缩小">－</button>
+  <button id="zreset" title="复位">⟳</button>
+</div>
+<div class="stylebar" id="stylebar">
+  <span class="lbl">画风</span>
+  <select id="styleSel">
+    <option value="qinglv">青绿山水</option>
+    <option value="shuimo">水墨淡彩</option>
+    <option value="jinbi">金碧</option>
+    <option value="qianjiang">浅绛山水</option>
+    <option value="yeyue">月夜图</option>
+    <option value="qiushan">秋山</option>
+    <option value="huijuan">写实绘卷</option>
+  </select>
+</div>
+<div class="layerbar" id="layerbar">
+  <span class="lbl">图层</span>
+  <button type="button" id="btnRoads" class="on">路网</button>
+  <button type="button" id="btnNames" class="on">地名</button>
+  <button type="button" id="btnRoadLbl" class="on">路名</button>
+  <button type="button" id="btnRealms" class="on">势力</button>
+  <input type="search" id="poiSearch" placeholder="搜地名…" autocomplete="off">
+</div>
+<div class="sidecol" id="side">
+  <div class="hd">
+    <button class="x" id="closeP">✕</button>
+    <span class="tag" id="pTag">要地</span>
+    <h2 id="pName">—</h2>
+    <div class="sub" id="pSub"></div>
+  </div>
+  <div class="bd" id="pBody"></div>
+</div>
+<div id="lizhuBox">
+  <button class="back" id="lizhuBack">← 返回宝瓶洲</button>
+  <iframe id="lizhuIframe" src=""></iframe>
+</div>
+
+<script>
+const CLS = {red:'#9c3b2e', gold:'#b5892f', green:'#4f7a3a', purple:'#6a4a7a', blue:'#3f6a8a', teal:'#2f8a7a', ink:'#2f2a20'};
+
+/* 九洲：标注/热区对齐 map-assets/haoran-painted.png（1600×1100 与底图 2048×1408 等比） */
+const WORLD = [
+  {key:'zhongtu', name:'中土神州', sub:'中央·文庙所在·面积最大', land:'land-zhongtu', wx:556, wy:366, ws:0.40, lx:780, ly:545, hit:{x:780,y:520,rx:230,ry:170},
+    wMtn:[{x:300,y:340,s:.9},{x:880,y:360,s:1.0},{x:500,y:560,s:.75}]},
+  {key:'bao',     name:'东宝瓶洲', sub:'正东·面积最小·故事起点', land:'land-bao', wx:1270, wy:495, ws:0.18, lx:1365, ly:560, hit:{x:1365,y:540,rx:90,ry:130},
+    wMtn:[{x:500,y:250,s:.7},{x:480,y:480,s:.65}]},
+  {key:'beiju',   name:'北俱芦洲', sub:'东北·剑修第一大洲', land:'land-beiju', wx:1001, wy:196, ws:0.34, lx:1210, ly:300, hit:{x:1210,y:275,rx:160,ry:110},
+    wMtn:[{x:320,y:300,s:.95},{x:620,y:340,s:.9},{x:450,y:450,s:.8}]},
+  {key:'aiai',    name:'皑皑洲',   sub:'正北·雪花钱矿脉·首富', land:'land-aiai', wx:610, wy:128, ws:0.32, lx:780, ly:165, hit:{x:780,y:145,rx:170,ry:95},
+    wMtn:[{x:400,y:320,s:.85},{x:680,y:360,s:.9}]},
+  {key:'liuxia',  name:'流霞洲',   sub:'西北·隐世·势力偏弱', land:'land-liuxia', wx:291, wy:162, ws:0.34, lx:355, ly:310, hit:{x:355,y:290,rx:150,ry:110},
+    wMtn:[{x:300,y:340,s:.85},{x:540,y:400,s:.8}]},
+  {key:'jinjia',  name:'金甲洲',   sub:'正西·武夫·边关要塞', land:'land-jinjia', wx:220, wy:401, ws:0.34, lx:280, ly:520, hit:{x:280,y:495,rx:140,ry:130},
+    wMtn:[{x:300,y:340,s:.9},{x:500,y:420,s:.85},{x:380,y:300,s:.75}]},
+  {key:'fuyao',   name:'扶摇洲',   sub:'西南·蛮荒主战场·残破', land:'land-fuyao', wx:250, wy:691, ws:0.34, lx:360, ly:830, hit:{x:360,y:800,rx:150,ry:120},
+    wMtn:[{x:320,y:360,s:.9},{x:520,y:400,s:.85}]},
+  {key:'tongye',  name:'桐叶洲',   sub:'东南·物产丰·玉圭宗', land:'land-tongye', wx:995, wy:709, ws:0.34, lx:1140, ly:880, hit:{x:1140,y:850,rx:150,ry:120},
+    wMtn:[{x:360,y:360,s:.85},{x:600,y:400,s:.9}]},
+  {key:'posuo',   name:'南婆娑洲', sub:'正南·亚圣文脉·倒悬山', land:'land-posuo', wx:626, wy:720, ws:0.32, lx:780, ly:930, hit:{x:780,y:900,rx:160,ry:110},
+    wMtn:[{x:380,y:380,s:.85},{x:580,y:420,s:.9}]}
+];
+
+const ZHOU = {
+  bao:{
+    name:'东宝瓶洲', sub:'浩然天下正东 · 九洲面积最小 · 骊珠洞天在最北端',
+    detail:{
+      realms:[
+        {key:'dali', name:'大骊', lx:480, ly:160, fill:'#b5892f',
+          d:'M455,100 C430,150 420,200 430,250 C420,300 430,360 450,420 C470,470 500,500 540,510 C590,520 640,500 670,460 C690,420 680,360 660,320 C640,280 620,240 600,200 C580,160 540,120 500,100 Z',
+          desc:'大骊王朝，宋氏执政，崔瀺任国师。宝瓶洲北方核心世俗王朝，曾以两大边军覆灭卢氏王朝；版图含龙泉郡与骊珠洞天坠落地，向南经略至书简湖一带。'},
+        {key:'qingluan_r', name:'青鸾国', lx:670, ly:620, fill:'#2f8a7a',
+          d:'M620,570 C610,590 615,620 630,640 C650,655 680,650 700,630 C715,610 710,580 690,565 C670,555 640,555 620,570 Z',
+          desc:'宝瓶洲东南藩属国，向大骊称臣。'},
+        {key:'caiyi_r', name:'彩衣国', lx:730, ly:555, fill:'#3f6a8a',
+          d:'M680,530 C670,545 675,570 695,580 C720,590 750,575 760,550 C765,530 750,515 725,512 C705,510 690,518 680,530 Z',
+          desc:'宝瓶洲东南藩属国，与青鸾国同为大骊附庸。胭脂郡等地在此国。'},
+        {key:'laolong_r', name:'老龙城', lx:500, ly:655, fill:'#9c3b2e',
+          d:'M455,620 C445,635 450,660 470,672 C495,682 530,678 545,660 C555,645 548,625 525,615 C500,605 470,608 455,620 Z',
+          desc:'宝瓶洲最南大城，南海之滨。符家、范家等盘踞，半独立于大骊；蛮荒大战中藩王宋集薪镇守南方战场，是洲之命脉。'}
+      ],
+      rivers:[{d:'M500,150 C482,250 520,330 500,420 C486,500 516,560 505,642', name:'齐渎'}],
+      roads:[
+        {d:'M500,78 C490,150 472,180 470,210 C468,260 488,285 500,310', name:'骊珠官道', from:'骊珠洞天', to:'大骊京城', desc:'自洞天南下龙泉郡，直抵大骊国都，陈平安少年远游与大骊运兵之干道。'},
+        {d:'M500,310 C555,330 585,345 610,360 M500,310 C560,305 620,302 650,300', name:'中部山门道', from:'大骊京城', to:'云霞山·正阳山', desc:'京城东出，分赴云霞山、正阳山等中部仙门。'},
+        {d:'M500,310 C515,420 528,500 540,560 C545,600 498,625 500,642', name:'南北纵贯道', from:'大骊京城', to:'老龙城', desc:'贯穿宝瓶洲南北，经书简湖西缘南下老龙城，商贸与军旅要道。'},
+        {d:'M540,560 C600,575 640,585 660,600 C680,585 700,572 710,560', name:'东南藩属道', from:'书简湖', to:'青鸾国·彩衣国', desc:'自书简湖东南行，通青鸾、彩衣等大骊藩属。'},
+        {d:'M640,470 C670,450 685,440 700,432', name:'风雪庙支路', from:'风雪庙', to:'神诰宗', desc:'南部剑宗与神诰宗之间的山道。'},
+        {d:'M430,228 C450,250 460,280 470,310', name:'龙泉剑道', from:'龙泉剑宗', to:'大骊京城', desc:'阮邛一脉入京常走之路。'},
+        {d:'M600,400 C605,430 610,450 640,470', name:'风雷园道', from:'风雷园', to:'风雪庙', desc:'中部园门南下风雪庙的捷径。'},
+        {d:'M450,248 C460,230 465,220 470,210', name:'落魄山道', from:'落魄山', to:'龙泉郡', desc:'陈平安下山入郡的常走之路，宗门与世俗往来频繁。'},
+        {d:'M470,210 C480,180 490,140 500,78', name:'龙泉骊珠道', from:'龙泉郡', to:'骊珠洞天', desc:'自龙泉郡北上旧洞天遗址之路，少年陈平安远游起点。'}
+      ],
+      mtn:[{x:610,y:360,s:1.2},{x:650,y:300,s:1.05},{x:560,y:250,s:0.95},{x:470,y:430,s:0.9},{x:420,y:520,s:0.85}],
+      places:[
+        {key:'lizhu', name:'骊珠洞天', x:500,y:78, lx:560,ly:70, cls:'red', tag:'洞天·可下钻', drill:'lizhu',
+          desc:'又名小镇，三十六小洞天之一，天下最后一条真龙王朱的丧生之地。悬浮于东宝瓶洲最北端，三千年前屠龙之战后由三教一家四位圣人联手布置。是本书开篇起点、陈平安故乡。点击可进入该地详图。'},
+        {key:'longquan', name:'龙泉郡', x:470,y:210, lx:380,ly:198, cls:'gold', tag:'郡',
+          desc:'骊珠洞天坠落后落于大骊版图之处。陈平安后来于此经营落魄山，阮邛铸剑、龙泉剑宗源起之地。'},
+        {key:'luopo', name:'落魄山', x:450,y:248, lx:530,ly:256, cls:'red', tag:'宗门',
+          desc:'陈平安在龙泉郡经营的山头，后正式创建宗门、跻身「宗」字头。祖师堂悬三幅挂像：居中老秀才，左齐静春，右崔诚。门下弟子裴钱、崔东山、曹晴朗等，大管家朱敛，护山供奉周米粒。'},
+        {key:'dalicap', name:'大骊京城', x:500,y:310, lx:426,ly:312, cls:'gold', tag:'王朝',
+          desc:'大骊王朝国都，宋氏执政。宋煜章奉命于骊珠洞天外建廊桥「风生水起」以求国祚绵长。大骊为宝瓶洲北方核心世俗王朝，曾以两大边军覆灭卢氏王朝。'},
+        {key:'yunxia', name:'云霞山', x:610,y:360, lx:648,ly:356, cls:'green', tag:'山门',
+          desc:'宝瓶洲中部名山，山上宗门势力，蔡金简等练气士出自此处。'},
+        {key:'zhengyang', name:'正阳山', x:650,y:300, lx:690,ly:292, cls:'green', tag:'山门',
+          desc:'宝瓶洲中部大山，妖族搬山猿一脉盘踞，曾下镇骊珠洞天、问剑陈平安。本色凌厉、山势奇绝。'},
+        {key:'zhenwu', name:'真武山', x:560,y:250, lx:600,ly:236, cls:'green', tag:'山门',
+          desc:'宝瓶洲中部山头，真武山一脉，与云霞、正阳并称中部仙门。'},
+        {key:'fengxue', name:'风雪庙', x:640,y:470, lx:684,ly:478, cls:'purple', tag:'宗门',
+          desc:'宝瓶洲南部剑修宗门风雪庙，山上人势力，参与洲内纷争与蛮荒之战。剑仙魏晋出自此宗。'},
+        {key:'shengao', name:'神诰宗', x:658,y:414, lx:706,ly:398, cls:'purple', tag:'宗门',
+          desc:'宝瓶洲宗门神诰宗，与风雪庙等同为洲内正道大山。'},
+        {key:'shujian', name:'书简湖', x:540,y:560, lx:470,ly:566, cls:'blue', tag:'湖',
+          desc:'宝瓶洲南部水域，善恶试炼之地，陈平安「问心局」所在。湖中诸岛门派错综，青峡岛、观湖书院皆在此。'},
+        {key:'laolong', name:'老龙城', x:500,y:642, lx:560,ly:650, cls:'gold', tag:'南疆大城',
+          desc:'宝瓶洲最南、南海之滨大城，符家几兄妹与范家等盘踞。蛮荒大战中藩王宋集薪镇守南方战场主心骨，剑舟悬空于城后。'},
+        {key:'qingluan', name:'青鸾国', x:660,y:600, lx:702,ly:606, cls:'teal', tag:'藩属',
+          desc:'宝瓶洲东南藩属国，向大骊称臣。'},
+        {key:'caiyi', name:'彩衣国', x:710,y:560, lx:754,ly:556, cls:'teal', tag:'藩属',
+          desc:'宝瓶洲东南藩属国，与青鸾国同为洲内附庸。'},
+        {key:'longquanjian', name:'龙泉剑宗', x:430,y:228, lx:350,ly:236, cls:'red', tag:'剑宗',
+          desc:'阮邛创立的宝瓶洲剑宗，大骊首席供奉阮邛为宗主，与风雪庙关系密切，弟子谢灵天赋异禀。'},
+        {key:'fenglei', name:'风雷园', x:600,y:400, lx:600,ly:424, cls:'purple', tag:'园门',
+          desc:'宝瓶洲园门，前园主李抟景曾一人压制正阳山，今园主黄河，刘灞桥、邢有恒等出自此处。'}
+      ]
+    }
+  },
+  zhongtu:{
+    name:'中土神州', sub:'浩然天下中央 · 文庙总庙 · 面积最大·实力最强', ds:1.25, dx:120, dy:30,
+    detail:{
+      rivers:[{d:'M300,420 C420,400 560,440 720,420 C840,405 900,430 940,440', name:'大江'}],
+      roads:[
+        {d:'M540,300 C560,380 540,470 560,540', name:'文庙南下道', from:'文庙总庙', to:'三大学宫', desc:'自文庙南下学宫群，儒生游学与礼圣巡行之主道。'},
+        {d:'M300,420 C460,430 700,430 900,440', name:'东西大江官道', from:'大玄都观', to:'穗山', desc:'沿大江北岸东西横贯，连道家祖庭与东岳，商贸与传法干道。'},
+        {d:'M620,260 C640,340 620,470 640,560', name:'中轴纵贯道', from:'文庙', to:'三大学宫南', desc:'中土南北中轴，文庙议事与学子赴考必经。'},
+        {d:'M340,480 C400,440 480,380 540,340', name:'桂山入京道', from:'桂山', to:'文庙总庙', desc:'西岳桂山神朝圣文庙之路。'},
+        {d:'M760,340 C760,400 760,440 760,470', name:'九嶷白帝道', from:'九嶷山', to:'白帝城', desc:'东侧名山南下白帝城，郑居中一脉往来的山道。'},
+        {d:'M640,480 C600,420 580,360 540,320', name:'桃符山道', from:'桃符山', to:'文庙总庙', desc:'于玄符道一脉入京之路。'},
+        {d:'M420,420 C480,400 520,360 540,320', name:'龙虎山朝圣道', from:'龙虎山', to:'文庙总庙', desc:'天师道与文庙往来之正道。'},
+        {d:'M300,360 C380,380 420,400 420,420', name:'玄都龙虎道', from:'大玄都观', to:'龙虎山', desc:'道家两大祖庭之间的山道。'},
+        {d:'M880,380 C860,400 820,430 760,470', name:'穗山白帝道', from:'穗山', to:'白帝城', desc:'东岳南下白帝城的官道，军旅与豪阀往来频繁。'}
+      ],
+      mtn:[{x:880,y:340,s:1.1},{x:840,y:420,s:1.0},{x:900,y:480,s:0.95},{x:300,y:340,s:0.9},{x:260,y:420,s:0.85},{x:360,y:470,s:0.8},{x:780,y:330,s:0.8}],
+      places:[
+        {key:'wenmiao', name:'文庙总庙', x:540,y:300, lx:600,ly:296, cls:'gold', tag:'儒教核心',
+          desc:'至圣先师道场，礼圣执掌，统筹九洲规矩、发行神仙钱。浩然天下权力核心。'},
+        {key:'longhu', name:'龙虎山', x:420,y:420, lx:360,ly:416, cls:'red', tag:'道教祖庭',
+          desc:'天师道祖庭，仙剑「万法」所在，雷法正统，大天师赵天籁坐镇。'},
+        {key:'xuandu', name:'大玄都观', x:300,y:360, lx:246,ly:356, cls:'red', tag:'道观',
+          desc:'白也旧地，仙剑「太白」原产地。'},
+        {key:'baidi', name:'白帝城', x:760,y:470, lx:806,ly:476, cls:'gold', tag:'城',
+          desc:'中土名城，郑居中坐镇，白帝城一脉豪雄。'},
+        {key:'suishan', name:'穗山', x:880,y:380, lx:924,ly:380, cls:'green', tag:'五岳之东岳',
+          desc:'中土神洲东岳，五岳之首，山巅崖壁留有四圣亲笔题刻，山神周游坐镇近六千年。'},
+        {key:'xuegong', name:'三大学宫', x:620,y:540, lx:668,ly:546, cls:'purple', tag:'学宫',
+          desc:'文庙之下三大学宫与七十二书院扎堆，醇儒辈出。'},
+        {key:'guishan', name:'桂山', x:340,y:480, lx:300,ly:496, cls:'green', tag:'五岳',
+          desc:'中土五岳之一，山神领地，与穗山、九嶷山等同列五岳。'},
+        {key:'jiuyi', name:'九嶷山', x:760,y:340, lx:806,ly:336, cls:'green', tag:'五岳',
+          desc:'中土五岳之一，山神领地，灵脉深厚。'},
+        {key:'taofu', name:'桃符山', x:640,y:480, lx:686,ly:496, cls:'purple', tag:'山门',
+          desc:'中土神洲名山，开山祖师于玄（符道第一人），薛直岁、杨玄宝等出自此处。'}
+      ]
+    }
+  },
+  beiju:{
+    name:'北俱芦洲', sub:'浩然天下东北 · 剑修密度第一 · 民风剽悍',
+    detail:{
+      realms:[
+        {key:'dayuan_r', name:'大源王朝', lx:400, ly:348, fill:'#b5892f',
+          d:'M340,310 C320,340 330,380 360,400 C400,420 450,410 470,380 C485,355 475,320 445,300 C410,285 365,288 340,310 Z',
+          desc:'北俱芦洲凡俗十大王朝之一，与山上剑宗并存。原著仅具名此一王朝，其余九国未载名号，图上不臆造。'}
+      ],
+      rivers:[{d:'M300,360 C360,380 420,360 480,380', name:'济渎'}],
+      roads:[
+        {d:'M360,300 C400,360 440,420 480,460', name:'剑修纵贯道', from:'顾祐拳场', to:'琼林宗', desc:'北俱芦洲南北剑修往来主道，沿途剑意冲天。'},
+        {d:'M260,360 C340,380 460,400 560,420', name:'东西大官道', from:'大源王朝', to:'太徽剑宗', desc:'贯穿洲中部，凡俗商贸与山上传法共用。'},
+        {d:'M300,440 C360,450 420,455 480,460', name:'北疆阴路', from:'披麻宗', to:'琼林宗', desc:'自骸骨滩、鬼蜮谷一带东行，披麻宗巡查北疆之路。'},
+        {d:'M560,300 C580,330 590,355 600,380', name:'云霄太徽道', from:'崇玄署云霄宫', to:'太徽剑宗', desc:'两大宗门之间的山道，贺小凉一脉常走。'},
+        {d:'M400,360 C380,330 360,315 340,300', name:'拳场朝圣道', from:'大源王朝', to:'顾祐拳场', desc:'武夫朝圣顾祐拳场之路，撼山拳传承所系。'},
+        {d:'M520,320 C500,360 480,400 400,420 C380,430 360,440 340,450', name:'趴地北巡道', from:'趴地峰', to:'骸骨滩', desc:'火龙真人一脉北巡骸骨滩之路。'},
+        {d:'M400,420 C420,430 440,440 460,450 C468,455 474,458 480,460', name:'浮萍剑道', from:'浮萍剑湖', to:'琼林宗', desc:'淬剑湖畔通往琼林宗的山道。'},
+        {d:'M280,460 C300,470 310,475 320,480', name:'滩谷小径', from:'骸骨滩', to:'鬼蜮谷', desc:'两处绝地之间的阴路，非披麻宗修士不可轻入。'}
+      ],
+      mtn:[{x:520,y:300,s:1.15},{x:560,y:360,s:1.05},{x:480,y:420,s:1.0},{x:620,y:340,s:0.95},{x:320,y:450,s:0.85},{x:280,y:460,s:0.8}],
+      places:[
+        {key:'padi', name:'趴地峰', x:520,y:320, lx:566,ly:316, cls:'green', tag:'山门',
+          desc:'火龙真人道场，北俱芦洲剑修核心，飞升境巅峰火龙真人坐镇，火法第一。'},
+        {key:'fuping', name:'浮萍剑湖', x:400,y:420, lx:344,ly:424, cls:'blue', tag:'剑湖',
+          desc:'北俱芦洲剑修淬剑之地，湖底藏剑冢遗迹。'},
+        {key:'taihui', name:'太徽剑宗', x:600,y:380, lx:646,ly:384, cls:'purple', tag:'宗门',
+          desc:'北俱芦洲顶尖剑宗之一，剑修如云。宗主刘景龙，率三十六剑仙战死剑气长城。'},
+        {key:'qionglin', name:'琼林宗', x:480,y:460, lx:526,ly:466, cls:'purple', tag:'宗门',
+          desc:'北俱芦洲大宗，与太徽剑宗并立。'},
+        {key:'guyou', name:'顾祐拳场', x:340,y:300, lx:286,ly:296, cls:'gold', tag:'武场',
+          desc:'撼山拳发源地，十境武夫顾祐于此，陈平安撼山拳之渊源。'},
+        {key:'pima', name:'披麻宗', x:300,y:440, lx:248,ly:446, cls:'purple', tag:'宗门',
+          desc:'镇守骸骨滩、鬼蜮谷，镇压阴物，守护北俱芦洲北疆地界，实力强横。'},
+        {key:'yunxiao', name:'崇玄署云霄宫', x:560,y:300, lx:606,ly:296, cls:'purple', tag:'道宫',
+          desc:'宗主贺小凉，为白玉京大掌教陆沉的嫡传弟子。'},
+        {key:'dayuan', name:'大源王朝', x:400,y:360, lx:346,ly:356, cls:'gold', tag:'王朝',
+          desc:'北俱芦洲凡俗十大王朝之一，与山上剑宗并存。'},
+        {key:'haigutan', name:'骸骨滩', x:280,y:460, lx:228,ly:470, cls:'red', tag:'绝地',
+          desc:'北俱芦洲北疆绝地，白骨累累、阴气冲天。披麻宗于此镇压阴物，守护洲之北界。'},
+        {key:'guiyugu', name:'鬼蜮谷', x:330,y:490, lx:278,ly:500, cls:'red', tag:'绝地',
+          desc:'紧邻骸骨滩的鬼蜮之谷，妖鬼盘踞。与骸骨滩同为披麻宗镇守要地。'}
+      ]
+    }
+  },
+  aiai:{
+    name:'皑皑洲', sub:'浩然天下正北 · 雪花钱矿脉 · 全浩然最富', ds:1.35, dx:300, dy:90,
+    detail:{
+      rivers:[{d:'M320,360 C440,380 560,360 660,380', name:'雪川'}],
+      roads:[
+        {d:'M400,320 C480,360 560,360 640,400', name:'雪原商道', from:'皑皑洲刘氏', to:'雪花玉矿', desc:'首富刘氏通往矿脉的商道，雪花钱运输干道，驼队不绝。'},
+        {d:'M300,400 C460,410 600,420 700,440', name:'南境官道', from:'雪原玉山', to:'雷公庙', desc:'沿洲南海岸东行，串联玉山与雷法武场。'},
+        {d:'M320,300 C420,300 500,300 540,300', name:'北山朝圣道', from:'九都山', to:'莺花洞天', desc:'自九都山宗门东行，通往无主洞天的山道。'},
+        {d:'M500,340 C540,320 580,310 600,400', name:'刘氏矿道', from:'皑皑洲刘氏', to:'雪花玉矿', desc:'刘氏私家矿道，戒备森严，半仙兵护送。'},
+        {d:'M420,420 C460,400 480,360 500,340', name:'玉山商道', from:'雪原玉山', to:'皑皑洲刘氏', desc:'玉料与雪花钱汇入市集之路。'},
+        {d:'M680,330 C660,360 640,380 600,400', name:'雷公东道', from:'雷公庙', to:'雪花玉矿', desc:'雷公庙武夫护矿之路。'}
+      ],
+      mtn:[{x:560,y:300,s:1.0},{x:620,y:340,s:0.9},{x:480,y:420,s:0.95},{x:680,y:380,s:0.9},{x:320,y:300,s:0.85}],
+      places:[
+        {key:'liujubao', name:'皑皑洲刘氏', x:500,y:340, lx:548,ly:336, cls:'gold', tag:'一洲首富',
+          desc:'皑皑洲第一世家，家主刘聚宝（刘财神）十四境合道雪花钱，富甲九洲，半仙兵存量冠绝天下。'},
+        {key:'xuehua', name:'雪花玉矿', x:600,y:400, lx:648,ly:404, cls:'blue', tag:'矿脉',
+          desc:'雪花钱（神仙钱原料）矿脉连绵，皑皑洲富庶之源。'},
+        {key:'xueyuan', name:'雪原玉山', x:420,y:420, lx:366,ly:424, cls:'green', tag:'山',
+          desc:'皑皑洲雪原与玉石矿脉交织，距离蛮荒最远，偏安富足。'},
+        {key:'jiudou', name:'九都山', x:320,y:300, lx:270,ly:296, cls:'red', tag:'宗门',
+          desc:'皑皑洲宗门，祖师堂秘传闱编郎与却鬼符（绿筋金书），峰主邓凉曾立剑气长城战功。'},
+        {key:'leigong', name:'雷公庙', x:680,y:330, lx:712,ly:312, cls:'purple', tag:'武场',
+          desc:'马湖府雷法武夫圣地，庙祝沛阿香（雷公）十境武夫，为刘氏供奉。'},
+        {key:'yinghua', name:'莺花洞天', x:540,y:300, lx:566,ly:282, cls:'teal', tag:'洞天',
+          desc:'三十六小洞天之一，光阴流速异于外界，天材地宝孕育极速，始终无主。'}
+      ]
+    }
+  },
+  liuxia:{
+    name:'流霞洲', sub:'浩然天下西北 · 隐世 · 存在感最低', ds:1.5, dx:330, dy:200,
+    detail:{
+      roads:[
+        {d:'M360,360 C440,380 520,380 580,420', name:'洲内主道', from:'青宫山', to:'天隅洞天', desc:'流霞洲少有的官道，串联山上第一人道场与超然台。'},
+        {d:'M300,320 C380,340 440,360 420,380', name:'青宫碧潮道', from:'青宫山', to:'碧潮福地', desc:'自青宫山东下碧潮福地的山道，剑修常走。'},
+        {d:'M500,330 C520,370 520,400 520,420', name:'曲江剑道', from:'曲江上巳剑派', to:'天隅洞天', desc:'剑派弟子赴超然台论剑之路。'},
+        {d:'M400,470 C440,440 480,400 500,330', name:'方寸山道', from:'方寸宗', to:'曲江上巳剑派', desc:'炼器宗门与剑派之间的往来之路。'},
+        {d:'M300,320 C340,360 380,420 400,470', name:'青宫南下道', from:'青宫山', to:'方寸宗', desc:'青宫太保一脉南巡之路。'},
+        {d:'M420,380 C460,400 490,420 520,430', name:'碧潮天隅道', from:'碧潮福地', to:'天隅洞天', desc:'福地与洞天之间的山道。'}
+      ],
+      mtn:[{x:300,y:340,s:0.95},{x:480,y:420,s:0.9},{x:540,y:360,s:0.85},{x:400,y:470,s:0.8}],
+      places:[
+        {key:'biichao', name:'碧潮福地', x:420,y:380, lx:466,ly:376, cls:'teal', tag:'福地',
+          desc:'流霞洲福地，蒲禾、葱蒨、芹藻等剑修出自此处，战力多在玉璞境。'},
+        {key:'tianyu', name:'天隅洞天', x:520,y:430, lx:566,ly:434, cls:'purple', tag:'洞天',
+          desc:'蜀中暑于天隅洞天打造超然台，洲内仙家执牛耳者为一位名气不大的飞升境修士。'},
+        {key:'qinggong', name:'青宫山', x:300,y:320, lx:250,ly:316, cls:'red', tag:'道场',
+          desc:'流霞洲山上第一人道场，荆蒿（青宫太保）飞升境，号称八十术法大道共登顶。'},
+        {key:'qujiang', name:'曲江上巳剑派', x:500,y:330, lx:548,ly:326, cls:'blue', tag:'宗门',
+          desc:'流霞洲剑派，骊山/春服/青阳三脉，掌门丁法仪精祝由科与梅花易数。'},
+        {key:'fangcun', name:'方寸宗', x:400,y:470, lx:346,ly:474, cls:'gold', tag:'宗门',
+          desc:'以炼制方寸物闻名天下，老宗主曾赴金甲洲战场参战。'}
+      ]
+    }
+  },
+  jinjia:{
+    name:'金甲洲', sub:'浩然天下正西 · 武夫 · 边关要塞', ds:1.4, dx:280, dy:120,
+    detail:{
+      roads:[
+        {d:'M300,360 C400,380 500,400 540,460', name:'西关大道', from:'西部边关', to:'曹慈试炼山', desc:'自边关东出，武夫赴边与军旅换防之主干道。'},
+        {d:'M260,420 C380,430 480,440 540,470', name:'南境官道', from:'西部边关', to:'曹慈试炼山', desc:'沿洲南海岸线东行，串联边关营堡与武夫试炼地。'},
+        {d:'M300,420 C360,400 420,380 460,420', name:'镇剑楼道', from:'西部边关', to:'仿制镇剑楼', desc:'边关将士朝圣镇剑楼之路，楼中镇压之剑仅次于老剑条。'},
+        {d:'M420,380 C470,410 500,430 520,450', name:'试炼山径', from:'仿制镇剑楼', to:'曹慈试炼山', desc:'山间小径，武夫登楼拜剑后赴试炼山问拳。'},
+        {d:'M300,420 C320,440 330,450 340,460', name:'边关南支', from:'西部边关', to:'古战场', desc:'边关南下古战场的戍巡小道。'},
+        {d:'M340,460 C380,440 400,410 420,380', name:'战场北道', from:'古战场', to:'仿制镇剑楼', desc:'古战场北上镇剑楼的旧路，曹慈、郁狷夫曾往来于此。'}
+      ],
+      mtn:[{x:300,y:340,s:1.0},{x:460,y:420,s:0.95},{x:520,y:360,s:0.9},{x:380,y:300,s:0.85},{x:340,y:460,s:0.8}],
+      places:[
+        {key:'zhenjian', name:'仿制镇剑楼', x:420,y:380, lx:466,ly:376, cls:'red', tag:'镇压之楼',
+          desc:'金甲洲屹立仿制镇剑楼，镇压之剑仅次于老剑条；洲内原第一人完颜老景（飞升境）叛出本洲、大杀上五境修士，致战力大跌。'},
+        {key:'bianguan', name:'西部边关', x:300,y:420, lx:248,ly:424, cls:'gold', tag:'边关',
+          desc:'直面西部虚空，常年布防，武夫、兵家修士扎堆，肉身修炼氛围浓厚。'},
+        {key:'caoci', name:'曹慈试炼山', x:500,y:430, lx:546,ly:434, cls:'green', tag:'武夫山',
+          desc:'天下武夫前三曹慈曾退守金甲洲，于古战场遗址指点郁狷夫拳法。'},
+        {key:'gujinchang', name:'古战场', x:340,y:460, lx:290,ly:470, cls:'red', tag:'古战场',
+          desc:'金甲洲西部古战场，历朝历代戍边血战之地。曹慈曾于此指点郁狷夫拳法，武运与杀伐之气并存。'}
+      ]
+    }
+  },
+  fuyao:{
+    name:'扶摇洲', sub:'浩然天下西南 · 蛮荒主战场 · 战后残破', ds:1.5, dx:330, dy:230,
+    detail:{
+      roads:[
+        {d:'M340,380 C440,400 520,410 580,440', name:'残破官道', from:'刘蜕洞府', to:'扶摇宗', desc:'战前主干道，蛮荒入侵后多处塌陷，仍是串联残存山门的唯一官道。'},
+        {d:'M460,360 C440,380 430,390 420,400', name:'战场支路', from:'扶摇宗', to:'古战场遗址', desc:'自扶摇宗北出，直抵古战场边缘，修士巡查与收敛遗骨之路。'},
+        {d:'M520,440 C480,452 440,458 400,462 C380,440 360,420 340,400', name:'南线残道', from:'烧苇剑庐', to:'刘蜕洞府', desc:'洲南部山道，纳兰烧苇一脉与刘蜕老祖势力之间的旧路。'},
+        {d:'M420,400 C480,390 520,400 540,420', name:'中脊道', from:'古战场遗址', to:'烧苇剑庐', desc:'穿过洲中部残山，通往烧苇剑庐的捷径。'}
+      ],
+      mtn:[{x:320,y:360,s:1.0},{x:480,y:440,s:0.95},{x:540,y:380,s:0.9},{x:470,y:370,s:0.85},{x:360,y:400,s:0.8}],
+      places:[
+        {key:'guzhan', name:'古战场遗址', x:420,y:400, lx:466,ly:396, cls:'red', tag:'古战场',
+          desc:'扶摇洲古战场遗迹，蛮荒入侵重灾区，战后大片土地化为废墟、灵脉断绝。剑仙纳兰烧苇等曾于此血战。'},
+        {key:'shaowei', name:'烧苇剑庐', x:520,y:440, lx:566,ly:444, cls:'purple', tag:'剑庐',
+          desc:'剑仙纳兰烧苇道场。纳兰烧苇为扶摇洲顶尖战力之一、剑气长城十大剑仙、十三境战力，剑庐立于残山之上，剑意犹存。'},
+        {key:'liutui', name:'刘蜕洞府', x:340,y:440, lx:288,ly:444, cls:'gold', tag:'洞府',
+          desc:'飞升境大修士刘蜕老祖道场。刘蜕为扶摇洲仙家执牛耳者，战后仍以飞升境坐镇残洲，护持一方。'},
+        {key:'fuyaozong', name:'扶摇宗', x:460,y:360, lx:506,ly:356, cls:'red', tag:'宗门',
+          desc:'扶摇洲宗门，宗主顾璨（陈平安挚友），副宗主刘幽州、韩俏色仲肃，洲内武运与剑道并重。'}
+      ]
+    }
+  },
+  tongye:{
+    name:'桐叶洲', sub:'浩然天下东南 · 物产丰 · 玉圭宗',
+    detail:{
+      realms:[
+        {key:'daquan_r', name:'大泉王朝', lx:340, ly:440, fill:'#b5892f',
+          d:'M290,390 C275,415 285,450 315,465 C350,480 395,470 410,440 C420,415 405,385 375,372 C345,360 310,370 290,390 Z',
+          desc:'桐叶洲世俗王朝，出资支持青萍剑宗、玉圭宗开凿大渎。'},
+        {key:'beijin', name:'北晋（旧）', lx:430, ly:340, fill:'#6a4a7a',
+          d:'M380,320 C365,340 375,365 405,375 C435,385 470,370 475,345 C478,325 460,308 430,302 C405,298 390,308 380,320 Z',
+          desc:'桐叶洲旧王国。落魄山下宗青萍剑宗选址于旧北晋南岳，洲内唯一剑道宗门。'}
+      ],
+      rivers:[{d:'M360,400 C460,420 560,410 640,430', name:'新开大渎'}],
+      roads:[
+        {d:'M380,380 C460,400 560,410 620,440', name:'玉圭官道', from:'太平山', to:'桃叶渡', desc:'洲内主干道，串联三大宗门与渡口，商贸繁盛。'},
+        {d:'M320,440 C440,450 560,460 640,470', name:'南境商道', from:'大泉王朝', to:'扶乩宗', desc:'王朝出资开凿大渎后的南线商道。'},
+        {d:'M640,380 C600,400 580,420 560,440', name:'扶乩桐叶道', from:'扶乩宗', to:'桐叶宗', desc:'两大宗门之间的山道，神仙问答常于此。'},
+        {d:'M420,360 C440,380 450,390 460,400', name:'青萍山道', from:'青萍剑宗', to:'玉圭宗', desc:'落魄山下宗与玉圭宗往来的剑道。'},
+        {d:'M480,470 C420,455 400,450 380,440', name:'万瑶福地道', from:'万瑶宗', to:'太平山', desc:'三山福地宗门与太平山之间的山道。'},
+        {d:'M360,360 C370,400 375,420 380,440', name:'金顶朝圣道', from:'金顶观', to:'太平山', desc:'道家旁门朝圣太平山之路。'},
+        {d:'M540,470 C550,455 555,448 560,440', name:'桃叶渡道', from:'桃叶渡', to:'桐叶宗', desc:'渡口通往桐叶宗的驿道。'},
+        {d:'M320,420 C380,410 420,405 460,400', name:'大渎北岸道', from:'大泉王朝', to:'玉圭宗', desc:'沿新开大渎北岸东行，王朝与宗门联络之路。'},
+        {d:'M460,400 C500,410 540,430 560,440', name:'玉圭桐叶道', from:'玉圭宗', to:'桐叶宗', desc:'两大顶级宗门之间的正道。'},
+        {d:'M380,440 C400,430 420,410 420,360', name:'太平青萍道', from:'太平山', to:'青萍剑宗', desc:'太平山与青萍剑宗之间的山道。'}
+      ],
+      mtn:[{x:360,y:360,s:1.0},{x:520,y:440,s:0.95},{x:600,y:380,s:0.9},{x:634,y:382,s:0.85},{x:470,y:480,s:0.85},{x:420,y:360,s:0.8}],
+      places:[
+        {key:'yugui', name:'玉圭宗', x:460,y:400, lx:506,ly:396, cls:'purple', tag:'宗门',
+          desc:'桐叶洲顶级宗门，宗主荀渊为货真价实仙人境；二把手姜尚真本命物柳叶，对妖族战中也跻仙人境。'},
+        {key:'tongyezong', name:'桐叶宗', x:560,y:440, lx:606,ly:444, cls:'purple', tag:'宗门',
+          desc:'桐叶洲道首，杜懋曾一剑洞穿陈平安，后被老剑条与左右前后夹击打得魂飞魄散。'},
+        {key:'taiping', name:'太平山', x:380,y:440, lx:328,ly:444, cls:'green', tag:'山门',
+          desc:'桐叶洲庞然大物之一，与玉圭宗、扶乩宗并列，白玉京大掌教寇名一脉。'},
+        {key:'fujiao', name:'扶乩宗', x:640,y:380, lx:686,ly:376, cls:'purple', tag:'宗门',
+          desc:'桐叶洲中部宗门，祖山垂裳，常年云海缭绕，擅长神仙问答、众真降授，豢养精怪冠绝一洲。'},
+        {key:'qingping', name:'青萍剑宗', x:420,y:360, lx:366,ly:356, cls:'red', tag:'下宗',
+          desc:'落魄山在桐叶洲的下宗，崔东山主持创立，选址旧北晋南岳，桐叶洲唯一剑道宗门，参与开凿大渎。'},
+        {key:'wanyao', name:'万瑶宗', x:480,y:470, lx:426,ly:474, cls:'purple', tag:'福地宗门',
+          desc:'位于三山福地，曾出飞升境开山祖（三山九侯先生不记名弟子），护山阵五岳真形图，曾暗中勾结蛮荒。'},
+        {key:'jinding', name:'金顶观', x:360,y:360, lx:308,ly:356, cls:'green', tag:'道观',
+          desc:'桐叶洲北部道家旁门，道士入世修心，曾于桃叶渡倡桃叶之盟，调和洲内纠纷。'},
+        {key:'taoye', name:'桃叶渡', x:540,y:470, lx:540,ly:494, cls:'blue', tag:'渡口',
+          desc:'金顶观结盟地，桃叶之盟举办处，十六山门缔结山水盟约。'},
+        {key:'daquan', name:'大泉王朝', x:334,y:424, lx:282,ly:428, cls:'gold', tag:'王朝',
+          desc:'桐叶洲世俗王朝，出资支持青萍剑宗、玉圭宗开凿大渎。'}
+      ]
+    }
+  },
+  posuo:{
+    name:'南婆娑洲', sub:'浩然天下正南 · 亚圣文脉 · 倒悬山', ds:1.4, dx:320, dy:230,
+    detail:{
+      roads:[
+        {d:'M400,400 C480,380 560,400 620,420', name:'亚圣官道', from:'镇海楼', to:'倒悬山', desc:'自镇海楼东行亚圣学宫、再东南抵倒悬山，文脉与雄关之间的干道。'},
+        {d:'M360,460 C460,470 560,460 640,470', name:'南境商道', from:'颍阴陈氏', to:'倒悬山', desc:'洲南海岸商道，颍阴陈氏与倒悬山中转贸易之路。'},
+        {d:'M540,380 C560,390 580,410 600,430', name:'龙象山道', from:'龙象剑宗', to:'倒悬山', desc:'齐廷济一脉剑修出关之路，直通剑气长城。'},
+        {d:'M400,460 C440,430 460,410 480,400', name:'武运朝圣道', from:'镇海楼', to:'亚圣学宫', desc:'武夫朝圣镇海楼后，北上文庙学宫的道路。'},
+        {d:'M480,400 C500,380 520,370 540,380', name:'文剑道', from:'亚圣学宫', to:'龙象剑宗', desc:'儒生与剑修往来的山道。'},
+        {d:'M360,430 C380,450 390,455 400,460', name:'陈氏北道', from:'颍阴陈氏', to:'镇海楼', desc:'颍阴陈氏朝圣武运圣地之路。'}
+      ],
+      mtn:[{x:380,y:380,s:1.0},{x:540,y:440,s:0.95},{x:600,y:380,s:0.9},{x:560,y:370,s:0.85},{x:420,y:470,s:0.85}],
+      places:[
+        {key:'yasheng', name:'亚圣学宫', x:480,y:400, lx:526,ly:396, cls:'red', tag:'儒',
+          desc:'亚圣一脉大本营，醇儒辈出。陈淳安肩挑日月，为洲之定海神针（半步十四境）。'},
+        {key:'daoxuan', name:'倒悬山', x:600,y:430, lx:646,ly:434, cls:'gold', tag:'山字印',
+          desc:'道老二余斗所炼巨型山字印，浩然天下通往剑气长城的唯一常规中转雄关，入境需签山盟、压半境修为。'},
+        {key:'zhenhai', name:'镇海楼', x:400,y:460, lx:348,ly:464, cls:'purple', tag:'道场',
+          desc:'曹曦道场，婆娑洲武运昌盛之象征。'},
+        {key:'longxiang', name:'龙象剑宗', x:540,y:380, lx:586,ly:376, cls:'purple', tag:'宗门',
+          desc:'南婆娑洲宗门，由齐廷济创立，后成落魄山下宗，汇聚剑气长城剑修，陆芝、黄龙、贺秋声出自此宗。'},
+        {key:'yingyin', name:'颍阴陈氏', x:360,y:430, lx:300,ly:420, cls:'gold', tag:'世家',
+          desc:'南婆娑洲名门颍阴陈氏，族中陈对曾救死扶伤、接引重伤修士。陈氏与亚圣学宫往来密切，是洲内凡俗与山上之间的桥梁。'}
+      ]
+    }
+  }
+};
+
+
+/* 地点·人物索引（打通 prototype 立绘/简介；无立绘则首字占位） */
+const CHAR_IDX = {"chenpingan":{"n":"陈平安","r":"止境","p":"《剑来》男主角 · 落魄山山主 · 剑气长城隐官","s":"落魄山 · 青萍剑宗","i":"骊珠洞天泥瓶巷的清瘦少年，长生桥被蔡金简一剑斩断，只剩数年性命，遂借《撼山谱》以武道续命。后拜老秀才为师，立落魄山、青萍剑宗，出任剑气长城隐官，合道半截城墙，为浩然天下守门。一生信奉\"讲道理、守底线\"。","img":"prototype/weapp/assets/portraits/chenpingan.jpg"},"qijingchun":{"n":"齐静春","r":"玉璞境","p":"中土文庙君子 · 骊珠洞天\"齐先生\"","s":"文圣一脉 · 礼圣","i":"文庙一脉的读书人，主动请调骊珠洞天教化一方，护佑陈平安、李宝瓶等少年。后身死道消，却以残魂布局天下，为浩然挡下无量劫，是读书人的脊梁。","img":"prototype/weapp/assets/portraits/qijingchun.jpg"},"ningyao":{"n":"宁姚","r":"止境","p":"剑气长城宁家大小姐 · 陈平安道侣","s":"剑气长城宁家","i":"剑气长城宁家嫡女，天生剑胎，天资卓绝的剑修。少年时与陈平安于剑气长城相识相知，约定各守一方，后同守城头、并肩御蛮，终成陈平安道侣。性子骄傲、剑心通明。","img":"prototype/weapp/assets/portraits/ningyao.jpg"},"宋集薪":{"n":"宋集薪","r":"止境","p":"大骊宋氏皇子 · 陈平安隔巷少年","s":"","i":"大骊宋氏皇子，自幼与陈平安隔巷相望。一个皇子、一个泥腿子，命运却将二人绑在同一条长路上。性子隐忍，心志不小。","img":"prototype/weapp/assets/portraits/宋集薪.jpg"},"李宝瓶":{"n":"李宝瓶","r":"练气","p":"齐静春弟子 · 山崖书院学子","s":"","i":"齐静春最为疼爱的弟子，曾被陈平安一路护送至山崖书院。天真烂漫、爱读书、爱问\"为什么\"，是泥瓶巷少年们中的\"小先生\"，也是陈平安心头最软的一处。","img":"prototype/weapp/assets/portraits/李宝瓶.jpg"},"顾粲":{"n":"顾璨","r":"止境","p":"泥瓶巷少年 · 书简湖问心局核心","s":"","i":"陈平安童年好友，与刘羡阳一起长在骊珠洞天泥瓶巷。后被送往书简湖，在弱肉强食的环境里一步步变成\"小魔王\"，造下无数杀孽。他是陈平安书简湖问心局里最痛的症结：护短，便要负天下；正法，便要负故友。","img":"prototype/weapp/assets/portraits/顾粲.jpg"},"刘羡阳":{"n":"刘羡阳","r":"止境","p":"泥瓶巷少年 · 陈平安发小","s":"","i":"骊珠洞天泥瓶巷与陈平安一起长大的发小，性格豪爽、重义气，家传一部剑经引来搬山猿觊觎，后走上武道与炼器之路。","img":"prototype/weapp/assets/portraits/刘羡阳.jpg"},"阮秀":{"n":"阮秀","r":"止境","p":"火神转世 · 炼器天才","s":"","i":"疑似远古火神转世，天生精通炼器与火属神通，阮邛之女。与陈平安相识于微时，于小镇以炼器与火道之能相伴成长，是落魄山重要的根基之一。","img":"prototype/weapp/assets/portraits/阮秀.jpg"},"李二":{"n":"李二","r":"止境","p":"散修 · 武夫 · 陈平安武道引路人","s":"","i":"陈平安武道上的引路人之一，老牌武夫，李柳之父。一生所学皆在拳脚功夫里，性子朴素厚重，所教不多却字字如铁。","img":"prototype/weapp/assets/portraits/李二.jpg"},"稚圭":{"n":"稚圭","r":"止境","p":"散修 · 旧龙宫遗脉","s":"","i":"旧龙宫遗脉，性喜独处，关键时刻偶有龙脉护身之能。清冷之下藏着古老血脉的韧性，是散修里最让人意外的韧者。","img":"prototype/weapp/assets/portraits/稚圭.jpg"},"蔡金简":{"n":"蔡金简","r":"止境","p":"正阳山剑修 · 断陈平安长生桥者","s":"","i":"正阳山一系的修士，骊珠洞天大变的推手之一。她为夺机缘对少年陈平安出手，一剑斩断其长生桥，几乎断绝陈平安的修行之路，是陈平安少年时代最痛的仇敌。","img":"prototype/weapp/assets/portraits/蔡金简.jpg"},"李槐":{"n":"李槐","r":"练气","p":"山崖书院 · 陈平安童年同窗","s":"","i":"骊珠洞天泥瓶巷的少年，与陈平安、李宝瓶、林守一同同走出小镇，赴山崖书院求学。性情跳脱，嘴快心热，是少年里最不懂修行却最重情的那一个。","img":"prototype/weapp/assets/portraits/李槐.jpg"},"林守一":{"n":"林守一","r":"止境","p":"中土文庙 · 陈平安童年同窗","s":"","i":"陈平安童年同窗，山崖书院同学。以一手算学起家，被视为少年一辈里最有望承继文庙道统的人，性子内秀沉稳。","img":"prototype/weapp/assets/portraits/林守一.jpg"},"杨老头":{"n":"杨老头","r":"飞升","p":"落魄山护道人 · 棋道高手","s":"","i":"落魄山暗中的护道人之一，与陈平安有半师之谊。棋子落处皆是布局，看似闲云野鹤，实则每一步都踩在棋眼上，是落魄山背后最稳的一双眼睛。","img":"prototype/weapp/assets/portraits/杨老头.jpg"},"魏檗":{"n":"魏檗","r":"止境","p":"落魄山山君","s":"","i":"落魄山山君之一，掌一方地形地势。能以山形压制来犯之敌，又每回合可自免一伤，是落魄山最稳的地利。","img":"prototype/weapp/assets/portraits/魏檗.jpg"},"裴钱":{"n":"裴钱","r":"练气","p":"陈平安大弟子 · 落魄山\"大徒弟\"","s":"","i":"陈平安收的第一个弟子，机灵泼辣、护短爱财，练就一身武艺，是落魄山最闹腾也最忠心的存在。一身江湖气，却把师父的话一句句记在心里。","img":"prototype/weapp/assets/portraits/裴钱.jpg"},"崔东山":{"n":"崔东山","r":"止境","p":"中土文庙 · 崔瀺少年分身","s":"","i":"崔瀺落入阴神转世后的少年分身，世人多以\"崔东山\"称之。看似跳脱不羁、嘴不饶人，实则算学惊人、护短至极，与陈平安亦师亦友，是落魄山上最不守规矩、也最护短的那个人。","img":"prototype/weapp/assets/portraits/崔东山.jpg"},"曹晴朗":{"n":"曹晴朗","r":"金丹境","p":"","s":"","i":"","img":"prototype/weapp/assets/portraits/曹晴朗.jpg"},"周米粒":{"n":"周米粒","r":"练气","p":"落魄山右护法 · 护山供奉 · 哑巴湖大水怪","s":"落魄山","i":"陈平安远游北俱芦洲途中，于哑巴湖旁「捡」到的一个大水怪。它总自称「米粒大」的大水怪，陈平安便给它取名周米粒。黑衣小童模样，真身是通体漆黑的十数丈怪鱼，龙门境。每日早起巡山一遍，爱吃棉布包里的瓜子，是落魄山上的小小耳报神，也是陈平安最宠的「小米粒」。它最大的心愿，是有人把它的故事写进书里。","img":"prototype/weapp/assets/portraits/周米粒.jpg"},"朱敛":{"n":"朱敛","r":"止境","p":"落魄山管家 · 武道高人","s":"","i":"落魄山管家，表面恭谨周到，实则是深不可测的武道宗师。初见陈平安便看穿其根骨，甘愿隐于山门做起洒扫待客的活计，是落魄山最稳的倚仗。","img":"prototype/weapp/assets/portraits/朱敛.jpg"},"姜尚真":{"n":"姜尚真","r":"止境","p":"落魄山首席供奉 · 副山主 · 玉圭宗宗主","s":"落魄山 · 玉圭宗","i":"桐叶洲玉圭宗宗主，化名周肥（春潮宫宫主），仙人境剑修。本命飞剑仅剩一片柳叶，却有「一片柳叶斩仙人」的杀力。与陈平安结识于藕花福地，本是某种意义上的对手，后了解陈平安身份，死皮赖脸蹭上落魄山首席供奉的名号，更一路从供奉做到副山主，是落魄山的天使投资人，把把高端局。蛮荒大战时，他一个仙人境从数名飞升境手","img":"prototype/weapp/assets/portraits/姜尚真.jpg"},"长命":{"n":"长命","r":"止境","p":"散修 · 丹药大修","s":"","i":"散修里的丹药大修，所炼灵丹可救伤续命，是落魄山最温厚的手。性子温厚，于同袍有难时总肯伸手。","img":"prototype/weapp/assets/portraits/长命.jpg"},"郭竹酒":{"n":"郭竹酒","r":"止境","p":"陈平安弟子 · 剑气长城郭稼之女 · 小名绿端","s":"落魄山","i":"剑气长城剑仙郭稼的独女，小名绿端，腰间悬一枚碧绿抄手砚。先天剑胚，手握两把本命飞剑，如今是金丹境剑修。在剑气长城便缠着陈平安要拜师，常与朋友去他和叠嶂开的酒铺捧场，还偷偷在平安无事牌上刻下「师父卖酒徒弟买酒，师徒之谊感人肺腑天长地久」。陈平安夜里收下这个性情跳脱的弟子，一则因郭家是当年唯一举家祭奠宁","img":"prototype/weapp/assets/portraits/郭竹酒.jpg"},"陈暖树":{"n":"陈暖树","r":"练气","p":"落魄山小管家 · 粉裙女童 · 陈如初","s":"落魄山","i":"本体是黄庭国芝兰府藏书楼里文运所化的一头火蟒，被崔东山收服后送与陈平安当书童。化为人形是粉雕玉琢的乖巧女童，龙门境。陈平安取名「暖树」，取自「暖律潜催，幽谷暄和，黄鹂翩翩，乍迁芳树」首尾各一字；她怕陈平安随意取名，抢先自号「陈如初」，得知深意后偷偷哭了好久。回落魄山后执掌全山房屋钥匙与账簿，把山上里","img":"prototype/weapp/assets/portraits/陈暖树.jpg"},"崔瀺":{"n":"崔瀺","r":"飞升","p":"大骊国师\"绣虎\"· 老秀才首徒 · 齐静春师兄","s":"","i":"老秀才门下大弟子，齐静春师兄。因道不同而渐行渐远；后入大骊为国师，自号\"绣虎\"，暗中为浩然天下布局一生。算计深远却不失护持之心，是陈平安成长路上绕不开的名字。于十四境合道宝瓶洲文脉（一洲文运），是文庙之外以一国一域证十四境的典型——先布局、后入道","img":"prototype/weapp/assets/portraits/崔瀺.jpg"},"caoci":{"n":"曹慈","r":"止境","p":"大骊武夫 · 武道天才 · 曹氏麒麟儿","s":"大骊","i":"大骊王朝曹氏的武道天才，与陈平安同辈争锋。曾三上落魄山与陈平安问拳，不为胜负，只为印证武道。拳意纯粹、重诺守心，是年轻一代武夫中走得最远的人之一。","img":"prototype/weapp/assets/portraits/caoci.jpg"},"搬山猿":{"n":"搬山猿","r":"止境","p":"正阳山供奉 · 搬山猿大妖","s":"","i":"正阳山供奉的搬山猿，力大无穷、性情暴烈。为夺刘羡阳家传剑经，他曾大闹骊珠洞天，与陈平安、刘羡阳结下死仇，是陈平安少年时代见识到的\"强者无情\"。","img":""},"魏晋":{"n":"魏晋","r":"止境","p":"剑气长城剑修 · 宁姚同代","s":"","i":"剑气长城剑修，与宁姚同代并肩的剑道良才，剑心相惜、协同御蛮，是长城年轻一代的中坚，性子儒雅沉静。","img":"prototype/weapp/assets/portraits/魏晋.jpg"},"石柔":{"n":"石柔","r":"练气","p":"骑龙巷压岁铺子代掌柜 · 落魄山门下","s":"落魄山 · 骑龙巷压岁铺子","i":"彩衣国胭脂郡出身的枯骨女鬼，作恶之时被陈平安收服，立下卖身契，自此效力落魄山。桐叶宗飞升境杜懋伏诛之后，崔东山施法，让她寄居那具仙人遗蜕：白日里以杜懋的男子面目行走人间，入夜才得恢复女子真身，一身彩衣、长裙大袖。如今替落魄山看管骑龙巷的压岁铺子，无需睡眠，把日子过得安稳而小心。","img":""},"刘灞桥":{"n":"刘灞桥","r":"止境","p":"散修 · 灞桥剑修","s":"","i":"散修里的灞桥剑修，出招繁密，回合内常常热闹非凡。性子直率出彩，是散修里最不缺存在感的那一位。","img":"prototype/weapp/assets/portraits/刘灞桥.jpg"},"至圣先师":{"n":"至圣先师","r":"飞升","p":"中土文庙至圣 · 儒教源头","s":"","i":"文庙儒教至圣先师，万世师表，立\"仁义礼智信\"之教，是读书人精神的最高象征，与道祖、佛祖并列为三教源头。","img":"prototype/weapp/assets/portraits/至圣先师.jpg"},"lisan":{"n":"礼圣","r":"飞升","p":"中土文庙礼圣 · 规矩化身","s":"中土文庙 · 礼圣","i":"文庙诸圣之一，主\"礼\"与\"规矩\"，以礼法约束天下秩序，性情清正古板却心怀天下，是文庙秩序最坚定的维护者。于十四境合道浩然天下礼序规矩（\"特殊\"一项，非天时/地利/人和），据传随时可上十五境，是三教祖师之下当前战力的天花板之一。","img":"prototype/weapp/assets/portraits/lisan.jpg"},"亚圣":{"n":"亚圣","r":"止境","p":"中土文庙亚圣 · 儒家道统之二","s":"","i":"文庙诸圣之一，地位仅次于至圣先师。他主\"性善\"与\"仁政\"，是儒家道统中承上启下的巨擘。与老秀才（即文圣）因学说分歧多有争执，却同样是读书人风骨的化身。于十四境合道中土神洲（地利），门下桃李满天下，是儒门半边天的柱石。","img":"prototype/weapp/assets/portraits/亚圣.jpg"},"老秀才":{"n":"老秀才","r":"飞升","p":"中土文庙至圣一脉 · 陈平安之师","s":"","i":"文庙第四圣，世称\"老秀才\"（即文圣），曾因弟子之争被逐出文庙，后收陈平安为关门弟子，传\"讲道理、守底线\"之道。性情诙谐坎坷，却是读书人风骨。门下首徒崔瀺、大徒齐静春皆为一时人杰。于十四境合道三洲之地——西南扶摇洲、正南婆娑洲、东南桐叶洲（据传本可走人和，未走）。","img":"prototype/weapp/assets/portraits/老秀才.jpg"},"baiye":{"n":"白也","r":"十四境·合道","p":"浩然天下诗剑第一人 · 人间最得意","s":"浩然天下 · 白玉京","i":"青衫仗剑、以诗入道的剑修，被誉为人间最得意。他不属剑气长城，却曾提剑登城，与长城剑仙并肩斩蛮。诗成处剑气纵横，是浩然天下风骨与杀力的象征。于十四境合道「心中诗篇」，诗不尽则灵气不竭、战力不休，扶摇洲一役独战七王座。","img":"prototype/weapp/assets/portraits/baiye.jpg"},"郑居中":{"n":"郑居中","r":"止境","p":"散修 · 居中策士","s":"","i":"散修里的居中策士，手牌多于常人，处事居中调度、不露破绽。是散修里难得的谋士型人物，沉稳有章法。于十四境走出一条从未有过的合道路数——「一人两十四」：一身可一分为二、道心如一、各自登顶，被称魔道第一人，战力对标余斗这一档。","img":"prototype/weapp/assets/portraits/郑居中.jpg"},"于玄":{"n":"于玄","r":"止境","p":"散修 · 循环老者","s":"","i":"散修老者，一生讲究循环之道，弃旧取新、生生不息。性子老辣不争，却活得长久通透，是散修里少有的\"活得明白\"之人。","img":"prototype/weapp/assets/portraits/于玄.jpg"},"火龙真人":{"n":"火龙真人","r":"止境","p":"散修 · 火德铸剑师","s":"","i":"散修里的火德修士，自带火龙剑胚，铸剑与斗法皆带火。于对抗蛮荒一脉时格外凌厉，是火道修行里的实力派。据传其十四境合道方式近似「火道」本身（火德一脉之极致），是散修里唯一以火入合道的特例。","img":"prototype/weapp/assets/portraits/火龙真人.jpg"},"liujinglong":{"n":"刘景龙","r":"飞升境","p":"","s":"","i":"","img":""},"贺小凉":{"n":"贺小凉","r":"止境","p":"散修 · 凉州女修","s":"","i":"凉州女修，性子果决如秋风。于判定之事常有主见，一旦落子便无可挽回，是散修里最冷静果敢的那一位。","img":"prototype/weapp/assets/portraits/贺小凉.jpg"},"纳兰烧苇":{"n":"纳兰烧苇","r":"止境","p":"蛮荒天下 · 火妖","s":"","i":"蛮荒火属大妖，剑气附带灼烧之焰。苇草易燃，她的怒火一旦点燃便难以熄灭，是蛮荒阵营里凌厉的火尖。","img":""},"xunyuan":{"n":"荀渊","r":"飞升境","p":"桐叶洲玉圭宗老宗主 · 飞升境大修士","s":"桐叶洲 · 玉圭宗","i":"桐叶洲玉圭宗老宗主，飞升境大修士。本命枪法「一尺枪」，常书「余家贫」三字自况；与姜尚真亦师亦友。蛮荒入侵桐叶洲时，玉圭宗撑起一洲门户，他于大战中陨落，是桐叶洲最沉的那座山。（原著人物）","img":""},"余斗":{"n":"余斗","r":"止境","p":"白玉京二掌教 · 道老二「真无敌」","s":"","i":"道祖\"一气化三清\"之分身，排行第二，号\"道老二\"，世称\"真无敌\"，执掌白玉京。青冥余氏传人，习斗转星移之术，与人交手时距离常被无形改写。行事大公无私，曾亲手斩杀两位大道同行的挚友——与陈平安在书简湖的选择互为对照（书简湖设局人是崔瀺，非他）。合道方式在各家百科中列\"未知\"，但借整座玉京山之力可临时爆","img":"prototype/weapp/assets/portraits/余斗.jpg"},"齐廷济":{"n":"齐廷济","r":"止境","p":"剑气长城齐家剑修","s":"","i":"齐氏剑修，与齐景龙并称\"齐家双璧\"。出剑讲究规矩与配合，是长城齐姓一脉的栋梁，后辈敬仰的前辈。","img":"prototype/weapp/assets/portraits/齐廷济.jpg"},"陆芝":{"n":"陆芝","r":"止境","p":"剑气长城女剑修","s":"","i":"长城女修，本命飞剑「抱朴」「北斗」，北斗主死。剑风清朗如玉芝，于同袍有难时常肯援手，是长城里被信任的搭档，剑心上干净通透。","img":"prototype/weapp/assets/portraits/陆芝.jpg"}};
+const PLACE_CHARS = {"lizhu":["chenpingan","qijingchun","ningyao","宋集薪","李宝瓶","顾粲","刘羡阳","阮秀","李二","稚圭","蔡金简","李槐","林守一","杨老头"],"longquan":["chenpingan","阮秀","魏檗","刘羡阳"],"luopo":["chenpingan","裴钱","崔东山","曹晴朗","周米粒","朱敛","姜尚真","长命","郭竹酒","陈暖树","杨老头","魏檗"],"dalicap":["崔瀺","宋集薪","caoci","曹晴朗"],"yunxia":["蔡金简"],"zhengyang":["搬山猿","蔡金简"],"fengxue":["魏晋"],"shujian":["顾粲","chenpingan"],"laolong":["宋集薪"],"caiyi":["石柔"],"longquanjian":["阮秀"],"fenglei":["刘灞桥"],"wenmiao":["至圣先师","lisan","亚圣","老秀才","qijingchun"],"xuandu":["baiye"],"baidi":["郑居中"],"xuegong":["老秀才","qijingchun"],"taofu":["于玄"],"padi":["火龙真人"],"taihui":["liujinglong"],"yunxiao":["贺小凉"],"caoci":["caoci"],"fuyaozong":["顾粲"],"shaowei":["纳兰烧苇"],"guzhan":["纳兰烧苇"],"yugui":["xunyuan","姜尚真"],"qingping":["chenpingan","曹晴朗","崔东山"],"yasheng":["亚圣"],"daoxuan":["余斗"],"longxiang":["齐廷济","陆芝"],"dali":["崔瀺","宋集薪","caoci"],"qingluan_r":[],"caiyi_r":["石柔"],"laolong_r":["宋集薪"],"dayuan_r":[],"daquan_r":[],"beijin":[]};
+const PORTRAIT_BASE = 'prototype/weapp/assets/portraits/';
+
+let view='world', curKey=null, scale=1, tx=0, ty=0;
+let showRoads=true, showNames=true, showRoadLbl=true, showRealms=true;
+const ZHOU_RELS={
+  bao:['tongye','posuo'],
+  zhongtu:['bao','posuo','tongye'],
+  beiju:['aiai','bao'],
+  aiai:['beiju','zhongtu'],
+  liuxia:['jinjia','zhongtu'],
+  jinjia:['liuxia','fuyao'],
+  fuyao:['posuo','tongye','jinjia'],
+  tongye:['bao','posuo','fuyao'],
+  posuo:['bao','tongye','fuyao']
+};
+const scene=document.getElementById('scene');
+const svg=document.getElementById('map');
+const side=document.getElementById('side');
+const crumb=document.getElementById('crumb');
+const stageEl=document.querySelector('.mapstage');
+
+function renderWorld(){
+  const painted = (stageEl && stageEl.dataset.style === 'huijuan');
+  let s='';
+  s+='<rect x="0" y="0" width="1600" height="1100" fill="url(#ocean)"/>';
+  if(painted){
+    s+='<image class="painted-bg" href="map-assets/haoran-painted.png" x="0" y="0" width="1600" height="1100" preserveAspectRatio="xMidYMid slice"/>';
+  }else{
+    s+='<rect x="0" y="0" width="1600" height="1100" fill="url(#sea)"/>';
+  }
+  const seas=[['东海',1002,424],['南海',762,716],['西海',562,548],['北海',772,368]];
+  if(!painted){
+    seas.forEach(([n,x,y])=>{ s+=`<text x="${x}" y="${y}" text-anchor="middle" font-size="20" fill="#7fa0a6" opacity=".7" letter-spacing="6">${n}</text>`; });
+  }
+  s+='<path d="M1360,150 L1360,950" stroke="#9c3b2e" stroke-width="3.4" stroke-dasharray="10 7" opacity=".62" filter="url(#rough)"/>';
+  s+='<text x="1344" y="560" font-size="15" fill="#9c3b2e" opacity=".82" transform="rotate(90 1344 560)" text-anchor="middle">剑气长城 · 浩然东界·隔蛮荒</text>';
+  s+='<g transform="translate(1472,540)" opacity=".6">';
+  s+='<text x="0" y="0" text-anchor="middle" font-size="22" fill="#6b3a30" letter-spacing="6">蛮荒天下</text>';
+  s+='<text x="0" y="26" text-anchor="middle" font-size="13" fill="#6b3a30" opacity=".85">妖族祖地 · 长城以东</text>';
+  s+='</g>';
+  /* 总图不画跨洲连线（与写实绘卷一致，只留洲块与标注） */
+  WORLD.forEach(c=>{
+    const h=c.hit||{x:c.lx,y:c.ly,rx:80,ry:40};
+    s+=`<g class="cont" data-drill="${c.key}" tabindex="0" role="button" style="cursor:pointer">`;
+    /* 大热区：各画风同一套，点洲即可下钻 */
+    s+=`<ellipse cx="${h.x}" cy="${h.y}" rx="${h.rx}" ry="${h.ry}" fill="transparent"/>`;
+    if(!painted){
+      s+=`<g transform="translate(${c.wx},${c.wy}) scale(${c.ws})">`;
+      s+=`<use href="#${c.land}" class="landfill" fill="var(--land)" stroke="var(--land-stroke)" stroke-width="2" filter="url(#rough)"/>`;
+      (c.wMtn||[]).forEach(m=>{ s+=`<use href="#mtnS" transform="translate(${m.x},${m.y}) scale(${m.s})" opacity=".55"/>`; });
+      s+=`</g>`;
+    }
+    if(showNames){
+      s+=`<text class="cont-name" x="${c.lx}" y="${c.ly}" text-anchor="middle">${c.name}</text>`;
+      s+=`<text x="${c.lx}" y="${c.ly+16}" text-anchor="middle" font-size="11" fill="${painted?'#f0e6c8':'#6b5f49'}">${c.sub}</text>`;
+    }
+    s+=`</g>`;
+  });
+  /* 倒悬山：婆娑洲东南·唯一常规中转；可点击，不画航线 */
+  s+=`<g class="cont daoxuan-node" data-drill="posuo" data-poi="daoxuan" tabindex="0" role="button" transform="translate(920,980)" style="cursor:pointer">`;
+  s+='<ellipse cx="20" cy="0" rx="70" ry="36" fill="transparent"/>';
+  s+='<path d="M-32,22 L-32,-4 L-19,-22 L-6,-4 L-6,22 L6,-4 L19,-22 L32,-4 L32,22 Z" fill="#b5892f" stroke="#5a3e1a" stroke-width="1.6" stroke-linejoin="round" filter="url(#rough)"/>';
+  s+='<circle cx="44" cy="-8" r="13" fill="#9c3b2e" stroke="#5a2018" stroke-width="1.2" filter="url(#rough)"/>';
+  s+='<text x="44" y="-3" text-anchor="middle" font-size="15" fill="#fff" font-weight="700">山</text>';
+  s+=`<text x="62" y="-4" font-size="14" fill="${painted?'#f0e6c8':'#9a7b2e'}" font-weight="700" paint-order="stroke" stroke="${painted?'#1a2430':'none'}" stroke-width="3">倒悬山</text>`;
+  s+=`</g>`;
+  scene.innerHTML=s;
+  attachCont();
+  updateCrumb();
+}
+
+function fitLayer(detail){
+  const d=detail||{};
+  const xs=[], ys=[];
+  (d.places||[]).forEach(p=>{
+    xs.push(p.x, p.lx!=null?p.lx:p.x);
+    ys.push(p.y, p.ly!=null?p.ly:p.y);
+  });
+  (d.realms||[]).forEach(r=>{
+    if(r.lx!=null){ xs.push(r.lx); ys.push(r.ly); }
+    if(r.d){
+      const nums=r.d.match(/-?\d+(?:\.\d+)?/g)||[];
+      for(let i=0;i<nums.length;i+=2){
+        const x=parseFloat(nums[i]), y=parseFloat(nums[i+1]);
+        if(isFinite(x)&&isFinite(y)){ xs.push(x); ys.push(y); }
+      }
+    }
+  });
+  (d.mtn||[]).forEach(m=>{ xs.push(m.x); ys.push(m.y); });
+  (d.roads||[]).forEach(r=>{
+    const path=(r&&typeof r==='object')?r.d:r;
+    if(!path) return;
+    const nums=path.match(/-?\d+(?:\.\d+)?/g)||[];
+    for(let i=0;i<nums.length;i+=2){
+      const x=parseFloat(nums[i]), y=parseFloat(nums[i+1]);
+      if(isFinite(x)&&isFinite(y)){ xs.push(x); ys.push(y); }
+    }
+  });
+  if(!xs.length) return {ox:220, oy:140, s:1.35};
+  const minX=Math.min.apply(null,xs), maxX=Math.max.apply(null,xs);
+  const minY=Math.min.apply(null,ys), maxY=Math.max.apply(null,ys);
+  const bw=Math.max(60, maxX-minX), bh=Math.max(60, maxY-minY);
+  const padX=200, padY=120;
+  const availW=1600-padX*2, availH=1100-padY*2;
+  const sc=Math.min(availW/bw, availH/bh, 2.4);
+  return {
+    ox: padX+(availW-bw*sc)/2 - minX*sc,
+    oy: padY+(availH-bh*sc)/2 - minY*sc,
+    s: sc
+  };
+}
+
+function renderZhou(key){
+  const z=ZHOU[key]; if(!z) return;
+  const painted = (stageEl && stageEl.dataset.style === 'huijuan');
+  const zhouImg = 'map-assets/zhou-'+key+'.png';
+  const d=z.detail;
+  let s='';
+  s+='<rect x="0" y="0" width="1600" height="1100" fill="url(#ocean)"/>';
+  if(painted){
+    s+=`<image class="painted-bg" href="${zhouImg}" x="0" y="0" width="1600" height="1100" preserveAspectRatio="xMidYMid slice"/>`;
+  }else{
+    s+='<rect x="0" y="0" width="1600" height="1100" fill="url(#sea)"/>';
+  }
+  const fit=fitLayer(d);
+  const gx=fit.ox, gy=fit.oy, gs=fit.s;
+  s+=`<g transform="translate(${gx},${gy}) scale(${gs})">`;
+  if(!painted){
+    s+=`<use href="#land-${key}" class="landfill" fill="var(--land)" stroke="var(--land-stroke)" stroke-width="2.2" filter="url(#rough)"/>`;
+    if(showRealms && d.realms){
+      d.realms.forEach(r=>{
+        s+=`<path class="realm" data-rkey="${r.key}" data-zhou="${key}" d="${r.d}" fill="${r.fill||'#b5892f'}" opacity="0.16" stroke="${r.fill||'#b5892f'}" stroke-width="1.2" stroke-dasharray="6 4"/>`;
+        if(showNames && r.lx!=null){
+          s+=`<text class="realm-lbl" x="${r.lx}" y="${r.ly}" text-anchor="middle" fill="${r.fill||'#6b5f49'}">${r.name}</text>`;
+        }
+      });
+    }
+    if(d.territory) s+=`<path d="${d.territory}" fill="#b5892f" opacity="0.16" stroke="#b5892f" stroke-width="1" stroke-dasharray="5 4"/>`;
+    (d.rivers||[]).forEach(r=>{ s+=`<path d="${r.d}" fill="none" stroke="var(--river)" stroke-width="3" opacity=".7" filter="url(#rough)"/>`; });
+    (d.mtn||[]).forEach(m=>{ s+=`<use href="#mtn" class="mtnG" transform="translate(${m.x},${m.y}) scale(${m.s})"/>`; });
+  } else if(showRealms && d.realms){
+    /* 绘卷底图下仍叠势力范围，保证信息完整 */
+    d.realms.forEach(r=>{
+      s+=`<path class="realm" data-rkey="${r.key}" data-zhou="${key}" d="${r.d}" fill="${r.fill||'#b5892f'}" opacity="0.22" stroke="${r.fill||'#b5892f'}" stroke-width="1.4" stroke-dasharray="6 4"/>`;
+      if(showNames && r.lx!=null){
+        s+=`<text class="realm-lbl" x="${r.lx}" y="${r.ly}" text-anchor="middle" fill="#f0e6c4" stroke="#1a2430" stroke-width="2.5">${r.name}</text>`;
+      }
+    });
+  }
+  if(showRoads){
+    const rStroke = painted ? '#e8c66a' : '#caa86a';
+    (d.roads||[]).forEach((r,i)=>{
+      const isObj = r && typeof r === 'object';
+      const path = isObj ? r.d : r;
+      const name = isObj ? (r.name||'古道') : '洲内古道';
+      const via = isObj && (r.from||r.to) ? `${r.from||'?'} ↔ ${r.to||'?'}` : '';
+      const desc = isObj ? (r.desc||'') : '';
+      s+=`<path class="road" data-name="${name}" data-via="${via}" data-desc="${desc}" data-i="${i}" d="${path}" fill="none" stroke="${rStroke}" stroke-width="${painted?2.4:3.4}" opacity=".88"/>`;
+      s+=`<path class="road-hit" data-name="${name}" data-via="${via}" data-i="${i}" d="${path}" fill="none"/>`;
+      if(showRoadLbl && name && name!=='古道'){
+        const mm=path.match(/M\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)/);
+        if(mm){
+          const rx=parseFloat(mm[1]), ry=parseFloat(mm[2]);
+          s+=`<text class="road-lbl" data-i="${i}" x="${rx+8}" y="${ry-6}">${name}</text>`;
+        }
+      }
+    });
+  }
+  (d.places||[]).forEach(p=>{
+    const isSect = ['宗门','洞天','道场','山字印','剑庐','洞府','下宗','福地宗门','福地'].includes(p.tag);
+    const isCap = ['王朝','国都','藩属','首富','飞升境','武场','边关','南疆大城','世家','军营','一洲首富'].includes(p.tag);
+    if(!painted){
+      if(isSect) s+=`<use href="#sect" transform="translate(${p.x},${p.y})"/>`;
+      else if(isCap) s+=`<use href="#capital" transform="translate(${p.x},${p.y}) scale(.9)"/>`;
+      else s+=`<use href="#city" transform="translate(${p.x},${p.y}) scale(.85)"/>`;
+      if(Math.abs(p.lx-p.x)>2||Math.abs(p.ly-p.y)>2){
+        s+=`<line x1="${p.x}" y1="${p.y}" x2="${p.lx}" y2="${p.ly}" stroke="#6b5f49" stroke-width="0.8" opacity=".6"/>`;
+      }
+    }
+    s+=`<circle cx="${p.x}" cy="${p.y}" r="${painted?4.2:4}" fill="${painted?'#f0e6c4':(CLS[p.cls]||'#2f2a20')}" stroke="${painted?'#1a2430':'none'}" stroke-width="1.2"/>`;
+    if(showNames){
+      const nm=p.name||'';
+      const hw=Math.max(48, nm.length*11+16);
+      s+=`<g class="poi" data-key="${p.key}" data-zhou="${key}" tabindex="0" role="button">`;
+      s+=`<text class="pl" x="${p.lx}" y="${p.ly}" text-anchor="middle">${nm}</text>`;
+      s+=`<rect x="${p.lx-hw/2}" y="${p.ly-22}" width="${hw}" height="26" fill="transparent"/>`;
+      s+=`<circle cx="${p.x}" cy="${p.y}" r="14" fill="transparent"/></g>`;
+    }
+  });
+  s+=`</g>`;
+  scene.innerHTML=s;
+  attachPoi();
+  attachRoads();
+  attachRealms();
+  updateCrumb();
+}
+
+function showLizhu(){
+  document.getElementById('lizhuIframe').src='骊珠洞天古地图.html';
+  document.getElementById('lizhuBox').classList.add('open');
+  scene.style.display='none';
+  document.querySelector('.zoom').style.display='none';
+  crumb.innerHTML='<button type="button" id="lizhuCrumbBack">← 返回</button><span class="here">骊珠洞天</span>';
+  const _lb=document.getElementById('lizhuCrumbBack');
+  if(_lb) _lb.addEventListener('click',hideLizhu);
+}
+function hideLizhu(){
+  document.getElementById('lizhuBox').classList.remove('open');
+  document.getElementById('lizhuIframe').src='';
+  scene.style.display='';
+  document.querySelector('.zoom').style.display='';
+  updateCrumb();
+}
+
+function attachCont(){
+  scene.querySelectorAll('.cont').forEach(g=>{
+    const go=()=>{
+      if(moved){ moved=false; return; }
+      const key=g.getAttribute('data-drill');
+      const poi=g.getAttribute('data-poi');
+      drill(key);
+      if(poi) show(poi, key);
+    };
+    g.addEventListener('click',go);
+    g.addEventListener('keydown',e=>{if(e.key==='Enter')go();});
+  });
+}
+function attachPoi(){
+  scene.querySelectorAll('.poi').forEach(g=>{
+    const key=g.getAttribute('data-key'), zk=g.getAttribute('data-zhou');
+    const go=()=>{
+      if(moved){ moved=false; return; }
+      const p=ZHOU[zk].detail.places.find(x=>x.key===key);
+      if(p&&p.drill==='lizhu'){ showLizhu(); return; }
+      show(key, zk);
+    };
+    g.addEventListener('click',go);
+    g.addEventListener('keydown',e=>{if(e.key==='Enter')go();});
+  });
+}
+function attachRoads(){
+  scene.querySelectorAll('.road-hit').forEach(el=>{
+    const name=el.getAttribute('data-name')||'古道';
+    const via=el.getAttribute('data-via')||'';
+    const idx=el.getAttribute('data-i');
+    const go=()=>{
+      if(moved){ moved=false; return; }
+      scene.querySelectorAll('.road').forEach(r=>r.classList.remove('on'));
+      scene.querySelectorAll('.road-lbl').forEach(t=>t.classList.remove('show'));
+      const vis=scene.querySelector(`.road[data-i="${idx}"]`);
+      if(vis) vis.classList.add('on');
+      const lbl=scene.querySelector(`.road-lbl[data-i="${idx}"]`);
+      if(lbl) lbl.classList.add('show');
+      document.getElementById('pTag').textContent='路网';
+      document.getElementById('pName').textContent=name;
+      document.getElementById('pSub').textContent = via || (view==='zhou' ? ZHOU[curKey].name : '跨洲航路');
+      let body='<p>点击高亮的即为当前线路。放大后可看清与各要地的衔接。</p>';
+      if(via) body+=`<p><b>走向</b>：${via}</p>`;
+      const desc=el.getAttribute('data-desc');
+      if(desc) body+=`<p>${desc}</p>`;
+      body+='<div class="src">路网为据原著要地关系勾勒的示意航线/官道，非逐里实测</div>';
+      document.getElementById('pBody').innerHTML=body;
+      side.classList.add('open');
+    };
+    el.addEventListener('click', e=>{ e.stopPropagation(); go(); });
+  });
+}
+function attachRealms(){
+  scene.querySelectorAll('.realm').forEach(el=>{
+    const rk=el.getAttribute('data-rkey'), zk=el.getAttribute('data-zhou');
+    const go=()=>{
+      if(moved){ moved=false; return; }
+      const r=(ZHOU[zk].detail.realms||[]).find(x=>x.key===rk);
+      if(!r) return;
+      document.getElementById('pTag').textContent='势力';
+      document.getElementById('pName').textContent=r.name;
+      document.getElementById('pSub').textContent=ZHOU[zk].name;
+      let html=`<p>${r.desc}</p>`;
+      html += charsSectionHtml(PLACE_CHARS[r.key]);
+      html+='<div class="src">势力范围为据原著王朝/藩属关系勾勒的示意边界，非逐里实测</div>';
+      document.getElementById('pBody').innerHTML=html;
+      bindCharCards(document.getElementById('pBody'));
+      side.classList.add('open');
+    };
+    el.addEventListener('click', e=>{ e.stopPropagation(); go(); });
+  });
+}
+function drill(key){ view='zhou'; curKey=key; resetT(); renderZhou(key); }
+window.drill=drill;
+
+function charChipHtml(key){
+  const c=CHAR_IDX[key];
+  if(!c) return '';
+  const sub=(c.p||c.s||c.r||'').slice(0,18);
+  const imgHtml = c.img
+    ? `<img src="${c.img}" alt="${c.n}" loading="lazy" onerror="this.outerHTML='<div class=\\'ph\\'>${c.n[0]}</div>'">`
+    : `<div class="ph">${c.n[0]}</div>`;
+  return `<div class="charcard" data-ckey="${key}" title="${c.n}">${imgHtml}<div class="meta"><div class="nm">${c.n}</div><div class="sub">${sub}</div></div></div>`;
+}
+function charsSectionHtml(list){
+  const keys=(list||[]).filter(k=>CHAR_IDX[k]);
+  if(!keys.length) return '';
+  let h='<div class="charsec"><h4>相关人物 · 点击看立绘与简介</h4><div class="charrow">';
+  keys.forEach(k=>{ h+=charChipHtml(k); });
+  h+='</div></div>';
+  return h;
+}
+function bindCharCards(rootEl){
+  (rootEl||document).querySelectorAll('.charcard').forEach(el=>{
+    el.addEventListener('click', e=>{
+      e.stopPropagation();
+      if(moved){ moved=false; return; }
+      showChar(el.getAttribute('data-ckey'));
+    });
+  });
+}
+function showChar(key){
+  const c=CHAR_IDX[key];
+  if(!c) return;
+  document.getElementById('pTag').textContent='人物';
+  document.getElementById('pName').textContent=c.n;
+  document.getElementById('pSub').textContent=(c.p||c.s||c.r||'');
+  const por = c.img
+    ? `<img class="por" src="${c.img}" alt="${c.n}" onerror="this.outerHTML='<div class=\\'por ph\\'>${c.n[0]}</div>'">`
+    : `<div class="por ph">${c.n[0]}</div>`;
+  let html=`<div class="chardetail">${por}`;
+  if(c.r) html+=`<p style="margin:0 0 6px"><b>境界</b>：${c.r}</p>`;
+  if(c.s) html+=`<p style="margin:0 0 6px"><b>所属</b>：${c.s}</p>`;
+  if(c.p) html+=`<p style="margin:0 0 8px"><b>身份</b>：${c.p}</p>`;
+  if(c.i) html+=`<p>${c.i}</p>`;
+  html+='</div>';
+  html+='<div class="src">立绘与简介打通自 prototype 卡牌/人物志数据</div>';
+  document.getElementById('pBody').innerHTML=html;
+  side.classList.add('open');
+}
+window.showChar=showChar;
+
+function show(key, zk){
+  const p = zk ? ZHOU[zk].detail.places.find(x=>x.key===key) : null;
+  if(!p) return;
+  document.getElementById('pTag').textContent=p.tag||'要地';
+  document.getElementById('pName').textContent=p.name;
+  document.getElementById('pSub').textContent = zk?ZHOU[zk].name:'';
+  let html = `<p>${p.desc}</p>`;
+  if(p.drill==='lizhu') html+='<p style="color:#9c3b2e">▶ 此为可下钻地点，点击地图同位置亦可进入骊珠洞天详图。</p>';
+  html += charsSectionHtml(PLACE_CHARS[key]);
+  if(zk && ZHOU_RELS[zk]){
+    html+='<div class="relrow"><span style="font-size:12px;color:#6b5f49;align-self:center">相关洲</span>';
+    ZHOU_RELS[zk].forEach(k=>{
+      const zn=(ZHOU[k]&&ZHOU[k].name)||k;
+      html+=`<button type="button" onclick="drill('${k}')">${zn}</button>`;
+    });
+    html+='</div>';
+  }
+  html += '<div class="src">原著考据 · 落魄山 WIKI / 剑来原著互证</div>';
+  document.getElementById('pBody').innerHTML = html;
+  bindCharCards(document.getElementById('pBody'));
+  side.classList.add('open');
+}
+document.getElementById('closeP').addEventListener('click',()=>side.classList.remove('open'));
+
+function updateCrumb(){
+  if(view==='world'){
+    crumb.innerHTML='<span class="here">浩然天下</span><span class="hint">点击任一洲下钻</span>';
+  }else if(view==='zhou'){
+    const name=(ZHOU[curKey]&&ZHOU[curKey].name)||'';
+    crumb.innerHTML=`<button type="button" onclick="backWorld()">← 返回</button><span class="here">${name}</span>`;
+  }
+}
+function backWorld(){ view='world'; curKey=null; resetT(); renderWorld(); side.classList.remove('open'); }
+window.backWorld=backWorld;
+document.getElementById('lizhuBack').addEventListener('click',hideLizhu);
+
+function applyT(){ scene.setAttribute('transform',`translate(${tx},${ty}) scale(${scale})`);
+  document.getElementById('pct').textContent=Math.round(scale*100)+'%'; }
+function resetT(){ scale=1; tx=0; ty=0; applyT(); }
+function zoomAt(cx,cy,factor){
+  const ns=Math.min(9,Math.max(0.6,scale*factor));
+  tx=cx-(cx-tx)*(ns/scale); ty=cy-(cy-ty)*(ns/scale); scale=ns; applyT();
+}
+function clientToSvg(e){
+  const r=svg.getBoundingClientRect();
+  return [(e.clientX-r.left)/r.width*1600, (e.clientY-r.top)/r.height*1100];
+}
+let moved=false, last=null;
+svg.addEventListener('wheel',e=>{ e.preventDefault(); const [cx,cy]=clientToSvg(e); zoomAt(cx,cy, e.deltaY<0?1.15:1/1.15); },{passive:false});
+svg.addEventListener('mousedown',e=>{ moved=false; last=[e.clientX,e.clientY]; });
+window.addEventListener('mousemove',e=>{
+  if(!last) return; const dx=e.clientX-last[0], dy=e.clientY-last[1];
+  if(Math.abs(dx)+Math.abs(dy)>3) moved=true;
+  if(moved){ const r=svg.getBoundingClientRect(); tx+=dx/r.width*1600; ty+=dy/r.height*1100; last=[e.clientX,e.clientY]; applyT(); }
+});
+window.addEventListener('mouseup',()=>{ last=null; });
+let t2=null;
+svg.addEventListener('touchstart',e=>{ if(e.touches.length===1){last=[e.touches[0].clientX,e.touches[0].clientY];moved=false;} else if(e.touches.length===2){ t2=touchDist(e); } },{passive:false});
+svg.addEventListener('touchmove',e=>{ e.preventDefault();
+  if(e.touches.length===1&&last){ const dx=e.touches[0].clientX-last[0], dy=e.touches[0].clientY-last[1];
+    if(Math.abs(dx)+Math.abs(dy)>3) moved=true; if(moved){ const r=svg.getBoundingClientRect(); tx+=dx/r.width*1600; ty+=dy/r.height*1100; last=[e.touches[0].clientX,e.touches[0].clientY]; applyT(); } }
+  else if(e.touches.length===2){ const d=touchDist(e); if(t2){ const [cx,cy]=touchMid(e); zoomAt(cx,cy,d/t2); } t2=d; }
+},{passive:false});
+svg.addEventListener('touchend',()=>{ last=null; t2=null; });
+function touchDist(e){ const a=e.touches[0],b=e.touches[1]; return Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY); }
+function touchMid(e){ const a=e.touches[0],b=e.touches[1]; const r=svg.getBoundingClientRect();
+  return [(a.clientX+b.clientX)/2/r.width*1600,(a.clientY+b.clientY)/2/r.height*1100]; }
+document.getElementById('zin').addEventListener('click',()=>zoomAt(800,550,1.2));
+document.getElementById('zout').addEventListener('click',()=>zoomAt(800,550,1/1.2));
+document.getElementById('zreset').addEventListener('click',resetT);
+
+/* 画风切换：CSS 变量驱动；写实绘卷需重绘 scene 以贴底图 */
+const styleSel=document.getElementById('styleSel');
+const STYLE_KEYS=['qinglv','shuimo','jinbi','qianjiang','yeyue','qiushan','huijuan'];
+function setStyle(s){
+  if(STYLE_KEYS.indexOf(s)<0) s='qinglv';
+  stageEl.dataset.style = s;
+  if(styleSel) styleSel.value = s;
+  try{ localStorage.setItem('hz_style', s); }catch(e){}
+  if(view==='world') renderWorld();
+  else if(view==='zhou' && curKey) renderZhou(curKey);
+}
+if(styleSel) styleSel.addEventListener('change',()=>setStyle(styleSel.value));
+try{ setStyle(localStorage.getItem('hz_style')||'huijuan'); }catch(e){ setStyle('huijuan'); }
+
+/* 图层 */
+const btnRoads=document.getElementById('btnRoads');
+const btnNames=document.getElementById('btnNames');
+const btnRoadLbl=document.getElementById('btnRoadLbl');
+const btnRealms=document.getElementById('btnRealms');
+function refreshLayers(){
+  if(btnRoads) btnRoads.classList.toggle('on', showRoads);
+  if(btnNames) btnNames.classList.toggle('on', showNames);
+  if(btnRoadLbl) btnRoadLbl.classList.toggle('on', showRoadLbl);
+  if(btnRealms) btnRealms.classList.toggle('on', showRealms);
+  if(view==='world') renderWorld();
+  else if(view==='zhou' && curKey) renderZhou(curKey);
+}
+if(btnRoads) btnRoads.addEventListener('click',()=>{ showRoads=!showRoads; refreshLayers(); });
+if(btnNames) btnNames.addEventListener('click',()=>{ showNames=!showNames; refreshLayers(); });
+if(btnRoadLbl) btnRoadLbl.addEventListener('click',()=>{ showRoadLbl=!showRoadLbl; refreshLayers(); });
+if(btnRealms) btnRealms.addEventListener('click',()=>{ showRealms=!showRealms; refreshLayers(); });
+
+/* 地名检索：输入即列命中，点击跳转 */
+const poiSearch=document.getElementById('poiSearch');
+function jumpToPlace(zk, key){
+  side.classList.remove('open');
+  drill(zk);
+  show(key, zk);
+  const p=ZHOU[zk].detail.places.find(x=>x.key===key);
+  if(p){
+    /* 将目标点拉到视野中心附近 */
+    const fit=fitLayer(ZHOU[zk].detail);
+    const sx=p.x*fit.s+fit.ox, sy=p.y*fit.s+fit.oy;
+    scale=1.8; tx=800-sx*scale; ty=550-sy*scale; applyT();
+  }
+}
+if(poiSearch){
+  poiSearch.addEventListener('input',()=>{
+    const q=(poiSearch.value||'').trim();
+    if(!q){ side.classList.remove('open'); return; }
+    const hits=[];
+    Object.keys(ZHOU).forEach(zk=>{
+      (ZHOU[zk].detail.places||[]).forEach(p=>{
+        if(p.name.indexOf(q)>=0 || (p.tag||'').indexOf(q)>=0) hits.push({zk,key:p.key,name:p.name,tag:p.tag||'要地',kind:'poi'});
+      });
+      (ZHOU[zk].detail.realms||[]).forEach(r=>{
+        if(r.name.indexOf(q)>=0) hits.push({zk,key:r.key,name:r.name,tag:'势力',kind:'realm'});
+      });
+    });
+    document.getElementById('pTag').textContent='检索';
+    document.getElementById('pName').textContent=`「${q}」`;
+    document.getElementById('pSub').textContent=`命中 ${hits.length} 处`;
+    let html='';
+    if(!hits.length) html='<p>无匹配地名。可试：宗门、洞天、王朝、大骊、青鸾、山、湖。</p>';
+    else{
+      html='<ul class="hitlist">';
+      hits.slice(0,40).forEach(h=>{
+        if(h.kind==='realm'){
+          html+=`<li onclick="jumpToRealm('${h.zk}','${h.key}')"><b>${h.name}</b> <span style="color:#8a785a;font-size:12px">· ${ZHOU[h.zk].name} · 势力</span></li>`;
+        }else{
+          html+=`<li onclick="jumpToPlace('${h.zk}','${h.key}')"><b>${h.name}</b> <span style="color:#8a785a;font-size:12px">· ${ZHOU[h.zk].name} · ${h.tag}</span></li>`;
+        }
+      });
+      html+='</ul>';
+    }
+    html+='<div class="src">仅索引图上已标注要地/势力；原著未明载者不臆造</div>';
+    document.getElementById('pBody').innerHTML=html;
+    side.classList.add('open');
+  });
+  poiSearch.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){ poiSearch.value=''; side.classList.remove('open'); poiSearch.blur(); }
+  });
+}
+window.jumpToPlace=jumpToPlace;
+function jumpToRealm(zk, key){
+  side.classList.remove('open');
+  drill(zk);
+  const r=(ZHOU[zk].detail.realms||[]).find(x=>x.key===key);
+  if(r){
+    document.getElementById('pTag').textContent='势力';
+    document.getElementById('pName').textContent=r.name;
+    document.getElementById('pSub').textContent=ZHOU[zk].name;
+    let html=`<p>${r.desc}</p>`;
+    html += charsSectionHtml(PLACE_CHARS[key]);
+    html+='<div class="src">势力范围为据原著王朝/藩属关系勾勒的示意边界，非逐里实测</div>';
+    document.getElementById('pBody').innerHTML=html;
+    bindCharCards(document.getElementById('pBody'));
+    side.classList.add('open');
+    if(r.lx!=null){
+      const fit=fitLayer(ZHOU[zk].detail);
+      const sx=r.lx*fit.s+fit.ox, sy=r.ly*fit.s+fit.oy;
+      scale=1.6; tx=800-sx*scale; ty=550-sy*scale; applyT();
+    }
+  }
+}
+window.jumpToRealm=jumpToRealm;
+
+renderWorld(); applyT();
+</script>
+</body>
+</html>

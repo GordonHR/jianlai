@@ -1,0 +1,105 @@
+<view class="lq">
+  <view class="lq-head">笼 中 雀</view>
+  <view class="lq-sub" wx:if="{{v}}">场面链 · 已见结局 {{v.seen}} / {{v.total}}</view>
+
+  <!-- 来路 -->
+  <block wx:if="{{v && v.stage==='origin'}}">
+    <view class="lq-lead">这座洞天像一只笼子。<br/>你还小，只知道心里好像有什么东西，想飞。</view>
+    <view class="lq-origins">
+      <view wx:for="{{v.origins}}" wx:key="k" class="lq-origin" bindtap="pickOrigin" data-k="{{item.k}}">
+        <view class="lq-omark">{{item.mark}}</view>
+        <view class="lq-ot">{{item.t}}</view>
+        <view class="lq-od">{{item.d}}</view>
+      </view>
+    </view>
+    <view class="lq-btns">
+      <view class="lq-btn ghost" bindtap="openCodex">结 局 图 鉴</view>
+      <view class="lq-btn ghost" bindtap="goHome">返 回</view>
+    </view>
+  </block>
+
+  <!-- 游玩 -->
+  <block wx:elif="{{v && v.stage==='play'}}">
+    <view class="lq-path">落笔 · 理 {{v.path.li}} · 情 {{v.path.qing}} · 剑 {{v.path.jian}}
+      <text wx:if="{{v.lean}}">　更近 {{v.lean}}</text>
+    </view>
+    <view class="lq-bag" wx:if="{{v.deeds.length}}">
+      <view class="lq-bag-h">行 囊</view>
+      <view class="lq-chips">
+        <text wx:for="{{v.deeds}}" wx:key="t" class="lq-chip {{item.path}}">{{item.t}}</text>
+      </view>
+    </view>
+    <view class="lq-progress">进度 {{v.node.prog}}%</view>
+    <view class="lq-card">
+      <view class="lq-ch">{{v.node.ch}}</view>
+      <view class="lq-qt">{{v.node.t}}</view>
+      <view class="lq-qd">{{v.node.d}}</view>
+    </view>
+    <view class="lq-choices">
+      <view wx:for="{{v.choices}}" wx:key="idx" class="lq-choice" bindtap="choose" data-i="{{item.idx}}">
+        <text class="lq-ctxt">{{item.txt}}</text>
+        <view class="lq-cnote" wx:if="{{item.note}}">{{item.note}}</view>
+        <view class="lq-ow {{item.path}}" wx:if="{{item.pathN}}">落笔 · {{item.pathN}}{{item.deed ? '　行囊：'+item.deed : ''}}</view>
+      </view>
+    </view>
+    <view class="lq-btns" style="margin-top:32rpx">
+      <view class="lq-btn ghost" bindtap="restart">重 来</view>
+      <view class="lq-btn ghost" bindtap="goHome">返 回</view>
+    </view>
+  </block>
+
+  <!-- 插曲 -->
+  <block wx:elif="{{v && v.stage==='il'}}">
+    <view class="lq-card">
+      <view class="lq-ch">巷 中 插 曲</view>
+      <view class="lq-qt">{{v.il.t}}</view>
+      <view class="lq-qd">{{v.il.d}}</view>
+    </view>
+    <view class="lq-btns"><view class="lq-btn" bindtap="ilNext">继 续</view></view>
+  </block>
+
+  <!-- 结局 -->
+  <block wx:elif="{{v && v.stage==='end'}}">
+    <view class="lq-end">
+      <image wx:if="{{v.ending.ico}}" class="lq-eico" src="{{v.ending.ico}}" mode="aspectFit"/>
+      <view class="lq-g">{{v.ending.g}}</view>
+      <view class="lq-gt">{{v.ending.t}}</view>
+      <view class="lq-new" wx:if="{{v.ending.isNew}}">新结局已收入图鉴</view>
+      <view class="lq-gd">{{v.ending.d}}</view>
+      <view class="lq-gp" wx:if="{{v.ending.poem}}">{{v.ending.poem}}</view>
+      <view class="lq-path">出笼时 · 理 {{v.ending.path.li}} · 情 {{v.ending.path.qing}} · 剑 {{v.ending.path.jian}}
+        <text wx:if="{{v.ending.lean}}">　更近 {{v.ending.lean}}</text>
+      </view>
+      <view class="lq-bag" wx:if="{{v.ending.deeds.length}}">
+        <view class="lq-bag-h">出笼时的行囊</view>
+        <view class="lq-chips">
+          <text wx:for="{{v.ending.deeds}}" wx:key="t" class="lq-chip {{item.path}}">{{item.t}}</text>
+        </view>
+      </view>
+      <view class="lq-btns">
+        <view class="lq-btn" bindtap="restart">再走一遭</view>
+        <view class="lq-btn ghost" bindtap="openCodex">图 鉴</view>
+        <view class="lq-btn ghost" bindtap="goHome">返 回</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 图鉴 -->
+  <block wx:elif="{{v && v.stage==='codex'}}">
+    <view class="lq-cx">
+      <view wx:for="{{v.codex}}" wx:key="key" class="lq-cx-card {{item.seen?'got':'lock'}}">
+        <view class="lq-cx-row" wx:if="{{item.seen}}">
+          <image class="lq-cx-ico" src="{{item.ico}}" mode="aspectFit"/>
+          <view class="lq-cx-tt">{{item.g}} · {{item.t}}</view>
+        </view>
+        <view class="lq-cx-tt" wx:else>？？？</view>
+        <view class="lq-cx-dd">{{item.seen ? item.d : '未至'}}</view>
+        <view class="lq-cx-ct" wx:if="{{item.seen}}">走过 {{item.n}} 次</view>
+      </view>
+    </view>
+    <view class="lq-btns">
+      <view class="lq-btn" bindtap="restart">开 始</view>
+      <view class="lq-btn ghost" bindtap="goHome">返 回</view>
+    </view>
+  </block>
+</view>

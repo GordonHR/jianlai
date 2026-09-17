@@ -9,6 +9,7 @@ Page({
   goWsp(){ wx.navigateTo({ url: '/pages/wushipai/wushipai' }); },
   goFulu(){ wx.navigateTo({ url: '/packageFulu/pages/fulu/fulu' }); },
   goAskLake(){ wx.navigateTo({ url: '/pages/asklake/asklake' }); },
+  goLongque(){ wx.navigateTo({ url: '/packageLongque/pages/longque/longque' }); },
   goSect(){ wx.navigateTo({ url: '/pages/sect/sect?diff=normal' }); },
   goShenci(){ wx.navigateTo({ url: '/pages/shenci/shenci' }); }
 });

@@ -18,6 +18,7 @@ generated-images/
 # 用移动硬盘/网盘或 Git LFS，不要塞进普通仓库。
 prototype/art/
 prototype/bg/
+map-assets/
 
 # ── 本地工具二进制（不要进仓库）───────────────────
 prototype/art/resvg.exe

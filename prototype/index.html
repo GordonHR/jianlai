@@ -40,7 +40,7 @@
     100%{ transform:translateY(112vh) translateX(40px); opacity:0; }
   }
 
-  /* ================= 开场卷轴 ================= */
+  /* ================= 开场卷�?================= */
   .title-screen { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
                   position:relative; overflow:hidden;
                   background:linear-gradient(160deg, rgba(10,8,14,.86), rgba(16,12,22,.80) 48%, rgba(8,6,12,.92)),
@@ -161,13 +161,13 @@
   .charinfo .skills { max-height:54px; overflow:hidden; margin:0 0 5px; }
   .skillrow { font-size:10.5px; line-height:1.28; margin:0 0 2px; }
   .skname { color:var(--gold); font-weight:bold; }
-  .skname::after { content:"："; }
+  .skname::after { content:"�?; }
   .skdesc { color:#b8b0a0; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; }
   .sk-more { width:100%; background:rgba(232,198,106,.12); color:var(--gold); border:1px solid rgba(232,198,106,.35);
              border-radius:7px; padding:6px; font-size:11px; cursor:pointer; letter-spacing:1px; margin-top:auto; }
   .sk-more:hover { background:rgba(232,198,106,.22); }
 
-  /* 已选阵容条 —— 固定浮在底部，前置不被遮挡 */
+  /* 已选阵容条 —�?固定浮在底部，前置不被遮�?*/
   .roster { position:sticky; bottom:0; z-index:50; margin-top:18px;
             padding:14px 16px calc(14px + env(safe-area-inset-bottom, 0px));
             background:linear-gradient(180deg,rgba(28,24,36,.94),rgba(16,13,20,.98));
@@ -198,7 +198,7 @@
   .btn.skill { background:linear-gradient(180deg,#3a5a72,#284a60); color:#eaf4fb; border:1px solid #4a6a82; }
   .btn.ghost { background:rgba(255,255,255,.06); color:#c9b98f; border:1px solid rgba(232,198,106,.3); }
 
-  /* ================= 对战界面 · 单屏九宫格 ================= */
+  /* ================= 对战界面 · 单屏九宫�?================= */
   .battlefield { position:relative; --bg:url('bg/hepan.png');
                  min-height:100vh; display:grid; grid-template-rows:auto minmax(0,1fr) auto;
                  gap:10px; padding:10px; box-sizing:border-box; }
@@ -239,7 +239,7 @@
   .enemies { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; align-items:flex-start; }
   .bf-board { display:grid; grid-template-columns:92px minmax(0,1fr) 92px; align-items:center;
               gap:10px; min-height:0; position:relative; z-index:1; }
-  /* 牌桌：战场化为一张圆桌，敌我在桌两侧落座（三国杀式围坐感） */
+  /* 牌桌：战场化为一张圆桌，敌我在桌两侧落座（三国杀式围坐感�?*/
   .bf-field { position:relative; }
   .bf-field::before { content:""; position:absolute; inset:4px; z-index:0; border-radius:20px; pointer-events:none;
                        background:radial-gradient(ellipse 118% 86% at 50% 52%, rgba(46,38,50,.42), rgba(20,16,24,.05) 70%, transparent 78%); }
@@ -277,7 +277,7 @@
 
   .bf-me { display:flex; flex-direction:column; gap:8px; }
   .bf-me-main { display:grid; grid-template-columns:184px minmax(0,1fr) 156px; gap:10px; align-items:stretch; }
-  /* 阵营侧栏小标：对位行（顶）/ 我方队友行（底） */
+  /* 阵营侧栏小标：对位行（顶�? 我方队友行（底） */
   .bf-side-band { font-size:11px; letter-spacing:4px; padding:4px 10px; border-radius:7px;
                   display:inline-flex; align-items:center; gap:6px; align-self:flex-start;
                   background:rgba(18,16,24,.7); border:1px solid rgba(255,255,255,.08); }
@@ -293,7 +293,7 @@
   .mates-row .player { transform:scale(.86); transform-origin:top center; margin-right:-16px;
                        box-shadow:0 4px 14px rgba(0,0,0,.5), 0 0 18px color-mix(in srgb,var(--col) 22%, transparent); }
   .mates-row .player:last-child { margin-right:0; }
-  /* 对位列：克制呈现，微微外灰 */
+  /* 对位列：克制呈现，微微外�?*/
   .bf-enemies .player { filter:brightness(.92) saturate(.95); }
   .bf-enemies .player.dead { filter:grayscale(1) brightness(.55); }
   .bf-handwrap { background:linear-gradient(180deg,rgba(32,29,40,.94),rgba(20,18,26,.94)); border-radius:14px;
@@ -334,7 +334,7 @@
               color:#fff; font-family:var(--kai); font-size:42px; letter-spacing:20px; font-weight:900;
               text-shadow:0 0 10px rgba(0,0,0,.9), 0 2px 4px rgba(0,0,0,.85), 1px 1px 0 #000, -1px -1px 0 #000;
               background:rgba(0,0,0,.45); padding-left:20px; }
-  /* 位置号角标（参考图：卡底/顶"X号位"醒目金底深字，立绘上一眼能辨） */
+  /* 位置号角标（参考图：卡�?�?X号位"醒目金底深字，立绘上一眼能辨） */
   .seat-num { position:absolute; bottom:5px; left:50%; transform:translateX(-50%);
               z-index:4; font-size:13px; font-weight:700; color:#3a2614; letter-spacing:3px; padding:3px 10px;
               background:linear-gradient(180deg, #f4d994, #c9a24b);
@@ -342,7 +342,7 @@
               text-shadow:0 1px 0 rgba(255,255,255,.4);
               box-shadow:0 2px 6px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.35); }
   .player.dead .seat-num { opacity:.85; filter:none; }
-  /* hero 中央大卡的位置号（放右上角，不与 hero-badge 冲突） */
+  /* hero 中央大卡的位置号（放右上角，不与 hero-badge 冲突�?*/
   .hero .seat-num.hero-seat { bottom:auto; left:auto; top:8px; right:8px; transform:none;
                               font-size:14px; padding:4px 12px; }
   .pwrap { position:relative; width:100%; height:132px; border-radius:10px 10px 0 0; overflow:hidden;
@@ -358,7 +358,7 @@
   .tag { font-size:10px; margin-top:3px; font-weight:bold; }
   .tag.tgt { color:var(--gold); text-shadow:0 0 6px rgba(232,198,106,.6); }
 
-  /* 气血：三国杀式血量点（实心=现有，空心=已失） */
+  /* 气血：三国杀式血量点（实�?现有，空�?已失�?*/
   .hppips { display:flex; align-items:center; gap:4px; justify-content:center; margin:4px 0 3px; flex-wrap:nowrap; }
   .hppips .pip { width:13px; height:13px; border-radius:50%; flex:0 0 auto;
                  background:radial-gradient(circle at 36% 30%, rgba(255,255,255,.14), rgba(0,0,0,.28));
@@ -367,7 +367,7 @@
                  border-color:#e8765c; box-shadow:0 0 6px rgba(214,83,63,.55), inset 0 1px 2px rgba(255,255,255,.4); }
   .hppips .hpcnt { font-size:10px; color:#c9b98f; margin-left:6px; font-weight:bold; letter-spacing:.5px; white-space:nowrap; }
 
-  /* 我方武将：竖版小卡，与手牌等高 */
+  /* 我方武将：竖版小卡，与手牌等�?*/
   .hero { display:flex; flex-direction:column; gap:0; position:relative; width:184px;
           background:linear-gradient(180deg,rgba(40,36,50,.93),rgba(22,20,28,.93));
           border:2px solid var(--col); border-radius:14px; padding:0; overflow:hidden;
@@ -402,7 +402,7 @@
                 box-shadow:0 14px 30px rgba(0,0,0,.7), 0 0 20px rgba(232,198,106,.4), inset 0 0 0 2px rgba(255,255,255,.5); }
   .card.disabled { filter:grayscale(.6) brightness(.75); cursor:not-allowed; }
   .card.disabled:hover { transform:rotate(var(--rot,0deg)) translateY(0) scale(1); box-shadow:0 3px 9px rgba(0,0,0,.55); }
-  /* 两步出牌：选中抬起 + 确认条（与手机端一致，PC 再补悬停说明） */
+  /* 两步出牌：选中抬起 + 确认条（与手机端一致，PC 再补悬停说明�?*/
   .hand.has-sel .card:not(.sel){ opacity:.4; filter:saturate(.7); transition:opacity .15s; }
   .card.sel { transform: translateY(-22px) scale(1.06) rotate(0deg) !important; border-color:var(--gold); box-shadow:0 12px 28px rgba(232,198,106,.45); z-index:40; }
   .card.sel:hover { transform: translateY(-26px) scale(1.08) rotate(0deg) !important; }
@@ -416,12 +416,12 @@
   .confirm-bar .cb-hint { font-size:11px; color:#8d8574; margin-top:4px; letter-spacing:.5px; }
   .confirm-bar .cb-key { font-size:11px; opacity:.7; margin-left:3px; }
   .confirm-bar .btn { padding:8px 18px; }
-  /* PC 专属：装备 · 状态坞 */
+  /* PC 专属：装�?· 状态坞 */
   .status-strip { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:6px 0 2px; padding-top:7px; border-top:1px solid rgba(232,198,106,.16); }
   .status-strip .ss-label { font-size:10.5px; letter-spacing:3px; color:#8a8170; margin-right:4px; }
   .status-strip .ss-chip { font-size:11px; padding:3px 9px; border:1px solid; border-radius:20px; background:rgba(0,0,0,.25); white-space:nowrap; }
   .status-strip .ss-chip b { margin-right:5px; font-weight:bold; }
-  /* 当前行动者高亮（PC 一眼看清轮到谁） */
+  /* 当前行动者高亮（PC 一眼看清轮到谁�?*/
   .hero.cur { box-shadow:0 0 0 2px var(--gold), 0 8px 30px rgba(232,198,106,.4); }
   .cf-head { height:28px; display:flex; align-items:center; justify-content:center;
              font-size:17px; letter-spacing:3px; font-weight:bold; position:relative;
@@ -453,7 +453,7 @@
               font-family:var(--kai); font-size:18px; color:rgba(232,198,106,.5); }
 
   /* ================= 卡牌特效粒子 ================= */
-  /* 火属：上窜火苗 */
+  /* 火属：上窜火�?*/
   .fx-flame { position:absolute; width:var(--sz,16px); height:calc(var(--sz,16px) * 1.7);
     border-radius:50% 50% 46% 46% / 62% 62% 38% 38%;
     background:linear-gradient(0deg, rgba(255,240,190,.95) 0%, #ffb347 32%, #e8621f 66%, rgba(150,40,10,0) 100%);
@@ -464,7 +464,7 @@
                        25%{ opacity:.95; transform:translate(calc(var(--dx,0px)*.35), calc(var(--dy,-60px)*.3)) scale(1,.9); }
                        100%{ transform:translate(var(--dx,0px), var(--dy,-60px)) scale(.5,.5); opacity:0; } }
 
-  /* 技能标签：带说明 */
+  /* 技能标签：带说�?*/
   .sk { cursor:help; }
   .fx-slashline { position:absolute; height:3px; width:var(--w,240px); border-radius:2px;
     transform-origin:left center; transform:rotate(var(--ang,-20deg)) scaleX(0);
@@ -510,7 +510,7 @@
     animation:drunkWave 2.2s ease-in-out forwards; }
   @keyframes drunkWave { 0%{ transform:translateY(0) scale(1); opacity:0; }
                          25%{ opacity:1; } 100%{ transform:translateY(-18px) scale(1.08); opacity:0; } }
-  /* 大字「酒」与横排「且饮此杯」已由 figfx.js 的「饮酒图」接手（剪影 + 竖排题字 + 朱砂印） */
+  /* 大字「酒」与横排「且饮此杯」已�?figfx.js 的「饮酒图」接手（剪影 + 竖排题字 + 朱砂印） */
   .drunk-sway { animation:drunkSway 2.2s ease-in-out; z-index:20; }
   @keyframes drunkSway { 0%,100%{ transform:rotate(0) translateX(0); }
     15%{ transform:rotate(-2.4deg) translateX(-5px); } 35%{ transform:rotate(2deg) translateX(5px); }
@@ -616,9 +616,9 @@
   .confetti { position:absolute; width:8px; height:14px; border-radius:2px; top:-20px; animation:confetti 1.8s ease-in forwards; }
   @keyframes confetti { 0%{transform:translateY(0) rotate(0);} 100%{transform:translateY(105vh) rotate(720deg);} }
 
-  /* ================= 粒子层（剑雨 / 妖雾 / 莲华 / 金光柱 / 血溅） ================= */
+  /* ================= 粒子层（剑雨 / 妖雾 / 莲华 / 金光�?/ 血溅） ================= */
   #fxlayer { position:fixed; inset:0; z-index:43; pointer-events:none; overflow:hidden; }
-  /* 万剑归宗：天降剑雨 */
+  /* 万剑归宗：天降剑�?*/
   .fx-sword { position:absolute; top:-60px; width:3px; height:56px; border-radius:2px;
               background:linear-gradient(180deg, rgba(255,255,255,0) 0%, #fff 30%, var(--sc,#8fd8ff) 70%, rgba(255,255,255,0) 100%);
               box-shadow:0 0 10px var(--sc,#8fd8ff), 0 0 22px rgba(255,255,255,.6);
@@ -626,13 +626,13 @@
   @keyframes swordFall { 0%{ transform:translateY(0) rotate(14deg) scaleY(.6); opacity:0; }
                          18%{ opacity:1; }
                          100%{ transform:translateY(112vh) rotate(14deg) scaleY(1.25); opacity:0; } }
-  /* 蛮荒入侵：妖雾扩散 */
+  /* 蛮荒入侵：妖雾扩�?*/
   .fx-mist { position:absolute; border-radius:50%; filter:blur(26px);
              background:radial-gradient(circle, rgba(150,40,160,.55) 0%, rgba(80,20,90,.32) 45%, transparent 72%);
              animation:mistOut 1.5s ease-out forwards; }
   @keyframes mistOut { 0%{ transform:scale(.15); opacity:0; } 30%{ opacity:1; }
                        100%{ transform:scale(2.6); opacity:0; } }
-  /* 疗愈：莲华上升 */
+  /* 疗愈：莲华上�?*/
   .fx-petal { position:absolute; width:12px; height:12px; pointer-events:none;
               background:radial-gradient(circle at 40% 35%, #fff 0%, #b6f2cf 45%, rgba(60,180,120,.15) 75%, transparent 100%);
               border-radius:60% 0 60% 0; animation:petalUp 1.25s ease-out forwards; }
@@ -647,13 +647,13 @@
   @keyframes pillarUp { 0%{ transform:scaleY(0) scaleX(.6); opacity:0; }
                         25%{ opacity:1; transform:scaleY(1) scaleX(1); }
                         100%{ transform:scaleY(1.06) scaleX(1.35) translateY(-18px); opacity:0; } }
-  /* 受击：血溅 */
+  /* 受击：血�?*/
   .fx-blood { position:absolute; width:6px; height:6px; border-radius:50%;
               background:radial-gradient(circle, #ffd9d0 0%, #d8342a 55%, rgba(120,20,15,0) 100%);
               animation:bloodFly .68s ease-out forwards; }
   @keyframes bloodFly { 0%{ transform:translate(0,0) scale(1); opacity:1; }
                         100%{ transform:translate(var(--dx,20px), var(--dy,40px)) scale(.2); opacity:0; } }
-  /* 低血警告：卡片红边呼吸 */
+  /* 低血警告：卡片红边呼�?*/
   .player.lowhp, .hero.lowhp { animation:lowHpBreath 1.35s ease-in-out infinite; }
   @keyframes lowHpBreath {
     0%,100%{ box-shadow:0 0 0 2px rgba(200,40,30,.30), 0 4px 14px rgba(0,0,0,.5); }
@@ -662,7 +662,7 @@
   .player.lowhp .hpbar .fill { animation:lowHpFill 1.35s ease-in-out infinite; }
   @keyframes lowHpFill { 0%,100%{ filter:brightness(1);} 50%{ filter:brightness(1.7) saturate(1.3);} }
 
-  /* 斩杀特写：暗场 + 白闪 + 大字 */
+  /* 斩杀特写：暗�?+ 白闪 + 大字 */
   #execfx { position:fixed; inset:0; z-index:52; pointer-events:none; opacity:0; }
   #execfx.go { animation:execHold 1.15s ease-out forwards; }
   @keyframes execHold { 0%{opacity:0;} 8%{opacity:1;} 78%{opacity:1;} 100%{opacity:0;} }
@@ -683,7 +683,7 @@
               animation:execSub 1.05s ease-out forwards; }
   @keyframes execSub { 0%{opacity:0; transform:translateY(14px);} 35%{opacity:1; transform:translateY(0);} 100%{opacity:0;} }
 
-  /* ================= 新增特效：闪屏 / 重击 / 护盾 / 连击 / 锦囊 ================= */
+  /* ================= 新增特效：闪�?/ 重击 / 护盾 / 连击 / 锦囊 ================= */
   #flash { position:fixed; inset:0; pointer-events:none; z-index:44; opacity:0; background:transparent; }
   #flash.go { animation:flashgo .38s ease-out; }
   @keyframes flashgo { 0%{opacity:0;} 18%{opacity:1;} 100%{opacity:0;} }
@@ -709,14 +709,14 @@
                         100%{opacity:0; top:-14px; transform:translateX(-50%) scale(1);} }
   .floatnum.guard { color:#9fd8ff; font-family:var(--kai); font-size:30px; }
 
-  /* 守心：护盾光环 */
+  /* 守心：护盾光�?*/
   .fx-guard { animation:guardUp .64s ease-out; }
   @keyframes guardUp {
     0%{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--col) 40%,transparent);}
     30%{box-shadow:0 0 30px rgba(140,205,255,.85), inset 0 0 22px rgba(140,205,255,.45); filter:brightness(1.25) saturate(1.1);}
     100%{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--col) 40%,transparent);}
   }
-  /* 论道：道理光环 */
+  /* 论道：道理光�?*/
   .fx-aura { animation:auraUp .95s ease-out; }
   @keyframes auraUp {
     0%{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--col) 40%,transparent);}
@@ -724,7 +724,7 @@
     100%{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--col) 40%,transparent);}
   }
 
-  /* 重击冲击波 */
+  /* 重击冲击�?*/
   .fx-wave { position:absolute; width:22px; height:22px; margin:-11px 0 0 -11px; border-radius:50%;
              border:3px solid rgba(255,90,60,.9); animation:waveOut .8s cubic-bezier(.2,.7,.3,1) forwards; }
   @keyframes waveOut { 0%{transform:scale(.3); opacity:.95;} 100%{transform:scale(9); opacity:0;} }
@@ -757,22 +757,22 @@
                       30%{opacity:1; transform:rotate(var(--ang,0deg)) scaleX(1);}
                       100%{opacity:0; transform:rotate(var(--ang,0deg)) scaleX(1);} }
 
-  /* 读书：书卷文字 */
+  /* 读书：书卷文�?*/
   .fx-glyph { position:absolute; width:12px; height:12px; color:#e8d9a8; font-size:12px; line-height:12px;
               text-align:center; animation:glyphUp 1.4s ease-out forwards; }
-  .fx-glyph::before { content:"文"; text-shadow:0 0 8px rgba(232,198,106,.9); }
+  .fx-glyph::before { content:"�?; text-shadow:0 0 8px rgba(232,198,106,.9); }
   @keyframes glyphUp { 0%{opacity:0; transform:translateY(10px) scale(.7);} 30%{opacity:.95;}
                        100%{opacity:0; transform:translateY(-70px) scale(1.15);} }
 
-  /* 炼器：炉火飞溅
-     类名与关键帧必须独占：.fx-spark / sparkFly 已由上方「卡牌特效粒子」段使用。
-     此前同名重定义覆盖了上方定义，使剑气/锦囊/星芒的 --sc 配色与径向散射全部失效。 */
+  /* 炼器：炉火飞�?
+     类名与关键帧必须独占�?fx-spark / sparkFly 已由上方「卡牌特效粒子」段使用�?
+     此前同名重定义覆盖了上方定义，使剑气/锦囊/星芒�?--sc 配色与径向散射全部失效�?*/
   .fx-forge-spark { position:absolute; width:5px; height:5px; border-radius:50%; background:#ffcf7a;
               box-shadow:0 0 9px #ff9d3c; animation:forgeSparkFly 1s ease-out forwards; }
   @keyframes forgeSparkFly { 0%{opacity:1; transform:translate(0,0) scale(1);}
                         100%{opacity:0; transform:translate(var(--dx,0), var(--dy,-50px)) scale(.3);} }
 
-  /* 出牌：卡牌飞向目标 */
+  /* 出牌：卡牌飞向目�?*/
   .fx-flycard { position:fixed; z-index:45; pointer-events:none; border-radius:8px; overflow:hidden;
                 transition:left .5s cubic-bezier(.22,.7,.25,1), top .5s cubic-bezier(.22,.7,.25,1),
                            transform .5s ease-out, opacity .5s ease-in;
@@ -791,7 +791,7 @@
                         45%{transform:scale(1) rotate(0);} 75%{opacity:1;}
                         100%{opacity:0; transform:scale(1.06) translateY(-16px);} }
 
-  /* 卷首设置：难度 / 战绩 */
+  /* 卷首设置：难�?/ 战绩 */
   .diff-row { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
   .dbtn { padding:7px 20px; font-size:13px; letter-spacing:3px; border-radius:8px; cursor:pointer;
           background:rgba(232,198,106,.06); border:1px solid rgba(232,198,106,.28); color:#c9b98f;
@@ -816,7 +816,7 @@
   .ts-mode p { font-size:11.5px; line-height:1.75; }
   .ts-mode .md-meta { margin-top:9px; font-size:10.5px; color:#6b6455; letter-spacing:1px; }
 
-  /* ================= 人物志 ================= */
+  /* ================= 人物�?================= */
   .codex-head { display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:6px; }
   .codex-head h1 { margin:0; text-align:left; letter-spacing:6px; }
   .codex-stat { color:#8d8574; font-size:12px; letter-spacing:1px; }
@@ -856,8 +856,8 @@
                     background:linear-gradient(180deg,transparent,rgba(0,0,0,.85)); text-shadow:0 1px 4px #000; }
   .codex-card .cf { position:absolute; top:5px; left:5px; font-size:10px; padding:2px 7px; border-radius:8px;
                     background:rgba(0,0,0,.5); border:1px solid rgba(232,198,106,.3); letter-spacing:1px; }
-  /* 境界稀有度角标：斜切左角 + 档位色渐变（金属高光）+ 同色微光。
-     档位色由 JS 注入 --rc：凡灰 / 精青 / 粹蓝 / 绝紫 / 圣橙 / 神金 / 仙赤 */
+  /* 境界稀有度角标：斜切左�?+ 档位色渐变（金属高光�? 同色微光�?
+     档位色由 JS 注入 --rc：凡�?/ 精青 / 粹蓝 / 绝紫 / 圣橙 / 神金 / 仙赤 */
   .codex-card .cr { position:absolute; top:0; right:0; display:flex; align-items:center; gap:3px;
                     font-size:10px; letter-spacing:.5px; color:#fff; padding:3px 9px 3px 13px;
                     clip-path:polygon(9px 0, 100% 0, 100% 100%, 0 100%);
@@ -874,14 +874,14 @@
   .codex-card .csk { font-size:10px; color:#c9b98f; line-height:1.5; height:30px; overflow:hidden; }
   .codex-card .csk span { color:var(--gold); }
   .codex-card .cno { font-size:9px; color:#6b6455; margin-top:4px; display:flex; align-items:center; }
-  /* 星级（气血）：实心★数 = hp，空心☆补足到 5 颗 */
+  /* 星级（气血）：实心★数 = hp，空心☆补足�?5 �?*/
   .cstars { display:inline-flex; gap:1px; margin-right:1px; }
   .cstars .st { font-style:normal; font-size:11px; line-height:1; color:#4e4638; }
   .cstars .st.on { color:#f0c14b; text-shadow:0 0 5px rgba(240,193,75,.6); }
   .cno .cdot { margin:0 5px; opacity:.55; }
   .cno .fl { font-style:normal; color:var(--gold); font-weight:bold; }
 
-  /* 戏里戏外：双栏切换 + 故事卡 */
+  /* 戏里戏外：双栏切�?+ 故事�?*/
   .cx-tabs { display:flex; gap:0; margin:0 0 16px; border:1px solid #4a3a1d; border-radius:10px; overflow:hidden; max-width:420px; }
   .cx-tab { flex:1; text-align:center; padding:11px 0; font-size:14px; letter-spacing:3px; color:#8a7e6c; background:#1a1510; cursor:pointer; border:none; }
   .cx-tab.on { color:#14110f; background:linear-gradient(135deg,#c9a24b,#e8c66a); font-weight:bold; }
@@ -905,11 +905,11 @@
   .cx-quote { font-size:15px; color:#e8c66a; line-height:1.85; margin:14px 0; padding:12px 16px; border-left:3px solid var(--gold); background:rgba(201,162,75,.06); border-radius:0 10px 10px 0; }
   .cx-note { font-size:13px; color:#8a7e6c; line-height:1.85; margin-top:8px; border-top:1px solid #2a2118; padding-top:12px; }
 
-  /* 戏里戏外 · 故事详情 = 展开画卷：摊卷入场 + 圆木画轴 + 随风晃动 + 光阴长河（与人物志详情同源） */
-  /* 外层 .tale-sway 用 grid 三列让左右画轴自动与画卷等高；只做居中容器，不晃动 */
+  /* 戏里戏外 · 故事详情 = 展开画卷：摊卷入�?+ 圆木画轴 + 随风晃动 + 光阴长河（与人物志详情同源） */
+  /* 外层 .tale-sway �?grid 三列让左右画轴自动与画卷等高；只做居中容器，不晃�?*/
   .tale-sway { position:relative; max-width:816px; margin:6px auto 14px;
                display:grid; grid-template-columns:14px 1fr 14px; gap:0; align-items:stretch; }
-  /* 内层 .tale-scroll 负责摊卷入场（居中展开，不做左右倾斜） */
+  /* 内层 .tale-scroll 负责摊卷入场（居中展开，不做左右倾斜�?*/
   .tale-scroll { position:relative; max-width:760px; width:100%; margin:0 auto; padding:34px 52px 32px;
                  grid-column:2; justify-self:center;
                  transform-style:preserve-3d;
@@ -925,9 +925,9 @@
     0%   { opacity:0; transform:scaleX(.06) scaleY(.92); filter:blur(5px); }
     60%  { opacity:1; transform:scaleX(1.022) scaleY(1.004); filter:blur(0); }
     100% { opacity:1; transform:scaleX(1) scaleY(1); filter:blur(0); } }
-  /* 光阴长河 · 蒙版后的流动光影（与小程序 .cx-river 同源）
-     原实现是 SVG 线条水波平铺：波形在 tile 边界斜率不为 0、blur 超出 viewBox 被裁，接缝是硬折角。
-     改为整块柔光平铺——每块到 tile 边缘已衰减为全透明，接缝天然不可见；再叠一层反向慢漂 + 呼吸。 */
+  /* 光阴长河 · 蒙版后的流动光影（与小程�?.cx-river 同源�?
+     原实现是 SVG 线条水波平铺：波形在 tile 边界斜率不为 0、blur 超出 viewBox 被裁，接缝是硬折角�?
+     改为整块柔光平铺——每块到 tile 边缘已衰减为全透明，接缝天然不可见；再叠一层反向慢�?+ 呼吸�?*/
   .tale-river { position:absolute; inset:0; z-index:1; pointer-events:none; overflow:hidden;
                 mix-blend-mode:screen;
                 -webkit-mask-image:radial-gradient(132% 78% at 50% 38%, #000 0%, rgba(0,0,0,.62) 52%, rgba(0,0,0,.18) 80%, transparent 100%);
@@ -947,7 +947,7 @@
       radial-gradient(closest-side, rgba(158,212,190,.13), rgba(158,212,190,0) 78%);
     background-size:640px 480px, 500px 380px;
     animation:trDriftB 46s ease-in-out infinite; }
-  /* 位移量必须取各层 background-size 的整数倍，否则循环回跳会跳变（同样是"不连续"） */
+  /* 位移量必须取各层 background-size 的整数倍，否则循环回跳会跳变（同样�?不连�?�?*/
   @keyframes trDriftA {
     from { background-position:0 0, 180px 120px, 120px 90px; }
     to   { background-position:560px 420px, -240px 440px, 460px 90px; } }
@@ -956,7 +956,7 @@
     50%  { transform:translate3d(-5%,3%,0) scale(1.09); opacity:.92; }
     100% { transform:translate3d(0,0,0) scale(1);      opacity:.5; } }
   .tale-scroll .cx-tale-detail { position:relative; z-index:2; }
-  /* 圆木画轴：grid item 高度自动与画卷等高；木纹 + 顶/底圆头端钮 */
+  /* 圆木画轴：grid item 高度自动与画卷等高；木纹 + �?底圆头端�?*/
   .tale-axis { position:relative; width:14px; pointer-events:none; z-index:3;
                border-radius:6px;
                background:linear-gradient(180deg, #3d2c1a 0%, #6a4a25 18%, #8a6433 50%, #6a4a25 82%, #3d2c1a 100%);
@@ -966,14 +966,14 @@
     0%   { opacity:0; transform:scaleY(0); }
     55%  { opacity:1; transform:scaleY(1.04); }
     100% { opacity:1; transform:scaleY(1); } }
-  /* 端钮：圆形"轴头"，金色光泽，挂在 .tale-sway 顶端/底端（grid item 内绝对定位） */
+  /* 端钮：圆�?轴头"，金色光泽，挂在 .tale-sway 顶端/底端（grid item 内绝对定位） */
   .tale-axis::before, .tale-axis::after { content:''; position:absolute; left:50%;
     width:16px; height:16px; border-radius:50%; transform:translateX(-50%);
     background:radial-gradient(circle at 32% 32%, #f4dba6 0%, #c0955a 30%, #6a4a25 72%, #2a1d10 100%);
     box-shadow:0 0 6px rgba(232,198,106,.6), inset 0 0 2px rgba(0,0,0,.6); z-index:1; }
   .tale-axis::before { top:-7px; }      /* 顶端圆头 */
   .tale-axis::after  { bottom:-7px; }   /* 底端圆头 */
-  /* 圆头溢出 .tale-axis 不影响 .tale-sway（grid item overflow visible 即可，.tale-sway 需保持 visible） */
+  /* 圆头溢出 .tale-axis 不影�?.tale-sway（grid item overflow visible 即可�?tale-sway 需保持 visible�?*/
   .tale-sway { overflow:visible; }
   .tale-axis.left  { grid-column:1; }
   .tale-axis.right { grid-column:3; }
@@ -985,10 +985,10 @@
   .tale-seal-tl { top:13px; left:14px; }
   .tale-seal-br { bottom:13px; right:14px; transform:rotate(-3deg); }
 
-  /* ================= 太平无事牌 · 八十面箴言匣 ================= */
-  /* 顶部不再渲染任何"天 下 太 平"标题（用户 2026-09-03 撤掉），改为仅按钮 + 右侧小计数 */
+  /* ================= 太平无事�?· 八十面箴言�?================= */
+  /* 顶部不再渲染任何"�?�?�?�?标题（用�?2026-09-03 撤掉），改为仅按�?+ 右侧小计�?*/
 
-  /* 操作条：返回 + 随机抽 + 右侧小计数 */
+  /* 操作条：返回 + 随机�?+ 右侧小计�?*/
   .wsp-bar { display:flex; align-items:center; justify-content:center; gap:12px;
              max-width:800px; margin:14px auto 14px; padding:0 6px; position:relative; }
   .wsp-bar .btn { padding:7px 16px; font-size:13px; border-radius:5px; letter-spacing:2px; }
@@ -1000,7 +1000,7 @@
 
   .wsp-holder { max-width:800px; margin:0 auto; background:#1c1610;
                 border:1px solid #3a2f23; border-radius:10px; padding:18px 18px 22px; }
-  /* 木牌 2:3（与立绘同比例，竖版高>宽）；grid 5 列适应更长的牌面 */
+  /* 木牌 2:3（与立绘同比例，竖版�?宽）；grid 5 列适应更长的牌�?*/
   .wsp-wall { display:grid; grid-template-columns:repeat(5,1fr); gap:14px 10px; }
   @media (max-width:740px){ .wsp-wall { grid-template-columns:repeat(4,1fr); } }
   @media (max-width:480px){ .wsp-wall { grid-template-columns:repeat(3,1fr); } }
@@ -1013,7 +1013,7 @@
   .wsp-card.on .wsp-inner { transform:rotateY(180deg); }
   .wsp-face { position:absolute; inset:0; backface-visibility:hidden; border-radius:3px;
               border:1px solid #8a7455; }
-  /* 牌背：素木 + 悬绳 + 绳孔 + 蝇头小楷编号 */
+  /* 牌背：素�?+ 悬绳 + 绳孔 + 蝇头小楷编号 */
   .wsp-wood { background:#c2ac86; overflow:hidden; }
   .wsp-wood::after { content:''; position:absolute; inset:0; pointer-events:none;
                      background:repeating-linear-gradient(96deg, rgba(90,66,38,.055) 0 3px, transparent 3px 9px); }
@@ -1021,13 +1021,13 @@
   .wsp-hole { position:absolute; top:15px; left:50%; margin-left:-3px; width:6px; height:6px;
               border-radius:50%; background:#1c1610; }
   .wsp-no { position:absolute; bottom:5px; right:7px; font-family:var(--kai); font-size:11px; color:#6f5c3e; }
-  /* 牌面：竖版比例下整张牌做底（左右虚化让牌文透气），mask 上下都渐隐 */
+  /* 牌面：竖版比例下整张牌做底（左右虚化让牌文透气），mask 上下都渐�?*/
   .wsp-words { background:#d9cbb0; transform:rotateY(180deg); transform-style:preserve-3d; overflow:hidden; }
   .wsp-art { position:absolute; left:0; right:0; bottom:0; width:100%; height:100%; object-fit:cover;
              object-position:50% 22%; filter:blur(6px) saturate(.5) brightness(.78); opacity:.36;
              -webkit-mask-image:linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,.95) 28%, rgba(0,0,0,.95) 74%, rgba(0,0,0,0) 100%);
                      mask-image:linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,.95) 28%, rgba(0,0,0,.95) 74%, rgba(0,0,0,0) 100%); }
-  /* 无立绘时的底部纹路：浅墨卷草 + 右上角朱点 + 左下暖光（双重径向让纹路不呆板） */
+  /* 无立绘时的底部纹路：浅墨卷草 + 右上角朱�?+ 左下暖光（双重径向让纹路不呆板） */
   .wsp-art.wsp-pattern { background:
               radial-gradient(circle at 84% 14%, rgba(180,69,60,.10) 0%, transparent 28%),
               radial-gradient(circle at 18% 86%, rgba(232,198,106,.10) 0%, transparent 30%),
@@ -1038,7 +1038,7 @@
   .wsp-card.s2.on2 .wsp-in2 { transform:rotateX(180deg); }
   .wsp-w1, .wsp-w2 { position:absolute; inset:0; backface-visibility:hidden; }
   .wsp-w2 { transform:rotateX(180deg); }
-  /* 多卡片页面不展示文字（用户 2026-09-03：只在弹框内展示），卡片仅留立绘+编号 */
+  /* 多卡片页面不展示文字（用�?2026-09-03：只在弹框内展示），卡片仅留立绘+编号 */
   .wsp-seal { margin:22px auto 4px; text-align:center; opacity:0; transform:scale(.94);
               transition:opacity .6s ease, transform .6s ease; pointer-events:none; }
   .wsp-seal.on { opacity:1; transform:scale(1); }
@@ -1047,7 +1047,7 @@
                    padding:8px 16px 8px 24px; border-radius:3px; }
   .wsp-acts { text-align:center; margin-top:16px; }
 
-  /* 放大详情层：2:3 竖版 + 翻转开合 + 模糊立绘底 + 四周金光 + 斜向光影 */
+  /* 放大详情层：2:3 竖版 + 翻转开�?+ 模糊立绘�?+ 四周金光 + 斜向光影 */
   #wsp-overlay { position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center;
                  opacity:0; pointer-events:none; transition:opacity .24s ease; }
   #wsp-overlay.show { opacity:1; pointer-events:auto; }
@@ -1063,7 +1063,7 @@
     60%  { opacity:1; }
     to   { opacity:1; transform:perspective(1400px) rotateY(0deg) translateY(0); }
   }
-  /* 四周不规则金光：更亮、四角偏移不对称（上右 / 下左 / 左中 / 右中 / 牌心） */
+  /* 四周不规则金光：更亮、四角偏移不对称（上�?/ 下左 / 左中 / 右中 / 牌心�?*/
   .wsp-dt-glow { position:absolute; inset:0; pointer-events:none; z-index:3;
                  background:
                    radial-gradient(130% 95% at 84% -8%,  rgba(255,238,182,.80) 0%, rgba(255,232,160,.22) 30%, rgba(255,232,160,0) 58%),
@@ -1085,11 +1085,11 @@
     25%  { opacity:1; }
     100% { transform:translateX(58%); opacity:0; }
   }
-  /* 模糊立绘做底：有立绘时压暗 + 适度模糊，让竖排文字浮出清晰（z0） */
+  /* 模糊立绘做底：有立绘时压�?+ 适度模糊，让竖排文字浮出清晰（z0�?*/
   .wsp-dt-bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 22%;
                filter:blur(10px) saturate(.55) brightness(.5);
                opacity:.72; transform:scale(1.08); z-index:0; }
-  /* 无立绘做底：底部纹路渐隐 + 中央一抹柔光（z0） */
+  /* 无立绘做底：底部纹路渐隐 + 中央一抹柔光（z0�?*/
   .wsp-dt-pattern { position:absolute; inset:0; z-index:0;
                     background:
                       radial-gradient(circle at 82% 12%, rgba(180,69,60,.14) 0%, transparent 34%),
@@ -1097,7 +1097,7 @@
                       radial-gradient(circle at 50% 50%, rgba(255,228,170,.08) 0%, transparent 60%),
                       repeating-linear-gradient(125deg, rgba(90,66,38,.07) 0 1px, transparent 1px 8px),
                       linear-gradient(165deg, #e6d7b6 0%, #d9cbb0 60%, #c2ac86 100%); }
-  /* 面板透明，立绘自然透出；牌文顶部对齐 */
+  /* 面板透明，立绘自然透出；牌文顶部对�?*/
   .wsp-dt-panel { position:relative; z-index:2; width:100%; height:100%; padding:48px 28px 36px;
                   display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
                   background:none;
@@ -1106,12 +1106,12 @@
                text-shadow:0 1px 2px rgba(255,245,220,.6); }
   .wsp-dt-words { flex:1; display:flex; flex-direction:row; align-items:flex-start; justify-content:center;
                   width:100%; padding:0 4px; min-height:0; }
-  /* 牌文：JS 按"每列 12 字"切成多段竖排列（用户 2026-09-04 明示：固定每列 12 字、多折行、从右往左）。
-    CSS 多列在 writing-mode:vertical-rl 下不可靠；JS 切列 + flex 横排 row-reverse 是物理横向并排（注意 .wsp-dt-txt 不能写 writing-mode，否则 row-reverse 会被旋转成上下堆叠——这是第 11 轮的 bug）。
-    字号 30px、line-height 1.5（12 字 ≈540px + 字距 ≈11px，弹框 panel 内容高 ≈552px，刚好填满不溢出；
-    用户 2026-09-04 二次反馈"文字再大一点"，故 26px→30px 提字、行高 1.7→1.5 收列高保不截字）；
-    文字组水平居中（justify-content:center）让短牌也视觉居中不贴左。
-    文字加双描边（浅金外发光 + 深色细描边）确保压暗立绘上仍清晰。 */
+  /* 牌文：JS �?每列 12 �?切成多段竖排列（用户 2026-09-04 明示：固定每�?12 字、多折行、从右往左）�?
+    CSS 多列�?writing-mode:vertical-rl 下不可靠；JS 切列 + flex 横排 row-reverse 是物理横向并排（注意 .wsp-dt-txt 不能�?writing-mode，否�?row-reverse 会被旋转成上下堆叠——这是第 11 轮的 bug）�?
+    字号 30px、line-height 1.5�?2 �?�?40px + 字距 �?1px，弹�?panel 内容�?�?52px，刚好填满不溢出�?
+    用户 2026-09-04 二次反馈"文字再大一�?，故 26px�?0px 提字、行�?1.7�?.5 收列高保不截字）�?
+    文字组水平居中（justify-content:center）让短牌也视觉居中不贴左�?
+    文字加双描边（浅金外发光 + 深色细描边）确保压暗立绘上仍清晰�?*/
   .wsp-dt-txt, .wsp-dt-txt2 {
                  display:flex; flex-direction:row-reverse; align-items:flex-start; justify-content:center;
                  font-family:var(--kai); font-size:26px; line-height:1.7; letter-spacing:2px; color:#2c2417;
@@ -1120,13 +1120,13 @@
                              0 2px 6px rgba(0,0,0,.42); }
   .wsp-dt-col { writing-mode:vertical-rl; text-orientation:upright; white-space:nowrap;
                 display:inline-block; }
-  /* 说的人：文字左侧用竖线分隔的一列名字（竖排） */
+  /* 说的人：文字左侧用竖线分隔的一列名字（竖排�?*/
   .wsp-dt-who { writing-mode:vertical-rl; text-orientation:upright;
                 font-family:var(--kai); font-size:15px; line-height:1.6; letter-spacing:2px;
                 color:#7a5a2e; border-left:2px solid rgba(180,69,60,.6);
                 padding-left:8px; margin-right:12px; align-self:flex-start;
                 text-shadow:0 1px 2px rgba(255,245,220,.8); }
-  /* 旧 .wsp-dt-again / .wsp-dt-x 样式撤除，保留空声明以防 CSS 残留误用 */
+  /* �?.wsp-dt-again / .wsp-dt-x 样式撤除，保留空声明以防 CSS 残留误用 */
 
 
   /* ================= 结算 ================= */
@@ -1135,7 +1135,7 @@
               radial-gradient(ellipse at 50% 0%, rgba(255,200,90,.42) 0%, rgba(255,150,60,.18) 18%, transparent 50%),
               radial-gradient(ellipse at 50% 100%, rgba(255,180,80,.18) 0%, transparent 60%),
               linear-gradient(180deg, #3a2614 0%, #2a1b0e 32%, #1a120a 100%); }
-  /* 参考图：暖金背景下，右上角有一抹浅金辐射，加 */
+  /* 参考图：暖金背景下，右上角有一抹浅金辐射，�?*/
   .result::after { content:""; position:absolute; top:-30px; right:14%; width:200px; height:200px;
                    pointer-events:none; opacity:.45;
                    background:radial-gradient(circle, rgba(255,225,160,.5) 0%, transparent 65%); }
@@ -1151,7 +1151,7 @@
                  border:2px solid var(--gold); box-shadow:0 14px 40px rgba(0,0,0,.7), 0 0 34px rgba(232,198,106,.28); }
   .rs-portrait img { width:100%; height:100%; object-fit:cover; object-position:center top; }
 
-  /* ===== 加冕时刻：全场魁首卡（参考全场最佳卡的金光火焰感） ===== */
+  /* ===== 加冕时刻：全场魁首卡（参考全场最佳卡的金光火焰感�?===== */
   .rs-mvp-wrap { position:relative; display:flex; flex-direction:column; align-items:center; margin:6px auto 18px; }
   .rs-mvp-card { position:relative; width:224px; height:312px; border-radius:18px; overflow:visible;
                  border:2px solid rgba(255,225,160,.95); padding:0; background:#1a1620;
@@ -1165,7 +1165,7 @@
                    border:0; box-shadow:none;
                    font-family:var(--kai); display:inline-flex; flex-direction:column; align-items:center;
                    line-height:1; }
-  /* 顶字：参考图「全 场 最 佳」——黑底金描边 + 字周火焰毛刺 */
+  /* 顶字：参考图「全 �?最 佳」——黑底金描边 + 字周火焰毛刺 */
   .rs-mvp-banner .rs-mvp-banner-t { font-size:38px; font-weight:900; letter-spacing:14px; color:#1a0e04;
                                      text-shadow:
                                        1px 0 0 #c89b3f, -1px 0 0 #c89b3f, 0 1px 0 #c89b3f, 0 -1px 0 #c89b3f,
@@ -1187,7 +1187,7 @@
   .rs-mvp-art img { width:100%; height:100%; object-fit:cover; object-position:center top; display:block; }
   .rs-mvp-art::after { content:""; position:absolute; inset:0; pointer-events:none;
                        background:linear-gradient(180deg,transparent 50%,rgba(8,5,3,.78) 100%); }
-  /* 底部火焰辐射光晕（静态多道椭圆框，避 AI 化的渐变光晕） */
+  /* 底部火焰辐射光晕（静态多道椭圆框，避 AI 化的渐变光晕�?*/
   .rs-mvp-flame { position:absolute; left:-12%; right:-12%; bottom:-22px; height:90px; z-index:2; pointer-events:none;
                   background: radial-gradient(ellipse at 50% 80%, rgba(232,198,106,.55) 0%, rgba(232,150,80,.35) 26%, transparent 60%); }
   .rs-mvp-flame::before, .rs-mvp-flame::after { content:""; position:absolute; left:50%; transform:translateX(-50%);
@@ -1203,7 +1203,7 @@
                  color:#fbe7b2; text-shadow:0 0 12px rgba(232,198,106,.8), 0 2px 6px #000; }
   .rs-mvp-name .mvp-fac { display:block; font-size:11px; letter-spacing:4px; color:#e8c66a;
                           opacity:.92; margin-top:4px; }
-  /* 加冕数据条：杀 / 伤 / 疗 三小指标 */
+  /* 加冕数据条：杀 / �?/ �?三小指标 */
   .rs-mvp-stats { display:flex; justify-content:center; gap:18px; margin-top:14px; }
   .rs-mvp-stat { text-align:center; min-width:64px; padding:6px 8px 5px;
                  background:rgba(20,16,26,.7); border:1px solid rgba(232,198,106,.32);
@@ -1211,12 +1211,12 @@
   .rs-mvp-stat b { display:block; font-family:var(--kai); font-size:22px; color:#f6e2b0;
                     text-shadow:0 0 12px rgba(232,198,106,.45); }
   .rs-mvp-stat span { font-size:10.5px; color:#9a917f; letter-spacing:3px; }
-  /* 败方模式：只显示题字 + 普通 portrait，不加火焰 */
+  /* 败方模式：只显示题字 + 普�?portrait，不加火�?*/
   .rs-lose-card { width:180px; height:240px; margin:0 auto 18px; border-radius:14px; overflow:hidden;
                   border:1px solid rgba(255,138,122,.35);
                   box-shadow:0 0 28px rgba(160,60,50,.18); filter:grayscale(.4) brightness(.92); }
   .rs-lose-card img { width:100%; height:100%; object-fit:cover; object-position:center top; }
-  /* 本局成就卡 */
+  /* 本局成就�?*/
   .rs-ach { width:320px; max-width:86vw; margin:18px auto 2px; padding:15px 18px 17px; border-radius:13px; text-align:center;
             border:1px solid rgba(232,198,106,.4); background:linear-gradient(180deg,rgba(28,24,18,.7),rgba(18,16,24,.66));
             box-shadow:0 8px 26px rgba(0,0,0,.4); }
@@ -1228,7 +1228,7 @@
   .rs-ach.rs-ach-lose .rs-ach-grade { color:#8b8d96; }
   .rs-ach.rs-ach-lose .rs-ach-title { color:#aeb0bb; text-shadow:none; }
   .rs-ach.rs-ach-lose .rs-ach-note { color:#8b8d96; }
-  /* 品级点缀（神/上/中/下品，沿用炼器品秩体系） */
+  /* 品级点缀（神/�?�?下品，沿用炼器品秩体系） */
   .rs-grade-divine .rs-ach-title { color:#d9b3ff; text-shadow:0 0 16px rgba(190,140,255,.5); }
   .rs-grade-high   .rs-ach-title { color:#ffe1a3; }
   .rs-grade-mid    .rs-ach-title { color:#bfe9c9; }
@@ -1254,7 +1254,7 @@
   .modal-box p { margin:0 0 16px; font-size:15px; color:#ece6d8; line-height:1.7; white-space:pre-line; }
   #modal-btns { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
 
-  /* 古风抉择弹框：卷轴顶饰 + 剑印 + 轴头 */
+  /* 古风抉择弹框：卷轴顶�?+ 剑印 + 轴头 */
   .modal-choice { position:relative; background:#1d1712; border:1px solid #8a7448; border-radius:14px; padding:0 0 16px;
                   max-width:420px; min-width:280px; text-align:center; box-shadow:0 8px 28px rgba(0,0,0,.55); }
   .modal-choice::before { content:""; position:absolute; left:12px; right:12px; top:6px; height:1px; background:rgba(201,162,75,.35); }
@@ -1275,7 +1275,7 @@
   .modal-roll-end { display:flex; justify-content:space-between; padding:0 30px; margin-top:10px; }
   .modal-roll-end span { width:10px; height:10px; border-radius:50%; border:1px solid #c9a24b; background:#14110f; }
 
-  /* 多选（弃牌） */
+  /* 多选（弃牌�?*/
   .pickrow { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:16px; }
   .pickcard { width:64px; height:88px; border-radius:7px; cursor:pointer; display:flex; align-items:center; justify-content:center;
               font-family:var(--kai); font-size:16px; letter-spacing:2px; color:#2b2114;
@@ -1284,12 +1284,12 @@
   .pickcard:hover { transform:translateY(-4px); }
   .pickcard.on { border-color:var(--gold); box-shadow:0 0 0 2px var(--gold), 0 6px 16px rgba(232,198,106,.4); transform:translateY(-6px); }
 
-  /* ================= 人物简报 ================= */
+  /* ================= 人物简�?================= */
   .modal-title { font-size:18px; font-weight:bold; color:#fdf6e3; margin-bottom:4px; }
   .modal-sk { margin:8px 0; padding-bottom:8px; border-bottom:1px solid rgba(232,198,106,.18); }
   .modal-sk:last-child { border-bottom:none; }
   .msk-name { color:var(--gold); font-weight:bold; font-size:14px; }
-  .msk-name::after { content:"："; }
+  .msk-name::after { content:"�?; }
   .msk-desc { color:#d8d0c0; font-size:13px; line-height:1.6; }
   .modal-empty { color:#9a917f; font-size:13px; padding:8px 0; }
 
@@ -1309,20 +1309,20 @@
   .rules-box .rv { color:#cfc7b6; font-size:13px; line-height:1.6; flex:1; }
   .rules-box .rclose { display:block; margin:18px auto 0; }
 
-  /* 尺寸固定：内容再少也不塌，矮屏/窄屏才让位（下限兜底） */
+  /* 尺寸固定：内容再少也不塌，矮�?窄屏才让位（下限兜底�?*/
   .brief-modal { position:relative; width:min(1100px,96vw); min-width:min(1000px,96vw);
                  height:min(680px,88vh); min-height:min(600px,80vh); max-width:none;
                  display:flex; gap:24px; align-items:stretch; padding:0; overflow:hidden;
                  background:#1a1612; }
-  /* 画轴底纸：宣纸纹理 + 边角朱印 + 顶部卷轴描金 */
+  /* 画轴底纸：宣纸纹�?+ 边角朱印 + 顶部卷轴描金 */
   .brief-modal::before { content:''; position:absolute; inset:0; pointer-events:none; z-index:0;
     background:
       radial-gradient(ellipse at 18% 12%, rgba(232,198,106,.10) 0%, transparent 55%),
       radial-gradient(ellipse at 82% 88%, rgba(158,212,190,.06) 0%, transparent 50%),
       repeating-linear-gradient(45deg, rgba(232,198,106,.018) 0 2px, transparent 2px 5px),
       repeating-linear-gradient(135deg, rgba(0,0,0,.025) 0 1px, transparent 1px 4px); }
-  /* 光阴长河 · 蒙版后的流动光影（替代原"一道直直的横扫金芒"，与小程序 .cx-river 同源）
-     整块柔光平铺，边缘衰减到全透明故无缝；径向蒙版让光从画轴中上部透出、四周渐隐。 */
+  /* 光阴长河 · 蒙版后的流动光影（替代原"一道直直的横扫金芒"，与小程�?.cx-river 同源�?
+     整块柔光平铺，边缘衰减到全透明故无缝；径向蒙版让光从画轴中上部透出、四周渐隐�?*/
   .brief-modal::after { content:''; position:absolute; inset:0;
     pointer-events:none; z-index:1; mix-blend-mode:screen;
     background-image:
@@ -1334,12 +1334,12 @@
     animation:briefRiverDrift 34s linear infinite;
     -webkit-mask-image:radial-gradient(132% 78% at 50% 38%, #000 0%, rgba(0,0,0,.62) 52%, rgba(0,0,0,.18) 80%, transparent 100%);
             mask-image:radial-gradient(132% 78% at 50% 38%, #000 0%, rgba(0,0,0,.62) 52%, rgba(0,0,0,.18) 80%, transparent 100%); }
-  /* 位移量必须取各层 background-size 的整数倍，否则循环回跳会跳变 */
+  /* 位移量必须取各层 background-size 的整数倍，否则循环回跳会跳�?*/
   @keyframes briefRiverDrift {
     from { background-position:0 0, 180px 120px, 120px 90px; }
     to   { background-position:560px 420px, -240px 440px, 460px 90px; } }
   .brief-modal > * { position:relative; z-index:2; }
-  /* 朱印：四角古印章（淡红不抢戏） */
+  /* 朱印：四角古印章（淡红不抢戏�?*/
   .brief-seal-tl, .brief-seal-br { position:absolute; z-index:6; pointer-events:none;
     width:34px; height:34px; border:1.5px solid rgba(180,60,40,.55); color:rgba(180,60,40,.65);
     font-family:var(--kai); font-size:11px; font-weight:bold; line-height:34px; text-align:center;
@@ -1357,7 +1357,7 @@
     box-shadow:0 0 8px rgba(158,212,190,.25); }
   .brief-left { flex:0 0 380px; padding:22px; background:linear-gradient(180deg,rgba(40,36,50,.6),rgba(20,18,26,.6));
                 border-right:1px solid rgba(232,198,106,.18); display:flex; flex-direction:column; overflow:visible; }
-  /* 左栏：立绘在上，技能在下（技能从右栏移来） */
+  /* 左栏：立绘在上，技能在下（技能从右栏移来�?*/
   .brief-left .brief-portrait { flex:0 0 auto; }
   .brief-skills { margin-top:14px; flex:1 1 auto; min-height:0; overflow-y:auto; }
   .brief-skills .brief-card { padding:11px 14px; }
@@ -1400,7 +1400,7 @@
   .portrait-glow { position:absolute; bottom:-22px; left:50%; transform:translateX(-50%); width:70%; height:54px;
                    background:radial-gradient(ellipse, rgba(232,198,106,.22) 0%, transparent 70%); border-radius:50%;
                    z-index:1; pointer-events:none; filter:blur(8px); }
-  /* 流动金光边框：金芒沿立绘外缘循环游走（@property 渐变角动画，无需旋转裁剪） */
+  /* 流动金光边框：金芒沿立绘外缘循环游走（@property 渐变角动画，无需旋转裁剪�?*/
   @property --ringAng { syntax:'<angle>'; initial-value:0deg; inherits:false; }
   .portrait-ring { position:absolute; inset:0; border-radius:12px; z-index:5; pointer-events:none; padding:2px;
                    background:conic-gradient(from var(--ringAng),
@@ -1411,7 +1411,7 @@
                    -webkit-mask-composite:xor; mask-composite:exclude;
                    animation:ringFlow 5s linear infinite; }
   @keyframes ringFlow { to { --ringAng:360deg; } }
-  /* 流光：一道金芒斜掠过立绘，循环不息 */
+  /* 流光：一道金芒斜掠过立绘，循环不�?*/
   .brief-portrait::after { content:''; position:absolute; top:-30%; left:-70%; width:52%; height:160%;
                             z-index:3; pointer-events:none; transform:rotate(10deg); mix-blend-mode:screen;
                             background:linear-gradient(115deg, transparent 0%, rgba(255,243,210,0) 36%,
@@ -1447,7 +1447,7 @@
                 filter:drop-shadow(0 2px 4px rgba(0,0,0,.6)) drop-shadow(0 0 12px rgba(232,198,106,.35)); }
   .brief-meta { color:var(--gold); font-size:12.5px; margin-top:6px; letter-spacing:.5px; }
   .brief-cards { display:flex; flex-direction:column; gap:13px; }
-  /* 竹简分隔条：每个 brief-card 上下边仿竹简痕 */
+  /* 竹简分隔条：每个 brief-card 上下边仿竹简�?*/
   .brief-card { position:relative; background:linear-gradient(180deg, rgba(232,198,106,.04), rgba(0,0,0,.08));
                 border:1px solid rgba(232,198,106,.18); border-radius:2px;
                 padding:13px 16px; }
@@ -1455,14 +1455,14 @@
     background:linear-gradient(90deg, transparent 0%, rgba(232,198,106,.45) 20%, rgba(232,198,106,.65) 50%, rgba(232,198,106,.45) 80%, transparent 100%); }
   .brief-card::after { content:''; position:absolute; left:0; right:0; bottom:0; height:1px;
     background:linear-gradient(90deg, transparent 0%, rgba(232,198,106,.30) 30%, rgba(232,198,106,.50) 50%, rgba(232,198,106,.30) 70%, transparent 100%); }
-  /* 竹简侧孔点缀：左右两个圆点暗示卷绳 */
+  /* 竹简侧孔点缀：左右两个圆点暗示卷�?*/
   .brief-card { box-shadow:inset 4px 0 0 rgba(232,198,106,.06), inset -4px 0 0 rgba(232,198,106,.06); }
   .brief-card { background:#211d2a; border:1px solid rgba(232,198,106,.2); border-radius:10px; padding:13px 17px; }
   .brief-card:last-child { margin-bottom:6px; }
   .brief-h { font-size:14.5px; color:var(--gold); border-left:4px solid #b8893b; padding:1px 0 1px 10px;
              margin:0 0 10px; font-weight:bold; letter-spacing:2px; }
   .brief-intro { font-size:13.5px; line-height:1.85; color:#e3ddcf; margin:0; }
-  /* 原著三栏（形貌/衣着/性情）：逐条成行，赭石小圆点作条目感，沿用 brief-card 竹简语汇 */
+  /* 原著三栏（形�?衣着/性情）：逐条成行，赭石小圆点作条目感，沿�?brief-card 竹简语汇 */
   .brief-lines { display:flex; flex-direction:column; gap:6px; }
   .brief-line { position:relative; margin:0; padding-left:15px; font-size:13.5px; line-height:1.85; color:#e3ddcf; }
   .brief-line::before { content:''; position:absolute; left:2px; top:.86em; width:4px; height:4px; border-radius:50%;
@@ -1494,9 +1494,9 @@
   .brief-card .modal-sk:last-child { border-bottom:none; padding-bottom:0; }
   .brief-btns { position:absolute; right:16px; bottom:14px; }
 
-  /* 弹框打开期间锁住整页滚动（JS 给 body 加 .modal-lock） */
+  /* 弹框打开期间锁住整页滚动（JS �?body �?.modal-lock�?*/
   body.modal-lock { overflow:hidden; }
-  /* 右栏独立滚动条：细、暗，不抢视觉 */
+  /* 右栏独立滚动条：细、暗，不抢视�?*/
   .brief-right::-webkit-scrollbar, .brief-skills::-webkit-scrollbar,
   .log::-webkit-scrollbar, .hero-info .pskills.big::-webkit-scrollbar { width:8px; }
   .brief-right::-webkit-scrollbar-track, .brief-skills::-webkit-scrollbar-track { background:rgba(0,0,0,.25); border-radius:4px; }
@@ -1514,7 +1514,7 @@
 
   .al-card { background:linear-gradient(180deg,#2a2533,#1a1620); border:1px solid rgba(232,198,106,.25);
              border-radius:14px; padding:24px 26px; box-shadow:0 8px 26px rgba(0,0,0,.5); }
-  /* 章节题头：双边细线夹章节名，古风留白，不配图片 */
+  /* 章节题头：双边细线夹章节名，古风留白，不配图�?*/
   .al-ch { display:flex; align-items:center; gap:12px; font-size:11px; color:#9a917f; letter-spacing:3px; margin-bottom:14px; }
   .al-ch::before, .al-ch::after { content:""; flex:1; height:1px; background:rgba(232,198,106,.22); }
   .al-q { font-family:var(--kai); font-size:28px; color:#fdf6e3; letter-spacing:3px; margin:0 0 16px; font-weight:normal;
@@ -1530,9 +1530,9 @@
                border-radius:10px; padding:13px 16px; cursor:pointer; color:#ece6d8;
                transition:background .15s, border-color .15s, transform .12s; }
   .al-choice:hover { background:rgba(232,198,106,.12); border-color:var(--gold); transform:translateX(6px); }
-  /* 选项只呈现「你要说什么／做什么」（.al-ct）。
-     原 .al-ce（旁白解读）与 .al-tag.bad（数值后果标签）属事前剧透，已停止渲染并随之删除；
-     .al-tag.req 是「为什么现在不能选」的约束提示，保留。 */
+  /* 选项只呈现「你要说什么／做什么」（.al-ct）�?
+     �?.al-ce（旁白解读）�?.al-tag.bad（数值后果标签）属事前剧透，已停止渲染并随之删除�?
+     .al-tag.req 是「为什么现在不能选」的约束提示，保留�?*/
   .al-ct { display:block; font-size:15px; font-weight:bold; letter-spacing:1px; line-height:1.55; }
   .al-tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:8px; }
   .al-tag { font-size:10.5px; font-style:normal; letter-spacing:.5px; padding:2px 7px; border-radius:4px;
@@ -1616,7 +1616,7 @@
   /* 落魄山结局意像 */
   .sect-end-img { display:block; width:360px; max-width:74%; height:auto; margin:0 auto 22px;
                   border:1px solid rgba(232,198,106,.3); border-radius:10px; }
-  /* 山水祠祈愿意像 */
+  /* 山水祠祈愿意�?*/
   .sc-wish-img { display:block; width:100%; height:auto; margin:0 0 16px;
                  border:1px solid rgba(232,198,106,.25); border-radius:8px; }
 
@@ -1636,9 +1636,9 @@
   .gsp { color:#ffe9a8; background:rgba(232,198,106,.2); box-shadow:0 0 18px rgba(232,198,106,.35); }
   .al-grade.lock { color:#6a6558; background:rgba(255,255,255,.04); border-style:dashed; border-color:rgba(255,255,255,.18); }
   .al-grade.sm.lock { background:linear-gradient(180deg,rgba(34,30,40,.85),rgba(20,16,24,.85)); padding:0; }
-  /* 未至印章：单线印玺轮廓 +「未至」二字，不使用锁/卷轴/红泥图案 */
+  /* 未至印章：单线印玺轮�?+「未至」二字，不使用锁/卷轴/红泥图案 */
   .cx-lock { width:24px; height:24px; display:block; opacity:.75; }
-  /* 结局图标：具象 SVG，随徽章尺寸缩放，继承等级色 */
+  /* 结局图标：具�?SVG，随徽章尺寸缩放，继承等级色 */
   .al-eico { display:block; width:26px; height:26px; }
   .al-grade.sm .al-eico { width:16px; height:16px; }
   .al-cx-wm .al-eico { width:100%; height:100%; }
@@ -1648,7 +1648,7 @@
   .al-grade.lg::before { content:""; position:absolute; top:8px; left:8px; right:8px; bottom:8px;
                          border-radius:50%; border:1px solid currentColor; opacity:.22; pointer-events:none; }
   .al-grade.lg .al-eico { width:68px; height:68px; }
-  /* 大徽章外辉光按等级取色，保持与字标一致的等级可读性 */
+  /* 大徽章外辉光按等级取色，保持与字标一致的等级可读�?*/
   .al-grade.lg.gS, .al-grade.lg.gsp { box-shadow:0 0 42px rgba(240,210,122,.22), inset 0 0 34px rgba(240,210,122,.09); }
   .al-grade.lg.gA { box-shadow:0 0 42px rgba(143,192,174,.20), inset 0 0 34px rgba(143,192,174,.08); }
   .al-grade.lg.gB { box-shadow:0 0 42px rgba(147,174,201,.20), inset 0 0 34px rgba(147,174,201,.08); }
@@ -1659,7 +1659,7 @@
   .al-cx-card:not(.got) { background:linear-gradient(180deg,#1c1820,#13101a); }
   .al-cx-card:not(.got) { position:relative; overflow:hidden; }
   /* 锁档卡暗纹：右下角散落的小字水印 */
-  .al-cx-card:not(.got)::after { content:"未 至"; position:absolute; right:8px; bottom:6px;
+  .al-cx-card:not(.got)::after { content:"�?�?; position:absolute; right:8px; bottom:6px;
                                    font-family:var(--kai); font-size:11px; letter-spacing:6px;
                                    color:rgba(232,198,106,.08); pointer-events:none; }
   .al-end-title { font-family:var(--kai); font-size:36px; color:var(--gold); letter-spacing:6px;
@@ -1706,7 +1706,7 @@
               margin-top:10px; padding-top:9px; border-top:1px solid rgba(232,198,106,.14); }
   .al-cx-ct { font-size:11px; color:#7f7a6c; margin-top:8px; letter-spacing:1px; }
 
-  /* 结局图鉴：分两区（已解锁 / 未至） */
+  /* 结局图鉴：分两区（已解锁 / 未至�?*/
   .al-cx-sec { margin-bottom:28px; }
   .al-cx-stitle { display:flex; align-items:center; gap:14px; margin:0 0 14px; padding:8px 0;
                   border-bottom:1px dashed rgba(232,198,106,.22);
@@ -1722,13 +1722,13 @@
   .al-cx-card.got { position:relative; overflow:hidden; padding:18px 20px; border:1px solid rgba(232,198,106,.32);
                     background:linear-gradient(180deg,#2a2533 0%,#1a1620 100%);
                     box-shadow:inset 0 1px 0 rgba(232,198,106,.06); }
-  /* 结局图标水印：绝对定位 → 不占布局（卡片更矮，一屏多看几个），右下出血填充空白区。
-     继承等级色（g* 类 → currentColor），等级信息零损失；未解锁卡不加水印（不剧透纪律） */
+  /* 结局图标水印：绝对定�?�?不占布局（卡片更矮，一屏多看几个），右下出血填充空白区�?
+     继承等级色（g* �?�?currentColor），等级信息零损失；未解锁卡不加水印（不剧透纪律） */
   .al-cx-wm { position:absolute; right:-18px; bottom:-22px; width:106px; height:106px;
               opacity:.12; pointer-events:none; line-height:0; }
   .al-cx-card.got .al-cx-tt { font-size:20px; letter-spacing:3px; }
 
-  /* 未解锁缩略占位网格：更紧凑的卡片，只保留「未至」印玺占位 */
+  /* 未解锁缩略占位网格：更紧凑的卡片，只保留「未至」印玺占�?*/
   .al-cx-grid.lost { grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:10px; }
   .al-cx-card.lost { padding:14px 10px; min-height:86px; display:flex; align-items:center;
                      justify-content:center; background:linear-gradient(180deg,rgba(28,24,32,.55),rgba(20,16,24,.55));
@@ -1781,6 +1781,7 @@
 <script src="wushipai.js?v=20260909a"></script>
 <script src="baofuzhai.js?v=20260909a"></script>
 <script src="fulu.js?v=20260911a"></script>
+<script src="longque.js?v=20260916e"></script>
 <script src="profile.js?v=20260910a"></script>
 </body>
 </html>

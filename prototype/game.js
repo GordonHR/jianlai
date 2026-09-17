@@ -3125,6 +3125,7 @@ function render(){
     if(state.phase==='setup'){ renderSetup(app); return; }
     if(state.phase==='codex'){ renderCodex(app); return; }
     if(state.phase==='asklake'){ renderAskLake(app); return; }
+    if(state.phase==='longque'){ renderLongque(app); return; }
     if(state.phase==='sect'){ renderSect(app); return; }
     if(state.phase==='fulu'){ renderFulu(app); return; }
     if(state.phase==='shenci'){ renderShenci(app); return; }
@@ -3366,6 +3367,10 @@ function renderTitle(app){
         '<div class="ts-mode-head"><h3>书简湖问心局</h3><div class="ts-mode-ico"><svg viewBox="0 0 30 30" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M9 5 L9 25 M15 5 L15 25 M21 5 L21 25" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M6 8 L24 8 M6 15 L24 15 M6 22 L24 22" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-opacity=".55"/><path d="M9 5 Q15 3 21 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div></div>'
     +       '<p>不拼剑气，只问本心。择来路、走支线、付代价，在五维心境与六方态度之间取舍。</p>'
       +       '<div class="md-meta">单人叙事 · 分支 · '+AL_TOTAL+' 结局</div></div>'
+    +     '<div class="ts-mode" onclick="openLongque()">' +
+        '<div class="ts-mode-head"><h3>笼中雀</h3><div class="ts-mode-ico"><svg viewBox="0 0 30 30" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="7" y="8" width="16" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 8 V5 Q15 2.5 19 5 V8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="15" cy="15" r="2.2" fill="currentColor" fill-opacity=".35" stroke="currentColor" stroke-width="1.5"/><path d="M13.2 16.5 Q12 19 10.5 20.5 M16.8 16.5 Q18 19 19.5 20.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-opacity=".7"/><path d="M15 17.5 V22" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div></div>'
+    +       '<p>骊珠洞天像一只笼子。你是泥瓶巷担水的少年陈平安——听先生讲学、护巷口兄弟、断桥练拳，直到心里那只雀抬起头。</p>'
+    +       '<div class="md-meta">单人叙事 · 童年线 · '+(typeof LJTQ_ENDINGS!=='undefined'?Object.keys(LJTQ_ENDINGS).length:11)+' 结局</div></div>'
     +   '</div>'
     + '</div>'
 

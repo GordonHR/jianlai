@@ -54,6 +54,14 @@
         <text class="p">不拼剑气，只问本心。替陈平安在书简湖的恩怨善恶中做出抉择，看最终能否问心无愧。</text>
         <text class="md-meta">单人叙事 · 多结局</text>
       </view>
+      <view class="ts-mode" bindtap="goLongque">
+        <view class="ts-mode-head">
+          <text class="h3">笼中雀</text>
+          <image class="mode-ico" src="/assets/icon/mode-longque.svg" mode="aspectFit"/>
+        </view>
+        <text class="p">骊珠洞天像一只笼子。你是泥瓶巷担水的少年陈平安——听先生讲学、护巷口兄弟、断桥练拳，直到心里那只雀抬起头。</text>
+        <text class="md-meta">单人叙事 · 童年线 · 15 结局</text>
+      </view>
     </view>
   </view>
 
