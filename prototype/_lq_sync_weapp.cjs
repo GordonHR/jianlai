@@ -20,6 +20,7 @@ const LJTQ_ENDINGS = ${JSON.stringify(pc.LJTQ_ENDINGS)};
 const LJTQ_NODES = ${JSON.stringify(pc.LJTQ_NODES)};
 const LQ_TOTAL = Object.keys(LJTQ_ENDINGS).length;
 function lqEndIco(k){ return k ? ('/packageLongque/assets/icon/end-lq-'+k+'.svg') : ''; }
+function lqAbs(p){ if(!p) return ''; p=String(p); while(p.charAt(0)==='/'){ p=p.slice(1); } return '/packageLongque/'+p; }
 
 function addPath(s,p,n){ if(p && s.path[p]!=null) s.path[p]+=(n==null?1:n); }
 function addDeed(s,k){ if(k && s.deeds.indexOf(k)<0) s.deeds.push(k); }
@@ -83,7 +84,7 @@ function view(){
       return { key:k, ico:lqEndIco(k), g:e.g, t:e.t, seen:got, d:got?e.d:'？？？', poem:got?(e.poem||''):'', n:got?c.endings[k]:0 };
     })});
   }
-  if(LQ.stage==='il') return Object.assign(base,{ il:{ t:LQ.il.t, d:LQ.il.d } });
+  if(LQ.stage==='il') return Object.assign(base,{ il:{ t:LQ.il.t, d:LQ.il.d, img:LQ.il.img ? lqAbs(LQ.il.img) : '' } });
   if(LQ.stage==='end'){
     const e=LJTQ_ENDINGS[LQ.endingKey]||LJTQ_ENDINGS.danshui;
     return Object.assign(base,{
@@ -97,7 +98,7 @@ function view(){
   const nd=LJTQ_NODES[LQ.node];
   const prog=Math.min(100, Math.round((LQ.step/18)*100));
   return Object.assign(base,{
-    node:{ ch:nd.ch, t:nd.t, d:nd.d, prog },
+    node:{ ch:nd.ch, t:nd.t, d:nd.d, prog, img:nd.img ? lqAbs(nd.img) : '' },
     choices:(nd.ch2||[]).map((ch,i)=>({
       idx:i, txt:ch.txt, note:ch.note||'',
       path:ch.path||'', pathN:ch.path?(LJTQ_PATHS[ch.path]||{}).n:'',

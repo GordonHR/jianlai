@@ -2391,7 +2391,7 @@ function view(){
   };
   if(over){
     const e = SECT_ENDINGS[s.ending];
-    out.ending = { key:s.ending, g:e.g, t:e.t, dLines:(e.d||'').split('\n'), poem:e.poem||'', recapLines: sectDaoqiRecap(s).split('<br>'), img:'/assets/sect/'+s.ending+'.jpg' };
+    out.ending = { key:s.ending, g:e.g, t:e.t, dLines:(e.d||'').split('\n'), poem:e.poem||'', recapLines: sectDaoqiRecap(s).split('<br>'), img:'/packageArt/assets/sect/'+s.ending+'.jpg' };
   }
   return out;
 }

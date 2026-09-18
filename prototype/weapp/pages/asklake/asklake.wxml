@@ -21,6 +21,7 @@
       <view class="lk-ch">{{v.node.ch}}</view>
       <view class="lk-prev" wx:if="{{v.node.prevNote}}">— {{v.node.prevNote}} —</view>
       <view class="lk-qt">{{v.node.t}}</view>
+      <image wx:if="{{v.node.img}}" class="lk-node-img" src="{{v.node.img}}" mode="widthFix"/>
       <view class="lk-qd">{{v.node.d}}</view>
       <view class="lk-line">湖上：{{v.node.lake}}</view>
       <view class="lk-line">心境：{{v.node.mood}}</view>

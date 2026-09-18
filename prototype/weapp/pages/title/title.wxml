@@ -1,5 +1,5 @@
 <view class="title-screen">
-  <image class="ts-bg" src="/assets/bg/合集封面海报.jpg" mode="aspectFill" />
+  <image class="ts-bg" src="/assets/bg/cover.jpg" mode="aspectFill" />
   <view class="ts-scrim"></view>
   <view class="ts-mark">剑来</view>
   <view class="ts-rule"></view>
@@ -84,6 +84,14 @@
         <text class="p">你是一位末流山水神明，辖一方水土。不能下山，不能出手，只能应，或不应——香火养你，也绑住你。</text>
         <text class="md-meta">单人养成 · 四十八旬 · 七结局</text>
       </view>
+      <view class="ts-mode" bindtap="goBaofu">
+        <view class="ts-mode-head">
+          <text class="h3">包袱斋</text>
+          <image class="mode-ico" src="/assets/icon/bf-shirou.svg" mode="aspectFit"/>
+        </view>
+        <text class="p">掌柜石柔坐镇的小铺子：和气斋赊账、拣漏掌眼、藏书阁翻书、锦囊行囊。雪花钱与道行，都在此处流转。</text>
+        <text class="md-meta">经营 · 雪花钱</text>
+      </view>
     </view>
   </view>
 
@@ -121,6 +129,22 @@
         </view>
         <text class="p">不涉战局，只翻阅符箓：缩地、破障、镇妖、求雨、雷符……名、功效、来历与出处皆依《剑来》原著，并附据古法符箓体例绘制的云篆图样（仅 PC 端可见）。</text>
         <text class="md-meta">原著符箓</text>
+      </view>
+      <view class="ts-mode" bindtap="goProfile">
+        <view class="ts-mode-head">
+          <text class="h3">行 者 录</text>
+          <image class="mode-ico" src="/assets/icon/mode-scroll.svg" mode="aspectFit"/>
+        </view>
+        <text class="p">择定剑修 / 练气士 / 武夫三途，照《剑来》原著境界修行；跨模块累积道行、破境、论功，一册录尽行走江湖的痕迹。</text>
+        <text class="md-meta">境界 · 道行</text>
+      </view>
+      <view class="ts-mode" bindtap="goMap">
+        <view class="ts-mode-head">
+          <text class="h3">天 下 舆 图</text>
+          <image class="mode-ico" src="/assets/icon/mode-mountain.svg" mode="aspectFit"/>
+        </view>
+        <text class="p">浩然天下五方九洲，东宝瓶洲、中土神州、北俱芦洲……点洲下钻，阅其要地、势力、航路；骊珠洞天另设详图。严守原著，不臆造。</text>
+        <text class="md-meta">世界地理 · 考据</text>
       </view>
     </view>
   </view>

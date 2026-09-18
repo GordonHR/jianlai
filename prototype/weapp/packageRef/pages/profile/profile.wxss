@@ -1,0 +1,96 @@
+.pf {
+  min-height: 100%;
+  padding: 24rpx 20rpx 60rpx;
+  color: #ece6d8;
+  animation: pageIn .18s ease both;
+}
+
+/* 头部 */
+.pf-head {
+  border-bottom: 1rpx solid rgba(232,198,106,.3);
+  padding-bottom: 16rpx; margin-bottom: 18rpx;
+}
+.pf-mark {
+  font-family: "KaiTi","STKaiti",serif; font-size: 22rpx; letter-spacing: 6rpx;
+  color: #8a7f5f; border: 1rpx solid rgba(232,198,106,.3); border-radius: 6rpx;
+  display: inline-block; padding: 2rpx 12rpx; margin-bottom: 10rpx;
+}
+.pf-title {
+  font-family: "KaiTi","STKaiti",serif; font-size: 46rpx; color: #e8c66a; letter-spacing: 8rpx;
+}
+.pf-greet { font-size: 24rpx; color: #b9ad8f; letter-spacing: 1rpx; margin-top: 8rpx; }
+
+/* 分区标题（通用，与包袱斋一致） */
+.pf-sec {
+  font-family: "KaiTi","STKaiti",serif; font-size: 34rpx; color: #e8c66a; letter-spacing: 4rpx;
+  border-left: 6rpx solid #e8c66a; padding-left: 16rpx; margin: 28rpx 0 14rpx;
+}
+.pf-sec-sp { font-family: inherit; font-size: 22rpx; color: #b9ad8f; letter-spacing: 1rpx; margin-left: 14rpx; }
+
+/* 道途择定 */
+.pf-paths { display: grid; grid-template-columns: repeat(auto-fill, minmax(300rpx, 1fr)); gap: 16rpx; }
+@media (max-width: 680rpx) { .pf-paths { grid-template-columns: 1fr; } }
+.pf-path {
+  background: rgba(20,17,15,.55); border: 1rpx solid rgba(232,198,106,.22);
+  border-radius: 16rpx; padding: 20rpx 22rpx; position: relative;
+}
+.pf-path.on { border-color: #e8c66a; background: rgba(232,198,106,.10); }
+.pf-path-n { font-family: "KaiTi","STKaiti",serif; font-size: 34rpx; color: #f0e6cc; letter-spacing: 4rpx; }
+.pf-path-sub { font-size: 22rpx; color: #cdb98a; margin: 6rpx 0 10rpx; letter-spacing: 1rpx; }
+.pf-path-desc { font-size: 24rpx; color: #b9ad8f; line-height: 1.7; }
+
+/* 当前进度 */
+.pf-prog { background: rgba(20,17,15,.45); border: 1rpx solid rgba(232,198,106,.18); border-radius: 14rpx; padding: 18rpx 20rpx; }
+.pf-prog-top { display: flex; justify-content: space-between; font-size: 24rpx; color: #cdb98a; margin-bottom: 12rpx; }
+.pf-bar { height: 16rpx; background: rgba(232,198,106,.12); border-radius: 10rpx; overflow: hidden; }
+.pf-bar-fill { height: 100%; background: linear-gradient(90deg,#c9a24a,#e8c66a); border-radius: 10rpx; }
+.pf-gains { display: flex; flex-wrap: wrap; gap: 12rpx; margin-top: 16rpx; }
+.pf-gain { background: rgba(232,198,106,.08); border: 1rpx solid rgba(232,198,106,.28); border-radius: 12rpx; padding: 12rpx 14rpx; flex: 1 1 280rpx; }
+.pf-gain-n { font-family: "KaiTi","STKaiti",serif; font-size: 28rpx; color: #e8c66a; letter-spacing: 1rpx; }
+.pf-gain-cls { font-size: 20rpx; color: #8a7f5f; margin-left: 10rpx; border: 1rpx solid rgba(232,198,106,.25); border-radius: 14rpx; padding: 1rpx 10rpx; }
+.pf-gain-q { font-size: 23rpx; color: #b9ad8f; line-height: 1.6; margin-top: 6rpx; }
+.pf-next { font-size: 24rpx; color: #cdb98a; margin-top: 14rpx; border-left: 4rpx solid rgba(232,198,106,.45); padding-left: 14rpx; }
+
+/* 境界图鉴分段 */
+.pf-seg { display: flex; gap: 0; border: 1rpx solid rgba(232,198,106,.3); border-radius: 12rpx; overflow: hidden; margin-bottom: 14rpx; }
+.pf-seg-i { flex: 1; text-align: center; font-size: 26rpx; color: #b9ad8f; padding: 14rpx 0; letter-spacing: 2rpx; }
+.pf-seg-i.on { color: #1a1714; background: #e8c66a; font-weight: normal; }
+
+/* 境界阶梯 */
+.pf-ladder { display: flex; flex-direction: column; gap: 12rpx; }
+.pf-rl { display: flex; gap: 16rpx; background: rgba(20,17,15,.45); border: 1rpx solid rgba(232,198,106,.18); border-radius: 12rpx; padding: 14rpx 16rpx; }
+.pf-rl.now { border-color: #e8c66a; background: rgba(232,198,106,.12); }
+.pf-rl-i { font-family: "KaiTi","STKaiti",serif; font-size: 30rpx; color: #8a7f5f; width: 48rpx; flex: none; text-align: center; }
+.pf-rl.now .pf-rl-i { color: #e8c66a; }
+.pf-rl-body { flex: 1; }
+.pf-rl-top { display: flex; align-items: baseline; gap: 12rpx; flex-wrap: wrap; }
+.pf-rl-n { font-family: "KaiTi","STKaiti",serif; font-size: 30rpx; color: #f0e6cc; letter-spacing: 2rpx; }
+.pf-rl-grp { font-size: 20rpx; color: #8a7f5f; }
+.pf-rl-tag { font-size: 20rpx; color: #8a7f5f; border: 1rpx solid rgba(232,198,106,.25); border-radius: 12rpx; padding: 1rpx 10rpx; }
+.pf-rl-tag.now { color: #1a1714; background: #e8c66a; border-color: #e8c66a; }
+.pf-rl-d { font-size: 23rpx; color: #b9ad8f; line-height: 1.7; margin-top: 6rpx; }
+
+/* 个人行迹 */
+.pf-stats { display: flex; gap: 14rpx; }
+.pf-stat { flex: 1; background: rgba(20,17,15,.45); border: 1rpx solid rgba(232,198,106,.18); border-radius: 12rpx; padding: 16rpx 0; text-align: center; }
+.pf-stat .b { display: block; font-family: "KaiTi","STKaiti",serif; font-size: 40rpx; color: #e8c66a; font-weight: normal; }
+.pf-stat .t { display: block; font-size: 22rpx; color: #9a917f; margin-top: 4rpx; }
+.pf-row { font-size: 24rpx; color: #b9ad8f; line-height: 1.9; margin-top: 12rpx; }
+.pf-row .b { color: #e8c66a; }
+
+/* 动作 */
+.pf-acts { display: flex; gap: 16rpx; margin-top: 20rpx; }
+.pf-acts .btn { flex: 1; }
+
+/* 论功录 */
+.pf-log { display: flex; flex-direction: column; gap: 10rpx; }
+.pf-lg { display: flex; align-items: baseline; gap: 12rpx; background: rgba(20,17,15,.4); border-left: 4rpx solid rgba(232,198,106,.35); border-radius: 8rpx; padding: 12rpx 16rpx; }
+.pf-lg-t { font-size: 22rpx; color: #8a7f5f; flex: none; }
+.pf-lg-s { font-size: 24rpx; color: #d8cfb6; flex: 1; line-height: 1.6; }
+.pf-lg-x { font-size: 26rpx; color: #e8c66a; flex: none; }
+
+.pf-foot { margin-top: 44rpx; text-align: center; }
+.pf-foot .btn { display: inline-block; }
+
+/* 紧凑按钮（卡片内） */
+.pf .btn.sm { min-height: 64rpx; padding: 8rpx 20rpx; font-size: 24rpx; border-radius: 10rpx; }

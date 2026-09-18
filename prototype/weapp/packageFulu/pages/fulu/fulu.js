@@ -116,17 +116,22 @@ const FULU_SYS = {
 };
 
 Page({
-  data: { list: [], sys: FULU_SYS, total: FULU.length, detail: null },
+  data: { list: [], sys: FULU_SYS, total: FULU.length, detail: null, fly: false },
   onLoad(){
+    const base = '/packageFulu/assets/fulu/';
     const list = FULU.map(function(f){
-      return { id:f.id, name:f.name, alias:f.alias||'', type:f.type, desc:f.desc, caster:f.caster, src:f.src };
+      return {
+        id: f.id, name: f.name, alias: f.alias||'', type: f.type,
+        desc: f.desc, caster: f.caster, src: f.src,
+        img: base + f.id + '.jpg'
+      };
     });
     this.setData({ list: list });
   },
   open(e){
     const i = e.currentTarget.dataset.i;
-    this.setData({ detail: this.data.list[i] });
+    this.setData({ detail: this.data.list[i], fly: true });
+    setTimeout(() => { this.setData({ fly: false }); }, 520);
   },
-  close(){ this.setData({ detail: null }); },
-  back(){ wx.navigateBack({ delta:1, fail(){ wx.reLaunch({ url:'/pages/title/title' }); } }); }
+  close(){ this.setData({ detail: null, fly: false }); }
 });

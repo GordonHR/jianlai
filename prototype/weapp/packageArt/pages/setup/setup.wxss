@@ -1,0 +1,79 @@
+.setup { padding: 24rpx 24rpx 0; }
+.hint { font-size: 23rpx; color: #9c9486; text-align: center; line-height: 1.6; margin-bottom: 16rpx; }
+.filterbar { display: flex; flex-wrap: wrap; gap: 12rpx; align-items: center; margin-bottom: 14rpx; }
+.fbtn { font-size: 22rpx; color: #cdc4b0; border: 1rpx solid rgba(236,230,216,.25); border-radius: 30rpx; padding: 6rpx 18rpx; }
+.fbtn.on { background: #e8c66a; color: #14110f; border-color: #e8c66a; }
+.fsearch { flex: 1; min-width: 160rpx; background: rgba(255,255,255,.06); border: 1rpx solid rgba(236,230,216,.2); border-radius: 30rpx; padding: 8rpx 20rpx; font-size: 24rpx; color: #ece6d8; }
+.grid-scroll { height: calc(100vh - 430rpx); }
+.grid { display: flex; flex-wrap: wrap; gap: 16rpx; padding-bottom: 20rpx; }
+.char { width: calc(33.33% - 11rpx); border: 2rpx solid #555; border-radius: 12rpx; overflow: hidden; background: rgba(255,255,255,.03); }
+.char.sel { box-shadow: 0 0 0 3rpx #e8c66a; }
+.cw { position: relative; aspect-ratio: 2 / 3; height: auto; display: flex; align-items: center; justify-content: center; }
+.charimg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ph-initial { font-size: 80rpx; color: rgba(255,255,255,.85); font-family: "KaiTi","楷体",serif; }
+.name-over { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-size: 24rpx; color: #fff; background: linear-gradient(180deg,transparent,rgba(0,0,0,.6)); padding: 18rpx 0 6rpx; }
+.badge { position: absolute; font-size: 18rpx; padding: 2rpx 8rpx; border-radius: 6rpx; background: rgba(0,0,0,.5); color: #fff; }
+.badge-hp { top: 8rpx; left: 8rpx; }
+.badge-realm { top: 8rpx; right: 8rpx; background: rgba(0,0,0,.4); }
+.fac-over { position: absolute; bottom: 52rpx; left: 0; right: 0; text-align: center; font-size: 20rpx; text-shadow: 0 1rpx 4rpx #000; }
+.selmark { position: absolute; top: 8rpx; right: 8rpx; width: 36rpx; height: 36rpx; border-radius: 50%; background: #e8c66a; color: #14110f; text-align: center; line-height: 36rpx; font-size: 24rpx; }
+.charinfo { padding: 8rpx 10rpx 12rpx; }
+.csk { font-size: 20rpx; color: #cdc4b0; line-height: 1.4; min-height: 56rpx; }
+.cno { font-size: 19rpx; color: #8a8175; margin-top: 4rpx; }
+.empty { color: #6f675c; font-size: 26rpx; padding: 40rpx; text-align:center; width:100%; }
+/* 已选阵容条 —— 固定浮在底部，前置不被遮挡（与 PC 端 prototype/index.html .roster 对齐） */
+.roster {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+  display: flex; align-items: center; gap: 12rpx;
+  padding: 18rpx 24rpx 20rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, rgba(28,24,36,.94), rgba(16,13,20,.98));
+  border-top: 1rpx solid rgba(232,198,106,.32);
+  box-shadow: 0 -8rpx 28rpx rgba(0,0,0,.55);
+  flex-wrap: wrap;
+}
+.rtitle { font-size: 22rpx; color: #e8c66a; }
+.rslot { width: 64rpx; height: 96rpx; border-radius: 10rpx; position: relative; display:flex; align-items:center; justify-content:center; overflow:hidden; border:1rpx solid rgba(236,230,216,.3); }
+.rimg { width: 100%; height: 100%; }
+.rph { width: 100%; height: 100%; display:flex; align-items:center; justify-content:center; color:#fff; font-size: 30rpx; }
+.rname { position: absolute; bottom: 2rpx; left: 0; right: 0; font-size: 16rpx; text-align: center; color: #fff; background: rgba(0,0,0,.5); }
+.rx { position: absolute; top: -4rpx; right: -2rpx; color: #c0392b; font-size: 22rpx; }
+.rslot.empty { border-style: dashed; color: #6f675c; font-size: 30rpx; }
+.spacer { flex: 1; }
+.ai-count { font-size: 22rpx; color: #cdc4b0; display: flex; align-items: center; gap: 6rpx; }
+.stepper-n { width: 40rpx; height: 40rpx; line-height: 40rpx; text-align: center; border-radius: 8rpx; border: 1rpx solid rgba(236,230,216,.3); }
+.stepper-n.on { background: #e8c66a; color: #14110f; border-color: #e8c66a; }
+
+/* ===== 随机择主 · 中转过场（暗幕 → 剑光 → 择主大字 → 角色名 → 落印） ===== */
+.pick-fx { position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.pf-mask { position:absolute; inset:0; background:rgba(8,6,12,.94); animation:pfMaskIn .28s ease-out both; }
+@keyframes pfMaskIn { from { opacity:0; } to { opacity:1; } }
+/* 一道剑光横扫：金色细线自左展开后隐去 */
+.pf-swordlight { position:absolute; left:6%; right:6%; top:50%; height:2rpx; transform-origin:left center;
+  background:linear-gradient(90deg, transparent, #e8c66a 30%, #ffd966 50%, #e8c66a 70%, transparent);
+  animation:pfSword .9s ease-out both; }
+@keyframes pfSword {
+  0%   { opacity:0; transform:scaleX(0); }
+  35%  { opacity:1; transform:scaleX(1); }
+  100% { opacity:0; transform:scaleX(1); }
+}
+.pf-core { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; }
+.pf-title { font-family:"KaiTi","STKaiti",serif; font-size:84rpx; font-weight:900; letter-spacing:24rpx;
+  color:#e8c66a; padding-left:24rpx; text-shadow:0 0 24rpx rgba(201,162,75,.45), 0 2rpx 6rpx #000;
+  animation:pfTitleIn .5s .25s ease-out both; }
+@keyframes pfTitleIn { from { opacity:0; transform:scale(.82); } to { opacity:1; transform:scale(1); } }
+.pf-names { display:flex; flex-direction:column; align-items:center; gap:14rpx; margin-top:32rpx; }
+.pf-name { font-family:"KaiTi","STKaiti",serif; font-size:40rpx; color:#f0e8d2; letter-spacing:6rpx;
+  text-shadow:0 2rpx 6rpx #000; animation:pfNameIn .45s ease-out both; }
+@keyframes pfNameIn { from { opacity:0; transform:translateY(18rpx); } to { opacity:1; transform:translateY(0); } }
+.pf-sub { font-size:24rpx; color:#9a9180; letter-spacing:4rpx; margin-top:14rpx; animation:pfNameIn .45s ease-out both; }
+/* 朱红落印：斜置盖章 */
+.pf-seal { margin-top:44rpx; width:84rpx; height:84rpx; display:flex; align-items:center; justify-content:center;
+  background:#a02a3f; color:#f3e3c0; font-family:"KaiTi","STKaiti",serif; font-size:30rpx; font-weight:bold;
+  border:2rpx solid #c9a24b; border-radius:8rpx; box-shadow:0 4rpx 14rpx rgba(0,0,0,.6);
+  animation:pfSeal .55s .95s ease-out both; }
+@keyframes pfSeal {
+  0%   { opacity:0; transform:scale(.3) rotate(-14deg); }
+  45%  { opacity:1; transform:scale(1.18) rotate(-6deg); }
+  100% { opacity:1; transform:scale(1) rotate(-6deg); }
+}

@@ -3521,13 +3521,13 @@ function cardCls(c){ return ({attack:'c-attack',dodge:'c-dodge',heal:'c-heal',wi
 // 图片基址：部署到公网/CDN 后改成你的地址，例如 'https://your-cdn.com/jianlai'。
 // 留空时小程序内显示阵营色占位（无立绘），等你有托管再填。
 const IMG_BASE = '';
-// 有立绘的 key（由 gen_data.js 扫 weapp/assets/portraits 目录生成，勿手改）
-const HAS_PORTRAIT = new Set(["aliang","baiye","baize","caoci","chenpingan","chenqingdu","daozu","fozu","lisan","miyu","ningyao","qijingchun","zhoumi","之祠","于玄","五嶽","亚圣","仙尉","仰止","余斗","切韵","刘叉","刘灞桥","刘羡阳","刘重润","南簪","卢白象","君倩","吴霜降","周海镜","周澄","周米粒","姚近之","姜尚真","姜赦","宋集薪","宋雨烧","小陌","崔东山","崔瀺","崔诚","左右","张山峰","徐远霞","托月山","持剑者","斐然","新妆","曹晴朗","朱敛","朱敛真容","李二","李宝瓶","李柳","李槐","杨老头","林守一","柔荑","柳柔","沛湘","火龙真人","牛刀","白莹","稚圭","绯妃","老秀才","至圣先师","苏心斋","苏稼","荷花庵主","萧愻","董三更","蔡金简","袁首","裴杯","裴钱","谢松花","谢狗","贺小凉","赊月","郑居中","郦彩","郭竹酒","长命","阮秀","陆台","陆沉","陆芝","陈景清","陈暖树","隋右边","隋景澄","顾璨","马苦玄","魏晋","魏檗","魏羡","黄庭","黄鸾","齐廷济","齐景龙","龙君"]);
+// 有立绘的 key（由 gen_data.js 扫 weapp/packageArt/assets/portraits 目录生成，勿手改）
+const HAS_PORTRAIT = new Set(["aliang", "baiye", "baize", "caoci", "chenpingan", "chenqingdu", "daozu", "fozu", "lisan", "miyu", "ningyao", "qijingchun", "zhoumi", "之祠", "于玄", "五嶽", "亚圣", "仙尉", "仰止", "余斗", "佛祖", "切韵", "刘叉", "刘灞桥", "刘羡阳", "刘重润", "初升", "南簪", "卢白象", "君倩", "吴霜降", "周密", "周海镜", "周澄", "周米粒", "姚近之", "姜尚真", "姜赦", "宁姚", "宋集薪", "宋雨烧", "寇名", "小陌", "崔东山", "崔瀺", "崔诚", "左右", "张山峰", "徐远霞", "托月山大祖", "持剑者", "文圣", "斐然", "新妆", "曹慈", "曹晴朗", "朱敛", "朱敛真容", "李二", "李宝瓶", "李希圣", "李柳", "李槐", "杨老头", "林守一", "柔荑", "柳柔", "沛湘", "火龙真人", "牛刀", "白也", "白泽", "白莹", "礼圣", "稚圭", "米裕", "绯妃", "老秀才", "至圣先师", "苏心斋", "苏稼", "荷花庵主", "萧愻", "董三更", "蔡金简", "袁首", "裴杯", "裴钱", "谢松花", "谢狗", "贺小凉", "赊月", "赵天籁", "路人", "道祖", "郑居中", "郦彩", "郭竹酒", "长命", "阮秀", "阿良", "陆台", "陆沉", "陆芝", "陈平安", "陈景清", "陈暖树", "陈清都", "隋右边", "隋景澄", "顾璨", "顾粲", "马苦玄", "魏晋", "魏檗", "魏羡", "黄庭", "黄鸾", "齐廷济", "齐景龙", "齐静春", "龙君"]);
 function portraitKey(key){ return String(key).replace(/[\/\\:]/g,'_'); }
 function artUrl(key){
   if(IMG_BASE) return IMG_BASE + '/art/' + key + '.png';
   const k = portraitKey(key);
-  return HAS_PORTRAIT.has(k) ? ('/assets/portraits/' + k + '.jpg') : '';
+  return HAS_PORTRAIT.has(k) ? ('/packageArt/assets/portraits/' + k + '.jpg') : '';
 }
 function bgUrl(name){ return IMG_BASE ? IMG_BASE + '/bg/' + name : ''; }
 module.exports = { FACTIONS, HOSTILE, CHARS, REALM_LIMIT, SKILLS, TALENT_DESC, CARD_SIG, CARD_KIND, cardSig, cardCls, SHOUTS, MODE_META, BG_LIST, IMG_BASE, HAS_PORTRAIT, artUrl, bgUrl, shuffle, cardPoint, pickShout, parseSkills };

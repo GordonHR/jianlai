@@ -1,0 +1,179 @@
+<view class="bf" wx:if="{{v.ready}}">
+
+  <!-- 头部：钱袋 + 掌柜 + 提示 -->
+  <view class="bf-head">
+    <view class="bf-title">包 袱 斋<text class="bf-sub">无奇不有 · 钱货两清</text></view>
+    <view class="bf-purse">
+      <view>囊中 <text class="b">{{v.head.coin}}</text> 雪花钱</view>
+      <view class="sub">{{v.head.coinText}}</view>
+      <view class="owe" wx:if="{{v.head.debt>0}}">赊欠 {{v.head.debt}} 未补</view>
+      <view class="sub">眼力 {{v.head.insight}}% · 印记 {{v.head.marks}}/{{v.head.markSlots}} · 法宝 {{v.head.gear}}/{{v.head.gearSlots}}</view>
+    </view>
+  </view>
+
+  <view class="bf-keeper">
+    <image class="kp-ico" src="/assets/icon/bf-shirou.svg" mode="aspectFit"/>
+    <view class="kp-body">
+      <view class="kp-n">掌柜 · 石柔</view>
+      <view class="kp-look">{{v.head.keeperLook}}</view>
+      <view class="kp-line">{{v.head.keeperLine}}</view>
+    </view>
+  </view>
+
+  <view class="bf-tabs">
+    <view class="bf-tab {{item[0]===v.head.tab?'on':''}}" wx:for="{{v.tabs}}" wx:key="*this" data-t="{{item[0]}}" bindtap="tab">{{item[1]}}</view>
+  </view>
+
+  <view class="bf-say" wx:if="{{v.head.say}}">
+    <text class="who" wx:if="{{v.head.tab!=='lou'}}">石柔：</text>{{v.head.say}}
+  </view>
+
+  <!-- ===================== 和气斋 ===================== -->
+  <block wx:if="{{v.body.kind==='heqi'}}">
+    <view class="bf-note">{{v.body.note}}</view>
+    <view class="bf-sec">和 气 斋<text class="bf-sec-sp">九十九间屋 · 此处 {{v.body.rooms.length}} 间</text></view>
+    <view class="bf-grid">
+      <view class="bf-room {{item.owned?'sold':''}}" wx:for="{{v.body.rooms}}" wx:key="id">
+        <view class="bf-plaque" wx:if="{{item.owned}}">已结善缘</view>
+        <view class="bf-r-top">
+          <view class="bf-r-name"><image class="bf-ico" src="{{item.icon}}" mode="aspectFit"/>{{item.name}}<text class="bf-room-no">第 {{item.roomNo}} 间</text></view>
+          <view class="bf-r-tag">{{item.tag}}</view>
+        </view>
+        <view class="bf-r-desc">{{item.desc}}</view>
+        <view class="bf-r-eff" wx:if="{{item.eff}}">{{item.eff}}</view>
+        <view class="bf-r-src">出处：{{item.src}}</view>
+        <view class="bf-r-buy">
+          <view class="bf-price">作价 <text class="b">{{item.price}}</text> 雪花钱</view>
+          <view class="bf-btns">
+            <button class="btn primary sm" wx:if="{{!item.owned && item.afford}}" data-id="{{item.id}}" bindtap="buy">买 下</button>
+            <button class="btn sm" wx:if="{{!item.owned && !item.afford && item.canCredit}}" data-id="{{item.id}}" bindtap="credit">赊 走</button>
+            <button class="btn sm" wx:if="{{item.owned && item.eff && !item.on}}" data-id="{{item.id}}" bindtap="toggleGear">带 上</button>
+            <button class="btn sm" wx:if="{{item.owned && item.eff && item.on}}" data-id="{{item.id}}" bindtap="toggleGear">取 下</button>
+            <button class="btn sm" wx:if="{{item.owned && !item.eff}}" disabled>藏 品</button>
+            <button class="btn ghost sm" wx:if="{{item.sellable}}" data-id="{{item.id}}" bindtap="sell">转 手</button>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="bf-sec" wx:if="{{v.body.debt>0}}">赊 欠<text class="bf-sec-sp">旧账未了，不可再赊</text></view>
+    <view class="bf-slotbar" wx:if="{{v.body.debt>0}}">尚欠善缘 {{v.body.debt}} 雪花钱。一局终了结账时，先从所得里抵扣。</view>
+    <button class="btn" wx:if="{{v.body.debt>0 && v.head.coin>0}}" bindtap="repay">就 地 补 上</button>
+  </block>
+
+  <!-- ===================== 拣漏 ===================== -->
+  <block wx:elif="{{v.body.kind==='lou'}}">
+    <view class="bf-note">{{v.body.note}}</view>
+    <view class="bf-slotbar" wx:if="{{v.body.canRouEye}}">夜深了。石柔不必睡，跟着你一道看摊——头一件东西，她替你上手。<button class="btn sm" bindtap="rouEye">请 石 柔 掌 眼</button></view>
+    <view class="bf-sec">散 修 摊 子<text class="bf-sec-sp">价廉而难辨 · 可掌眼一次</text></view>
+    <view class="bf-grid">
+      <view class="bf-room {{item.done?'sold':''}}" wx:for="{{v.body.stalls}}" wx:key="idx">
+        <view class="bf-plaque" wx:if="{{item.done}}">{{item.real?'捡 着 了':'打 眼 了'}}</view>
+        <view class="bf-r-top">
+          <view class="bf-r-name"><image class="bf-ico" src="{{item.icon}}" mode="aspectFit"/>{{item.name}}</view>
+          <view class="bf-r-tag">要 价 {{item.ask}}</view>
+        </view>
+        <view class="bf-r-desc">{{item.note}}</view>
+        <view class="bf-eye {{item.eyeBad?'bad':''}}" wx:if="{{item.eye}}">{{item.eye}}</view>
+        <view class="bf-eye" wx:else>还未上手。</view>
+        <view class="bf-r-buy" wx:if="{{!item.done}}">
+          <view class="bf-price">雪花钱 <text class="b">{{item.ask}}</text></view>
+          <view class="bf-btns">
+            <button class="btn sm" wx:if="{{!item.eye}}" data-i="{{item.idx}}" bindtap="eye">掌 眼</button>
+            <button class="btn primary sm" wx:if="{{item.afford}}" data-i="{{item.idx}}" bindtap="buyStall">买 下</button>
+            <button class="btn sm" wx:else disabled>钱不够</button>
+          </view>
+        </view>
+        <view class="bf-r-desc" wx:if="{{item.done}}">{{item.real ? ('真东西，作价 '+item.worth+' 雪花钱，你花了 '+item.ask+'。') : ('假货。'+item.ask+' 雪花钱买了个数，记在打眼录上。')}}</view>
+      </view>
+    </view>
+    <view class="bf-sec">换 一 处<text class="bf-sec-sp">散修走到哪儿摆到哪儿</text></view>
+    <button class="btn" bindtap="refreshStall">另 寻 摊 子</button>
+  </block>
+
+  <!-- ===================== 藏书阁 ===================== -->
+  <block wx:elif="{{v.body.kind==='shu'}}">
+    <view class="bf-note">{{v.body.note}}</view>
+    <view class="bf-sec">藏 书 阁<text class="bf-sec-sp">已读 {{v.body.readCount}} / {{v.body.bookTotal}} 本</text></view>
+    <view class="bf-grid">
+      <view class="bf-room {{item.got?'sold':''}}" wx:for="{{v.body.books}}" wx:key="id">
+        <view class="bf-plaque" wx:if="{{item.got}}">{{item.on?'已 带':'已 读'}}</view>
+        <view class="bf-r-top">
+          <view class="bf-r-name"><image class="bf-ico" src="{{item.icon}}" mode="aspectFit"/>{{item.name}}</view>
+          <view class="bf-r-tag">{{item.tag}}</view>
+        </view>
+        <view class="bf-r-desc">{{item.desc}}</view>
+        <view class="bf-r-eff" wx:if="{{item.got}}">悟：{{item.eff}}</view>
+        <view class="bf-r-eff" wx:else>读后方知其中道理</view>
+        <view class="bf-r-src">出处：{{item.src}}</view>
+        <view class="bf-r-buy">
+          <view class="bf-price">书价 <text class="b">{{item.price}}</text> 雪花钱</view>
+          <view class="bf-btns">
+            <button class="btn primary sm" wx:if="{{!item.got && item.afford}}" data-id="{{item.id}}" bindtap="read">买 下 读</button>
+            <button class="btn sm" wx:if="{{!item.got && !item.afford}}" disabled>钱不足</button>
+            <button class="btn sm {{item.on?'':''}}" wx:if="{{item.got}}" data-id="{{item.id}}" bindtap="toggleMark">{{item.act}}</button>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- ===================== 行囊 · 善缘录 ===================== -->
+  <block wx:else>
+    <view class="bf-note">{{v.body.note}}</view>
+
+    <view class="bf-sec">随 身 · 法 宝<text class="bf-sec-sp">{{v.body.gear.length}} / {{v.head.gearSlots}}</text></view>
+    <view class="bf-bag" wx:if="{{v.body.gear.length}}">
+      <view class="bf-bag-i on" wx:for="{{v.body.gear}}" wx:key="id">
+        <view class="bf-bag-n"><image class="bf-bag-ico" src="{{item.icon}}" mode="aspectFit"/>{{item.name}}</view>
+        <view class="bf-bag-c">{{item.eff}}<view class="bf-bag-src">{{item.src}}</view></view>
+        <button class="btn sm ghost" data-id="{{item.id}}" bindtap="toggleGear">取 下</button>
+      </view>
+    </view>
+    <view class="bf-empty" wx:else>身上还空着。去和气斋挑两件。</view>
+
+    <view class="bf-sec">随 身 · 悟 道 印 记<text class="bf-sec-sp">{{v.body.marks.length}} / {{v.head.markSlots}}</text></view>
+    <view class="bf-bag" wx:if="{{v.body.marks.length}}">
+      <view class="bf-bag-i on" wx:for="{{v.body.marks}}" wx:key="id">
+        <view class="bf-bag-n">{{item.name}}</view>
+        <view class="bf-bag-c">{{item.eff}}</view>
+        <button class="btn sm ghost" data-id="{{item.id}}" bindtap="toggleMark">收 起</button>
+      </view>
+    </view>
+    <view class="bf-empty" wx:else>还不曾从书里悟出什么。去藏书阁看看。</view>
+
+    <view class="bf-sec">行 囊<text class="bf-sec-sp">已得而未带 {{v.body.ownedEff.length}} 件</text></view>
+    <view class="bf-bag" wx:if="{{v.body.ownedEff.length}}">
+      <view class="bf-bag-i" wx:for="{{v.body.ownedEff}}" wx:key="id">
+        <view class="bf-bag-n"><image class="bf-bag-ico" src="{{item.icon}}" mode="aspectFit"/>{{item.name}}</view>
+        <view class="bf-bag-c">{{item.eff}}</view>
+        <view class="bf-btns">
+          <button class="btn sm" data-id="{{item.id}}" bindtap="toggleGear">带 上</button>
+          <button class="btn sm ghost" data-id="{{item.id}}" bindtap="sell">转手 {{item.sellHalf}}</button>
+        </view>
+      </view>
+    </view>
+    <view class="bf-empty" wx:else>没有闲置的物件。</view>
+
+    <view class="bf-sec" wx:if="{{v.body.keeps.length}}">藏 品<text class="bf-sec-sp">不入战局</text></view>
+    <view class="bf-bag" wx:if="{{v.body.keeps.length}}">
+      <view class="bf-bag-i" wx:for="{{v.body.keeps}}" wx:key="id">
+        <view class="bf-bag-n"><image class="bf-bag-ico" src="{{item.icon}}" mode="aspectFit"/>{{item.name}}</view>
+        <view class="bf-bag-c">{{item.src}}</view>
+        <button class="btn sm ghost" data-id="{{item.id}}" bindtap="sell">转手 {{item.sellHalf}}</button>
+      </view>
+    </view>
+
+    <view class="bf-sec">善 缘 录<text class="bf-sec-sp">已结善缘 {{v.body.seen.length}} 条</text></view>
+    <view class="bf-empty">{{v.body.seen.length ? (v.body.seen.join('、')) : '一件也还不曾识得。'}}</view>
+
+    <view class="bf-sec" wx:if="{{v.body.fakes.length}}">打 眼 录<text class="bf-sec-sp">买假 {{v.body.fakes.length}} 次</text></view>
+    <view class="bf-empty bad" wx:if="{{v.body.fakes.length}}">{{v.body.fakes.join('、')}}<view class="bf-fakes-foot">——刘杆子那一路说辞，多是从这儿来的。</view></view>
+  </block>
+
+  <view class="bf-foot"><button class="btn ghost" bindtap="back">回 到 卷 首</button></view>
+
+  <!-- 资源飘字（不拦截点击） -->
+  <view class="bf-fx">
+    <view class="bf-float" wx:for="{{v.floats}}" wx:key="id" style="color:#e8cf8f">{{item.text}}</view>
+  </view>
+</view>

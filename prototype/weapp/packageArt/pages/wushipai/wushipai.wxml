@@ -1,0 +1,55 @@
+<view class="wsp">
+  <!-- 顶部栏已删除（用户 2026-09-03 撤掉"天 下 太 平"）；返回由导航栏承担，仅留抽牌按钮 -->
+  <view class="wsp-bar">
+    <view class="btn primary wsp-draw" bindtap="draw">随 手 抽 一 张</view>
+  </view>
+
+  <view class="wsp-hint">剑气长城酒铺一面木墙，挂满木牌。出城杀妖前留一句话，当作最后的声音。
+  也收录书中人物的对白与箴言，皆为原著原句，不杜撰。点牌即翻。</view>
+
+  <view class="wsp-wall">
+    <view wx:for="{{cards}}" wx:key="n" class="wsp-card {{item.on?'on':''}} {{item.s2?'s2':''}}" bindtap="open" data-i="{{index}}">
+      <view class="wsp-inner">
+        <view class="wsp-face wsp-wood">
+          <view class="wsp-cord"></view><view class="wsp-hole"></view>
+          <text class="wsp-no">{{item.no}}</text>
+        </view>
+        <view class="wsp-face wsp-words">
+          <image wx:if="{{item.w}}" class="wsp-art" src="{{item.art}}" mode="aspectFill" binderror="imgErr" data-i="{{index}}"/>
+          <view wx:else class="wsp-art wsp-pattern"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{count>=total}}" class="wsp-seal"><text>天下太平　真正无事</text></view>
+
+  <view class="wsp-acts">
+    <view class="btn ghost" bindtap="openAll">全 部 翻 开</view>
+    <view class="btn ghost" bindtap="reset">重 新 挂 起</view>
+  </view>
+
+  <!-- 放大详情层：2:3 竖版 + 居中 + 整层做底（有立绘模糊，无则底部纹路）+ 四角不规则柔光 -->
+  <!-- 点击弹框内任意区域、遮罩、均关闭（不再用按钮） -->
+  <view wx:if="{{detail}}" class="wsp-dt">
+    <view class="wsp-dt-scrim" bindtap="close"></view>
+    <view class="wsp-dt-card" bindtap="close">
+      <view class="wsp-dt-glow"></view>
+      <view class="wsp-dt-sheen"></view>
+      <image wx:if="{{detail.hasArt}}" class="wsp-dt-bg" src="{{detail.art}}" mode="aspectFill" binderror="dtImgErr"/>
+      <view wx:else class="wsp-dt-pattern"></view>
+      <view class="wsp-dt-panel">
+        <text class="wsp-dt-no">{{detail.no}}</text>
+        <view class="wsp-dt-words">
+          <text wx:if="{{detail.who}}" class="wsp-dt-who">{{detail.who}}</text>
+          <view wx:if="{{!detail.show2}}" class="wsp-dt-txt">
+            <text wx:for="{{detail.cols}}" wx:key="ci" class="wsp-dt-col">{{item}}</text>
+          </view>
+          <view wx:else class="wsp-dt-txt">
+            <text wx:for="{{detail.cols2}}" wx:key="ci2" class="wsp-dt-col">{{item}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

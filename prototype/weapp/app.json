@@ -1,13 +1,7 @@
 {
   "pages": [
     "pages/title/title",
-    "pages/setup/setup",
-    "pages/game/game",
-    "pages/codex/codex",
-    "pages/asklake/asklake",
-    "pages/sect/sect",
-    "pages/shenci/shenci",
-    "pages/wushipai/wushipai"
+    "pages/asklake/asklake"
   ],
   "subPackages": [
     {
@@ -21,8 +15,46 @@
       "pages": [
         "pages/longque/longque"
       ]
+    },
+    {
+      "root": "packageArt",
+      "pages": [
+        "pages/art/art",
+        "pages/setup/setup",
+        "pages/game/game",
+        "pages/codex/codex",
+        "pages/wushipai/wushipai",
+        "pages/sect/sect"
+      ]
+    },
+    {
+      "root": "packageMedia",
+      "pages": [
+        "pages/media/media"
+      ]
+    },
+    {
+      "root": "packageShui",
+      "pages": [
+        "pages/shui/shui",
+        "pages/shenci/shenci"
+      ]
+    },
+    {
+      "root": "packageRef",
+      "pages": [
+        "pages/baofu/baofu",
+        "pages/profile/profile",
+        "pages/map/map"
+      ]
     }
   ],
+  "preloadRule": {
+    "pages/title/title": {
+      "network": "wifi",
+      "packages": ["packageArt", "packageLongque", "packageRef"]
+    }
+  },
   "window": {
     "navigationBarTitleText": "剑来 · 卡牌对战",
     "navigationBarBackgroundColor": "#14110f",

@@ -1,0 +1,212 @@
+<view class="sc">
+  <!-- 未就绪 -->
+  <view wx:if="{{!v.ready}}" class="sc-empty">…</view>
+
+  <!-- ===================== 择 地 ===================== -->
+  <block wx:elif="{{v.phase==='pick'}}">
+    <view class="sc-pick">
+      <view class="pk-title">山 水 祠</view>
+      <view class="pk-rule"></view>
+      <view class="pk-sub">一 方 水 土 · 一 位 末 流 神 明</view>
+
+      <view class="pk-intro">
+        <view class="pi" wx:for="{{v.pick.intro}}" wx:key="*this">{{item}}</view>
+      </view>
+
+      <view class="pk-cards">
+        <view class="pk-card {{item.on?'on':''}}" wx:for="{{v.pick.cards}}" wx:key="key"
+              data-dom="{{item.key}}" bindtap="pickDomain">
+          <image class="pk-seal" src="{{item.sealImg}}" mode="aspectFit" />
+          <view class="pk-name">{{item.name}}</view>
+          <view class="pk-desc"><text wx:for="{{item.desc}}" wx:for-item="ln" wx:key="*this">{{ln}}\n</text></view>
+          <view class="pk-origin"><text wx:for="{{item.origin}}" wx:for-item="ln" wx:key="*this">{{ln}}\n</text></view>
+        </view>
+      </view>
+
+      <view class="pk-diffs">
+        <view class="pk-diff {{item.on?'on':''}}" wx:for="{{v.pick.diffs}}" wx:key="key"
+              data-d="{{item.key}}" bindtap="pickDiff">{{item.name}}</view>
+      </view>
+
+      <button class="sc-btn primary" bindtap="start">受 香 入 祠</button>
+    </view>
+  </block>
+
+  <!-- ===================== 结 局 ===================== -->
+  <block wx:elif="{{v.phase==='over'}}">
+    <view class="sc-ending">
+      <image wx:if="{{v.ending.img}}" class="sc-end-img" src="{{v.ending.img}}" mode="widthFix"/>
+      <view class="grade {{v.ending.g}}">{{v.ending.g}}</view>
+      <view class="et">{{v.ending.t}}</view>
+      <view class="ed"><text wx:for="{{v.ending.d}}" wx:key="*this" wx:for-item="ln">{{ln}}\n</text></view>
+      <view class="ep" wx:if="{{v.ending.poem}}">「{{v.ending.poem}}」</view>
+      <view class="recap"><text wx:for="{{v.ending.recap}}" wx:key="*this" wx:for-item="rl">{{rl}}\n</text></view>
+      <view class="sc-back">
+        <button class="sc-btn primary" bindtap="restart">重 开 一 局</button>
+        <button class="sc-btn ghost" bindtap="back">回到卷首</button>
+      </view>
+    </view>
+  </block>
+
+  <!-- ===================== 本 旬 中 转 ===================== -->
+  <block wx:elif="{{v.phase==='settle'}}">
+    <view class="sc-settle">
+      <view class="st-head">本 旬 已 了</view>
+      <view class="st-sub">第 {{v.settle.year}} 年 · 第 {{v.settle.xun}} 旬 · {{v.settle.season}}</view>
+
+      <view class="st-label ledger-l">本 旬 账 本</view>
+      <view class="st-ledger">
+        <view class="st-row {{item.cls}}" wx:for="{{v.settle.ledger}}" wx:key="k">
+          <image class="st-ico" src="{{item.ico}}" mode="aspectFit" wx:if="{{item.ico}}"/>
+          <view class="st-k">{{item.k}}</view>
+          <view class="st-v">
+            <text class="sv-net">{{item.netTxt}}</text>
+            <text class="sv-sub">所奏 {{item.evtTxt}} ／ 自然 {{item.natTxt}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="st-label stats-l">本 旬 所 奏</view>
+      <view class="st-stats">
+        <view class="st-stat {{item.cls}}" wx:for="{{v.settle.stats}}" wx:key="n">
+          <image class="st-sico" src="{{item.ico}}" mode="aspectFit" wx:if="{{item.ico}}"/>
+          <view class="b">{{item.v}}</view>
+          <view class="t">{{item.n}}</view>
+        </view>
+      </view>
+
+      <view class="st-notes" wx:if="{{v.settle.notes.length}}">
+        <view class="st-note" wx:for="{{v.settle.notes}}" wx:key="*this">{{item}}</view>
+      </view>
+
+      <view class="st-backlog" wx:if="{{v.settle.backlogLeft > 0}}">尚有 {{v.settle.backlogLeft}} 桩积压，悬而未决。</view>
+
+      <button class="sc-btn" wx:if="{{v.canCiwu}}" bindtap="toggleCiwu">祠 务</button>
+      <button class="sc-btn primary" bindtap="enterNext">{{v.settle.isLast ? '入 终 局 →' : '入 下 一 旬 →'}}</button>
+    </view>
+  </block>
+
+  <!-- ===================== 主 界 面 ===================== -->
+  <block wx:else>
+    <!-- 头部 -->
+    <view class="sc-head">
+      <image class="sc-seal" src="{{v.head.sealImg}}" mode="aspectFit" />
+      <view class="sc-headline">
+        <view class="sc-dom">{{v.head.domName}}</view>
+        <view class="sc-rank">{{v.head.rankName}}</view>
+      </view>
+      <view class="sc-clock">
+        <view class="sc-time">第 {{v.head.year}} 年 · 第 {{v.head.xun}} 旬 · {{v.head.season}}</view>
+        <view class="sc-left">余 {{v.head.left}} 旬 ｜ 入 {{v.head.income}} ｜ 信 {{v.head.faith}}</view>
+        <view class="sc-ap {{v.apOut?'out':''}}">行动 {{v.head.ap}}／{{v.head.apMax}} ｜ 积压 {{v.head.backlog}}</view>
+      </view>
+    </view>
+
+    <!-- 资源：器物图标 + 竖向刻度条 + 数字 -->
+    <view class="sc-res">
+      <view class="sc-res-i" wx:for="{{v.res}}" wx:key="k">
+        <image class="ico" src="{{item.ico}}" mode="aspectFit"/>
+        <view class="gauge"><view class="fill {{item.cls}}" style="height:{{item.ratio*100}}%"></view></view>
+        <view class="txt">
+          <view class="k">{{item.n}}</view>
+          <view class="v {{item.cls}}">{{item.v}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 叙事节拍 -->
+    <view class="sc-mood" wx:if="{{v.mood}}">「{{v.mood}}」</view>
+
+    <!-- 本旬香火：主舞台，只放选择本身，不剧透后果 -->
+    <view class="sc-panel" wx:if="{{v.wishes.length}}">
+      <view class="h3">本 旬 香 火</view>
+      <view class="sc-w-prog" wx:if="{{v.wishTotal > 1}}">本旬所奏 · 第 {{v.wishIndex}} 桩 ／ 共 {{v.wishTotal}} 桩</view>
+      <view class="sc-wish {{item.cls}}" wx:for="{{v.wishes}}" wx:key="idx">
+        <image wx:if="{{item.img}}" class="sc-wish-img" src="{{item.img}}" mode="widthFix" binderror="onImgErr" data-idx="{{item.idx}}"/>
+        <view class="sw-who" wx:if="{{item.who}}">{{item.who}}</view>
+        <view class="sw-title">{{item.title}}</view>
+        <view class="sw-desc"><text wx:for="{{item.desc}}" wx:for-item="ln" wx:key="*this">{{ln}}\n</text></view>
+        <view class="sc-opt {{!o.ok?'disabled':''}}" wx:for="{{item.opts}}" wx:for-item="o" wx:key="oi"
+                data-idx="{{item.idx}}" data-oi="{{o.oi}}" bindtap="resolve" hover-class="sc-opt-hover">
+          <image class="sc-opt-ico" src="{{o.ico}}" mode="aspectFit" aria-hidden="true" />
+          <view class="ot">{{o.txt}}</view>
+          <view class="req" wx:if="{{!o.ok}}">{{o.why}}</view>
+        </view>
+        <view class="sc-opt skip-opt" data-idx="{{item.idx}}" bindtap="skip" hover-class="sc-opt-hover">
+          <image class="sc-opt-ico" src="/assets/icon/opt-skip.svg" mode="aspectFit" aria-hidden="true" />
+          <view class="ot">不 应（记入积压）</view>
+        </view>
+      </view>
+      <view class="sc-w-more" wx:if="{{v.wishTotal > 1}}">了却眼前这桩，方见其后 {{v.wishTotal - 1}} 桩。</view>
+    </view>
+    <!-- 右下角悬浮入口：祠务（参考手游 FAB，点开 80% 屏 bottom sheet） -->
+    <view class="sc-fab" bindtap="toggleCiwu" wx:if="{{!v.ciwuOpen}}" hover-class="sc-fab-hover">
+      <image class="sc-fab-img" src="/assets/icon/ciwu.svg" mode="aspectFit"/>
+    </view>
+  </block>
+
+    <!-- 祠务 bottom sheet：占 80% 屏高浮层（参考手游系统菜单），主屏与结算页都能开 -->
+    <view class="sc-sheet-mask" wx:if="{{v.ciwuOpen}}" bindtap="toggleCiwu"></view>
+    <view class="sc-sheet" wx:if="{{v.ciwuOpen}}">
+      <view class="sc-sheet-handle" bindtap="toggleCiwu"></view>
+      <view class="sc-sheet-bar">
+        <view class="sc-drawer-title">祠 务</view>
+        <view class="sc-btn ghost sm" bindtap="toggleCiwu">收 起 ✕</view>
+      </view>
+      <scroll-view scroll-y class="sc-sheet-body">
+        <view class="sc-panel">
+          <view class="h3">位 阶 · {{v.ciwu.rankName}}</view>
+          <view class="sc-rank-desc">{{v.ciwu.rankDesc}}</view>
+          <view class="sc-stat">脱 根 {{v.ciwu.tuogen}} ｜ 越 界 {{v.ciwu.yuejie}} ｜ 辖内香客上限 {{v.ciwu.cap}}</view>
+          <view class="sc-stat">较开祠时 {{v.ciwu.xkDelta}} 户</view>
+        </view>
+
+        <view class="sc-panel" wx:if="{{v.ciwu.next}}">
+          <view class="h3">上 晋 · {{v.ciwu.next.name}}</view>
+          <view class="sc-need">
+            <text class="nd {{item.ok?'ok':''}}" wx:for="{{v.ciwu.next.need}}" wx:key="n">{{item.n}} {{item.v}}　</text>
+          </view>
+          <button class="sc-btn" disabled="{{!v.ciwu.next.qualified || !v.ciwu.next.canAsk}}" bindtap="tianjie">请 神 道 天 劫</button>
+          <view class="sc-tip" wx:if="{{!v.ciwu.next.canAsk}}">行动力不足 · 请天劫与应天劫各需一点</view>
+          <view class="sc-tip" wx:elif="{{!v.ciwu.next.qualified}}">阴德与气数不足，天劫必败</view>
+        </view>
+        <view class="sc-panel" wx:else>
+          <view class="h3">上 晋</view>
+          <view class="sc-empty">已至绝顶，再无上晋之路。</view>
+        </view>
+
+        <view class="sc-panel">
+          <view class="h3">神 行</view>
+          <view class="sc-acts">
+            <button class="sc-btn" disabled="{{!v.actions.canPatrol}}" bindtap="patrol">巡 山（香火 8）</button>
+            <button class="sc-btn" disabled="{{!v.actions.canNourish}}" bindtap="nourish">养 气（香火 20）</button>
+          </view>
+        </view>
+
+        <view class="sc-panel">
+          <view class="h3">祠 中 纪 事</view>
+          <view class="sc-log">
+            <view class="lg {{item.cls}}" wx:for="{{v.ciwu.log}}" wx:key="t">{{item.t}}</view>
+          </view>
+        </view>
+
+        <view class="sc-panel">
+          <view class="h3">因 果</view>
+          <view class="sc-trail">
+            <view class="tr" wx:for="{{v.ciwu.trail}}" wx:key="t" style="color:{{item.c}}">{{item.t}}</view>
+          </view>
+        </view>
+
+        <view class="sc-back"><button class="sc-btn ghost" bindtap="back">回到卷首</button></view>
+      </scroll-view>
+    </view>
+
+  <!-- ===================== 演出层：回合横幅 + 资源飘字（覆盖于主舞台，不拦截点击） ===================== -->
+  <view class="sc-fx">
+    <view class="sc-banner" wx:for="{{v.fxBanners}}" wx:key="title">
+      <view class="bt">{{item.title}}</view>
+      <view class="bs" wx:if="{{item.sub}}">{{item.sub}}</view>
+    </view>
+    <view class="sc-float {{item.cls}}" style="color:{{item.color}};margin-left:{{item.dx}}rpx;margin-top:{{item.dy}}rpx" wx:for="{{v.fxFloats}}" wx:key="id">{{item.text}}</view>
+  </view>
+</view>

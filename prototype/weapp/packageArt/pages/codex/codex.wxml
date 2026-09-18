@@ -1,0 +1,121 @@
+<view class="codex">
+  <!-- 标题与返回由顶部导航栏承担，页内不再重复 -->
+
+  <!-- 人物志 -->
+  <block wx:if="{{tab==='chars'}}">
+    <view wx:for="{{groups}}" wx:key="faction" class="cx-group">
+      <view class="cx-gtitle" style="color:{{item.col}}">{{item.faction}}（{{item.list.length}}）</view>
+      <view class="cx-grid">
+        <view wx:for="{{item.list}}" wx:for-item="ch" wx:key="key" class="cx-card" bindtap="open" data-key="{{ch.key}}">
+          <view class="cx-port">
+            <text wx:if="{{!ch.art}}" class="cx-initial" style="color:{{ch.col}}">剑来</text>
+            <image wx:else src="{{ch.art}}" class="cx-img" mode="aspectFill"/>
+          </view>
+          <view class="cx-name">{{ch.name}}</view>
+          <view class="cx-realm">{{ch.realm}} · {{ch.skills}}技</view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 戏里戏外 -->
+  <block wx:if="{{tab==='tales'}}">
+    <view class="cx-tip">原著中的小故事 · 取《剑来》本意，不杜撰情节</view>
+    <view class="cx-tales">
+      <view wx:for="{{tales}}" wx:key="id" class="cx-tale" bindtap="openTale" data-id="{{item.id}}">
+        <view class="cx-tl">{{item.title}}</view>
+        <view class="cx-tmeta">
+          <text class="cx-mchip">{{item.era}}</text>
+          <text class="cx-mchip">{{item.place}}</text>
+        </view>
+        <view class="cx-tpeople">
+          <text wx:for="{{item.people}}" wx:for-item="p" wx:key="*this" class="cx-pchip">{{p}}</text>
+        </view>
+        <view class="cx-tlead">{{item.lead}}</view>
+        <view class="cx-tmore">细 看 ›</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 人物详情 -->
+  <view wx:if="{{sel}}" class="cx-mask" bindtap="close">
+    <view class="cx-detail" catchtap="noop">
+      <view class="cx-river"></view>
+      <view class="seal-tl">剑来</view><view class="seal-br">人物</view>
+      <view class="cx-dport">
+        <text wx:if="{{!sel.art}}" class="cx-initial big" style="color:{{sel.col}}">剑来</text>
+        <image wx:else src="{{sel.art}}" class="cx-dimg" mode="aspectFill"/>
+      </view>
+      <view class="cx-dname" style="color:{{sel.col}}">{{sel.name}}</view>
+      <view class="cx-dpos">{{sel.pos}}</view>
+      <view class="cx-dline">
+        <text class="cx-k">阵营</text><text style="color:{{sel.col}}">{{sel.faction}}</text>
+        <text class="cx-k">境</text>{{sel.realm}}
+        <text class="cx-k">气血</text>{{sel.hp}}
+      </view>
+      <view class="cx-dline" wx:if="{{sel.sect}}">
+        <text class="cx-k">宗门</text><text style="color:#c9a24b">{{sel.sect}}</text>
+      </view>
+      <view class="cx-sec" wx:if="{{sel.skills.length}}">【本命神通】 {{sel.skills}}</view>
+      <view class="cx-sec" wx:if="{{sel.intro}}">{{sel.intro}}</view>
+      <view class="cx-sec" wx:if="{{sel.look.length}}">— 形 貌 —</view>
+      <view wx:for="{{sel.look}}" wx:for-item="ln" wx:key="*this" class="cx-sd">{{ln}}</view>
+      <view class="cx-sec" wx:if="{{sel.dress.length}}">— 衣 着 —</view>
+      <view wx:for="{{sel.dress}}" wx:for-item="ln" wx:key="*this" class="cx-sd">{{ln}}</view>
+      <view class="cx-sec" wx:if="{{sel.temper.length}}">— 性 情 —</view>
+      <view wx:for="{{sel.temper}}" wx:for-item="ln" wx:key="*this" class="cx-sd">{{ln}}</view>
+      <view class="cx-tags" wx:if="{{sel.tags.length}}">
+        <text wx:for="{{sel.tags}}" wx:for-item="tg" wx:key="*this" class="cx-tag">{{tg}}</text>
+      </view>
+      <view class="cx-sec" wx:if="{{sel.scenes.length}}">— 原著剪影 —</view>
+      <view wx:for="{{sel.scenes}}" wx:for-item="sc" wx:key="t" class="cx-scene">
+        <view class="cx-st">{{sc.t}}</view>
+        <view class="cx-sd" wx:if="{{sc.d}}">{{sc.d}}</view>
+        <view class="cx-sq" wx:if="{{sc.q}}">「{{sc.q}}」</view>
+      </view>
+      <view class="cx-sec" wx:if="{{sel.quotes.length}}">— 原句 —</view>
+      <view wx:for="{{sel.quotes}}" wx:for-item="qt" wx:key="*this" class="cx-quote">「{{qt}}」</view>
+      <block wx:if="{{sel.relList.length}}">
+        <view class="cx-sec">— 人 物 关 系 —</view>
+        <view wx:for="{{sel.relList}}" wx:key="label" class="cx-rel-group">
+          <text class="cx-rel-label">{{item.label}}</text>
+          <view class="cx-rel-chips">
+            <text wx:for="{{item.list}}" wx:for-item="nm" wx:key="n" class="cx-rel-chip">{{nm.n}}</text>
+          </view>
+        </view>
+      </block>
+      <view class="cx-sec" wx:if="{{sel.verdict}}">— 评 —</view>
+      <view class="cx-verdict" wx:if="{{sel.verdict}}">{{sel.verdict}}</view>
+      <view class="cx-close" bindtap="close">收 卷</view>
+    </view>
+  </view>
+
+  <!-- 戏里戏外 · 故事详情 = 展开画卷：圆木画轴 + 光阴长河 + 顶/底淡出 mask 提示滚动边界。
+       历史曾套一层 .cx-sway 外壳（暗示"随风晃动"但实际无动画），已并入 .cx-detail 同层，去掉空壳避免
+       多余层叠上下文劫持 touchmove —— 这是「按着跟手晃动」的根因之一。 -->
+  <view wx:if="{{selTale}}" class="cx-mask" bindtap="close">
+    <view class="cx-detail cx-tale-view" catchtap="noop">
+        <view class="cx-river"></view>
+        <view class="cx-river2"></view>
+        <view class="cx-axis left"></view><view class="cx-axis right"></view>
+        <view class="seal-tl">剑来</view><view class="seal-br">戏外</view>
+        <view class="cx-dname" style="color:#c9a24b">{{selTale.title}}</view>
+        <view class="cx-tmeta cx-tmeta-d">
+          <text class="cx-mchip">{{selTale.era}}</text>
+          <text class="cx-mchip">{{selTale.place}}</text>
+        </view>
+        <view class="cx-tpeople">
+          <text wx:for="{{selTale.people}}" wx:for-item="p" wx:key="*this" class="cx-pchip">{{p}}</text>
+        </view>
+        <view class="cx-tlead cx-tlead-d">{{selTale.lead}}</view>
+        <view class="cx-sec">— 故 事 —</view>
+        <view wx:for="{{selTale.beats}}" wx:for-item="b" wx:key="t" class="cx-beat">
+          <view class="cx-bt">{{b.t}}</view>
+          <view class="cx-bd">{{b.d}}</view>
+        </view>
+        <view class="cx-quote" wx:if="{{selTale.quote}}">「{{selTale.quote}}」</view>
+        <view class="cx-note" wx:if="{{selTale.note}}">{{selTale.note}}</view>
+        <view class="cx-close" bindtap="close">收 卷</view>
+    </view>
+  </view>
+</view>

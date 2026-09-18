@@ -1,5 +1,4 @@
 <view class="lq">
-  <view class="lq-head">笼 中 雀</view>
   <view class="lq-sub" wx:if="{{v}}">场面链 · 已见结局 {{v.seen}} / {{v.total}}</view>
 
   <!-- 来路 -->
@@ -33,6 +32,7 @@
     <view class="lq-card">
       <view class="lq-ch">{{v.node.ch}}</view>
       <view class="lq-qt">{{v.node.t}}</view>
+      <image wx:if="{{v.node.img}}" class="lq-node-img" src="{{v.node.img}}" mode="widthFix"/>
       <view class="lq-qd">{{v.node.d}}</view>
     </view>
     <view class="lq-choices">
@@ -53,6 +53,7 @@
     <view class="lq-card">
       <view class="lq-ch">巷 中 插 曲</view>
       <view class="lq-qt">{{v.il.t}}</view>
+      <image wx:if="{{v.il.img}}" class="lq-il-img" src="{{v.il.img}}" mode="widthFix"/>
       <view class="lq-qd">{{v.il.d}}</view>
     </view>
     <view class="lq-btns"><view class="lq-btn" bindtap="ilNext">继 续</view></view>

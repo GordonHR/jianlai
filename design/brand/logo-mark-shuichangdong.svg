@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="水长东 公司徽">
+  <!-- 公司徽：方框内东流水势——三叠水纹 + 东向箭意（源头活水、奔流入海） -->
+  <defs>
+    <linearGradient id="g-w" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f3e0a0"/>
+      <stop offset="0.5" stop-color="#e8c66a"/>
+      <stop offset="1" stop-color="#c9a24b"/>
+    </linearGradient>
+    <linearGradient id="g-f" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e8c66a"/>
+      <stop offset="0.55" stop-color="#c9a24b"/>
+      <stop offset="1" stop-color="#e8c66a"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="128" height="128" rx="22" fill="#14110f"/>
+  <rect x="4" y="4" width="120" height="120" rx="18" fill="none" stroke="url(#g-f)" stroke-width="2.8"/>
+  <rect x="10" y="10" width="108" height="108" rx="13" fill="none" stroke="#e8c66a" stroke-opacity=".22" stroke-width="1"/>
+
+  <!-- 三叠东流水：自左向右涌动 -->
+  <path d="M22 48
+           C34 40, 46 56, 58 48
+           C70 40, 82 56, 94 48
+           C100 44, 104 46, 106 50"
+        fill="none" stroke="url(#g-w)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M22 68
+           C34 60, 46 76, 58 68
+           C70 60, 82 76, 94 68
+           C100 64, 104 66, 106 70"
+        fill="none" stroke="url(#g-w)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>
+  <path d="M22 88
+           C34 80, 46 96, 58 88
+           C70 80, 82 96, 94 88
+           C100 84, 104 86, 106 90"
+        fill="none" stroke="url(#g-w)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/>
+
+  <!-- 东向箭头：水势所向 -->
+  <path d="M98 42 L110 68 L98 94" fill="none" stroke="#e8c66a" stroke-width="2.4"
+        stroke-linecap="round" stroke-linejoin="round" opacity=".55"/>
+
+  <!-- 源头点 -->
+  <circle cx="24" cy="68" r="3" fill="#e8c66a" opacity=".9"/>
+</svg>

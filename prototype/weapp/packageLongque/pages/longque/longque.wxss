@@ -2,8 +2,6 @@ page { background:#14110f; color:#e8e0d2; }
 
 .lq { padding:28rpx 28rpx 80rpx; min-height:100vh; box-sizing:border-box;
   background:radial-gradient(circle at 50% 0%, #2a2430 0%, #14110f 70%); }
-.lq-head { text-align:center; font-size:44rpx; font-weight:bold; color:#e8c66a;
-  letter-spacing:12rpx; margin-bottom:10rpx; }
 .lq-sub { text-align:center; font-size:22rpx; color:#8a7e6c; margin-bottom:16rpx; }
 .lq-lead { text-align:center; font-size:24rpx; line-height:1.9; color:#b8ac98; margin:8rpx 0 28rpx; }
 
@@ -36,6 +34,7 @@ page { background:#14110f; color:#e8e0d2; }
 .lq-ch { font-size:22rpx; color:#c9a24b; letter-spacing:3rpx; margin-bottom:12rpx; }
 .lq-qt { font-size:32rpx; font-weight:bold; color:#f0e6cc; margin-bottom:14rpx; }
 .lq-qd { font-size:24rpx; line-height:1.95; color:#b8ac98; white-space:pre-wrap; }
+.lq-node-img, .lq-il-img { width:100%; border-radius:12rpx; border:1rpx solid #3a2f23; margin-bottom:16rpx; display:block; }
 
 .lq-choices { display:flex; flex-direction:column; gap:14rpx; }
 .lq-choice { background:#211b16; border:1rpx solid #3a2f23; border-radius:12rpx;

@@ -172,6 +172,7 @@
 
 /* 结局 */
 .sc-ending{border:1px solid #3a4a42;background:#141c18;padding:30px 26px;text-align:center;border-radius:2px}
+.sc-end-img{display:block;width:100%;max-width:640px;margin:0 auto 18px;border:1px solid #3a4a42;border-radius:2px}
 .sc-ending .grade{font-size:38px;letter-spacing:6px;color:#e8cf8f;margin-bottom:6px}
 .sc-ending .grade.g-A{color:#c9d4cd}.sc-ending .grade.g-B{color:#9fb0a6}
 .sc-ending .grade.g-C{color:#c98b6a}.sc-ending .grade.g-D{color:#8fa098}
@@ -1470,25 +1471,25 @@ function scNourish(){
 
 /* ===================== 结局 ===================== */
 const SC_ENDINGS = {
-  zhengshen: { g:'S', t:'正 神',
+  zhengshen: { g:'S', t:'正 神', img:'assets/shenci/zhengshen.jpg',
     d:'你受封正神，执掌千里地界，护水土、扛文运，享万民香火。\n\n你走过很远的路，远到有时候要很费力，才想得起最初那座小庙的样子。但你每次想起来，都还记得。\n\n辖内的人说，这位神明很怪——位子越高，来得越勤。',
     poem:'千年香火一朝新，犹记当年一炷心。' },
-  shanjun: { g:'A', t:'山 君',
+  shanjun: { g:'A', t:'山 君', img:'assets/shenci/shanjun.jpg',
     d:'你做到一山之主，辖三十余山头，一方水土都服你。\n\n庙修过三次，一次比一次大。只是上山的路也越修越宽，宽到山民上香时，很少再像从前那样，站下来跟你说几句话。\n\n你想，这大概就是往上走的代价。',
     poem:'山有木兮木有枝，心悦君兮君已知。' },
-  shoutu: { g:'B', t:'守 土',
+  shoutu: { g:'B', t:'守 土', img:'assets/shenci/shoutu.jpg',
     d:'你没有再往上走。位子不高，香火不算旺，但你守着这一方水土，一守就是很多年。\n\n辖内每一户人家的红白喜事，你都在。谁家的田今年收成好，谁家的孩子考中了，你比谁都先知道。\n\n有人替你惋惜，说你本来可以更高。你没接这话——脚下的土还厚实，这比什么都强。',
     poem:'不须更上层楼去，自有青山在脚边。' },
-  tuogen: { g:'C', t:'脱 根',
+  tuogen: { g:'C', t:'脱 根', img:'assets/shenci/tuogen.jpg',
     d:'你上去了。位阶一次比一次高，金身一次比一次亮。\n\n可不知从哪一年起，山下的炊烟你渐渐看不清，辖内谁家添了丁、谁家走了人，你也渐渐不知道了。有天你低头看了一眼，发现脚下的土已经薄得几乎没有。\n\n你成了很高很大的神明，只是没有地方可回了。',
     poem:'更上一层楼，回首不见人。' },
-  chenjiang: { g:'C', t:'沉 江',
+  chenjiang: { g:'C', t:'沉 江', img:'assets/shenci/chenjiang.jpg',
     d:'神位被废。金身被打碎，抛进了江里。\n\n香火断了，庙拆了，辖内的册子上再没有你的名字。你在江底躺了很多年，看着一代又一代人从桥上走过去。\n\n很多年后，有个孩子在江边捡到一块碎金，拿回家给他娘看。他娘看了很久，说：好像是庙里的东西。',
     poem:'金身沉江底，香火付东流。' },
-  yinci: { g:'D', t:'淫 祠',
+  yinci: { g:'D', t:'淫 祠', img:'assets/shenci/yinci.jpg',
     d:'朝廷判你淫祠，庙拆，名除。\n\n你在废墟上坐了很多年。偶尔还有人偷偷来放一炷香，放完就走，走得很快，像做贼。\n\n你想说点什么，但已经没有人听得见了。',
     poem:'名不正则言不顺，香火虽在已无人。' },
-  xiaosan: { g:'D', t:'消 解',
+  xiaosan: { g:'D', t:'消 解', img:'assets/shenci/xiaosan.jpg',
     d:'香客散尽，庙门紧闭，神像落满了灰。\n\n你没有死，只是慢慢没人记得了。风从破窗里吹进来，吹动香案上一层薄薄的灰。\n\n神明不是被打倒的，是被忘掉的。',
     poem:'香冷灰深人不至，一庙风雨自消磨。' },
 };
@@ -1771,6 +1772,7 @@ function renderShenci(app){
   if(s.over){
     const e = SC_ENDINGS[s.ending];
     app.innerHTML = '<div class="sc"><div class="sc-ending">'
+      + (e.img ? '<img class="sc-end-img" src="'+e.img+'" alt="" onerror="this.style.display=\'none\'">' : '')
       + '<div class="grade g-'+e.g+'">'+e.g+'</div>'
       + '<div class="et">'+e.t+'</div>'
       + '<div class="ed">'+e.d.replace(/\n/g,'<br>')+'</div>'

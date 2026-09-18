@@ -63,6 +63,10 @@ function injectLjtqStyle(){
             border-left:2px solid rgba(232,198,106,.45); background:rgba(20,17,15,.4);
             font-size:13px; line-height:1.95; color:#cfc4a8; }
   .ljtq-il .il-t{ font-family:var(--kai); color:#e8c66a; letter-spacing:2px; margin-bottom:6px; font-size:14px; }
+  .ljtq-node-img{ display:block; max-width:640px; width:100%; margin:0 auto 16px;
+                  border:1px solid rgba(58,47,35,.55); border-radius:10px; }
+  .ljtq-il-img{ display:block; width:100%; margin-bottom:10px;
+                border:1px solid rgba(58,47,35,.55); border-radius:8px; }
   .ljtq-end{ text-align:center; padding:16px 12px; }
   .ljtq-eico{ width:92px; height:92px; margin:6px auto 8px; }
   .ljtq-end .g{ font-family:var(--kai); font-size:52px; letter-spacing:10px; color:var(--gold); margin:4px 0; }
@@ -150,11 +154,11 @@ const LJTQ_INTERLUDES = [
   { t:'先生的目光', d:'齐先生从学堂出来，看见你坐在门槛上用树枝在地上写字。他站了一会儿，没打扰你，第二天却让人送来一支秃笔。', path:'li' },
   { t:'巷口的价', d:'杨老头盯着你看了半天，忽然问：小子，想不想活久一点？你没听懂，只觉得他眼神像在称斤两。', path:'li', deed:'yang' },
   { t:'蝉鸣很吵', d:'夏天的蝉鸣特别吵。你挑着水从福禄街过，听见李宝瓶在墙头喊你名字，声音比蝉还亮。', path:'qing' },
-  { t:'井边的凉', d:'夜里你又去井边。风从井口吹上来，凉得不像话。你还是多站了一会儿。', path:'jian', deed:'jing_watch' },
+  { t:'井边的凉', d:'夜里你又去井边。风从井口吹上来，凉得不像话。你还是多站了一会儿。', path:'jian', deed:'jing_watch', img:'assets/longque/well_cool.jpg' },
   { t:'宝甲的消息', d:'听说刘羡阳家里有祖传的剑经和宝甲。镇上一些人的眼神变了。你替他担心，他却笑嘻嘻说没事。', path:'qing' },
   { t:'稚圭一瞥', d:'稚圭在巷口晾衣裳。她抬头看你，又很快低下头。像怜悯，又像在看一件旧物。', path:'jian', deed:'zhi_gaze' },
-  { t:'炉火旁', d:'阮秀蹲在炉边看火，见你路过，招手让你暖一暖手。她说：火最公道，谁靠近都暖。', path:'qing', deed:'ruanxiu' },
-  { t:'外乡人的影', d:'镇口来了个佩剑的生面孔。你只看见一个背影，剑却像活的。', path:'jian', deed:'ning' },
+  { t:'炉火旁', d:'阮秀蹲在炉边看火，见你路过，招手让你暖一暖手。她说：火最公道，谁靠近都暖。', path:'qing', deed:'ruanxiu', img:'assets/longque/forge_fire.jpg' },
+  { t:'外乡人的影', d:'镇口来了个佩剑的生面孔。你只看见一个背影，剑却像活的。', path:'jian', deed:'ning', img:'assets/longque/stranger_sword.jpg' },
   { t:'水井边的棋', d:'有人说镇上来了个很会下棋的外乡人，跟齐先生在老槐树下摆过一局。你路过时只看见半盘残局，黑白子像两军对峙。', path:'li', deed:'cuichan' },
   { t:'山道上的雾', d:'你挑水走远了些，山道起雾。雾里好像有人负手而立，衣袂不动。等雾散了，只有一株老松。', path:'li', deed:'weibo' },
   { t:'宋家夜灯', d:'宋家窗纸上的灯亮到后半夜。你听见稚圭低声说了句什么，宋集薪没接话。那灯灭得干脆。', path:'jian', deed:'zhi_gaze' },
@@ -233,7 +237,7 @@ function ljtqIco(k){ return LJTQ_END_ICO[k] || LJTQ_END_ICO.danshui; }
 /* 场面链。opt: path 落笔向, deed 行囊, mark 关键标记, next */
 const LJTQ_NODES = {
   /* 一 · 陋巷少年 */
-  a1: { ch:'一 · 陋巷少年', t:'天不亮的井', total:18,
+  a1: { ch:'一 · 陋巷少年', t:'天不亮的井', total:18, img:'assets/longque/well_dawn.jpg',
     d:'骊珠洞天，泥瓶巷。\n\n你叫陈平安，平平安安的平安。父母早亡，只剩你一人守着漏风的屋子。天不亮就得去井边排队，把水挑到福禄街大户人家，换几个铜板。\n\n桶很沉。路很长。你还很小。\n\n很多年后有人问你，笼中雀是什么意思。你想了很久，才想起这口井。',
     ch2:[
       { txt:'咬牙把今天的水挑完', note:'日子要一天天过', path:'li', next:'a2' },
@@ -255,14 +259,14 @@ const LJTQ_NODES = {
       { txt:'记住这一幕，不再多问', note:'总有一天会懂', path:'jian', deed:'zhi_gaze', next:'a3' },
       { txt:'对宋集薪说：她好像有心事', note:'他看了你一眼，没接话', path:'qing', next:'a3' },
     ]},
-  a3: { ch:'一 · 陋巷少年', t:'羡阳与挨打的孩子', il:1,
+  a3: { ch:'一 · 陋巷少年', t:'羡阳与挨打的孩子', il:1, img:'assets/longque/alley_beating.jpg',
     d:'刘羡阳拽着你满巷跑。董水井在井边冲你们招手，顾璨被几个大孩子按在地上打，哭都不敢出声。\n\n你放下水桶。有些事，你可以不管。可你还是走了过去。',
     ch2:[
       { txt:'把顾璨拉起来，挡在身前', note:'打不过也要挡', path:'qing', deed:'help_gucan', mark:'protect', next:'a4' },
       { txt:'喊羡阳一起上，把人吓跑', note:'人多势众，也是法子', path:'qing', deed:'help_gucan', mark:'protect', next:'a4' },
       { txt:'去找大人，不硬碰', note:'少挨一顿打，多费口舌', path:'li', deed:'help_gucan', mark:'protect', next:'a4' },
     ]},
-  a4: { ch:'一 · 陋巷少年', t:'红棉袄',
+  a4: { ch:'一 · 陋巷少年', t:'红棉袄', img:'assets/longque/red_coat.jpg',
     d:'福禄街李家有个小姑娘叫李宝瓶，爱穿红棉袄，见了你就喊名字，声音脆得像敲碗。\n\n她塞给你一块糕，又问你为什么总挑水。你答不上来，她自己先想明白了：「因为你没有爹娘，对不对？」',
     ch2:[
       { txt:'点头，然后把糕掰一半还她', note:'穷，但不占便宜', path:'li', deed:'bao_cake', next:'a5' },
@@ -705,9 +709,12 @@ function ljHtmlPlay(){
   let h = '<div class="ljtq">' + ljHtmlHead() + ljCageBar(s) + ljHtmlPath(s) + ljHtmlBag(s);
   h += '<div class="ljtq-ch">'+node.ch+'</div>';
   h += '<h2 class="ljtq-t">'+node.t+'</h2>';
+  if(node.img) h += '<img class="ljtq-node-img" src="'+node.img+'" alt="" onerror="this.style.display=\'none\'">';
   h += '<div class="ljtq-d">'+node.d+'</div>';
   if(s.lastIl){
-    h += '<div class="ljtq-il"><div class="il-t">巷中插曲 · '+s.lastIl.t+'</div>'+s.lastIl.d+'</div>';
+    h += '<div class="ljtq-il">';
+    if(s.lastIl.img) h += '<img class="ljtq-il-img" src="'+s.lastIl.img+'" alt="" onerror="this.style.display=\'none\'">';
+    h += '<div class="il-t">巷中插曲 · '+s.lastIl.t+'</div>'+s.lastIl.d+'</div>';
   }
   h += '<div class="ljtq-opts">';
   (node.ch2||[]).forEach((o,i) => {

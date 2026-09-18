@@ -46,9 +46,9 @@ const blocks = [
   extractBlock(/^const ASKLAKE_QUESTIONS\s*=/), // 兼容旧 game.js：缺失则返回 null 并被过滤
 ].filter(Boolean);
 
-/* 立绘白名单：扫 weapp/assets/portraits 目录自动派生。
+/* 立绘白名单：扫 weapp/packageArt/assets/portraits 目录自动派生。
    这样新增/删除人物时不必手工维护「缺图名单」——没有对应 .jpg 的 key 自动不出图。 */
-const PORTRAIT_DIR = "weapp/assets/portraits";
+const PORTRAIT_DIR = "weapp/packageArt/assets/portraits";
 let portraitKeys = [];
 try {
   portraitKeys = fs.readdirSync(PORTRAIT_DIR)
@@ -75,13 +75,13 @@ const helpers = [
   "// 图片基址：部署到公网/CDN 后改成你的地址，例如 'https://your-cdn.com/jianlai'。",
   "// 留空时小程序内显示阵营色占位（无立绘），等你有托管再填。",
   "const IMG_BASE = '';",
-  "// 有立绘的 key（由 gen_data.js 扫 weapp/assets/portraits 目录生成，勿手改）",
+  "// 有立绘的 key（由 gen_data.js 扫 weapp/packageArt/assets/portraits 目录生成，勿手改）",
   "const HAS_PORTRAIT = new Set(" + JSON.stringify(portraitKeys) + ");",
   "function portraitKey(key){ return String(key).replace(/[\\/\\\\:]/g,'_'); }",
   "function artUrl(key){",
   "  if(IMG_BASE) return IMG_BASE + '/art/' + key + '.png';",
   "  const k = portraitKey(key);",
-  "  return HAS_PORTRAIT.has(k) ? ('/assets/portraits/' + k + '.jpg') : '';",
+  "  return HAS_PORTRAIT.has(k) ? ('/packageArt/assets/portraits/' + k + '.jpg') : '';",
   "}",
   "function bgUrl(name){ return IMG_BASE ? IMG_BASE + '/bg/' + name : ''; }",
   "module.exports = { FACTIONS, HOSTILE, CHARS, REALM_LIMIT, SKILLS, TALENT_DESC, CARD_SIG, CARD_KIND, cardSig, cardCls, SHOUTS, MODE_META, BG_LIST, IMG_BASE, HAS_PORTRAIT, artUrl, bgUrl, shuffle, cardPoint, pickShout, parseSkills };",

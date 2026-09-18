@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="剑来剑徽 · 中式长剑">
+  <!-- 参照真实中式剑：细长双刃、如意/云头剑格、缠茎、圆首系环；剑下双峰 -->
+  <defs>
+    <linearGradient id="g-blade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f3e0a0"/>
+      <stop offset="0.45" stop-color="#e8c66a"/>
+      <stop offset="1" stop-color="#c9a24b"/>
+    </linearGradient>
+    <linearGradient id="g-frame" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e8c66a"/>
+      <stop offset="0.55" stop-color="#c9a24b"/>
+      <stop offset="1" stop-color="#e8c66a"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="128" height="128" rx="22" fill="#14110f"/>
+  <rect x="4" y="4" width="120" height="120" rx="18" fill="none" stroke="url(#g-frame)" stroke-width="2.8"/>
+  <rect x="10" y="10" width="108" height="108" rx="13" fill="none" stroke="#e8c66a" stroke-opacity=".22" stroke-width="1"/>
+
+  <!-- 剑身：极细长双刃，剑尖近顶，中脊 -->
+  <path d="M64 17
+           L59.8 68
+           L64 72.5
+           L68.2 68
+           Z" fill="url(#g-blade)"/>
+  <path d="M64 23 V68" stroke="#f7ebc4" stroke-width="0.75" stroke-linecap="round" opacity=".85"/>
+
+  <!-- 剑格：云头/如意形——两端上卷、中部下凹，更贴真实剑格 -->
+  <path d="M42 72
+           C44 68, 50 67, 54 70
+           C57 72, 60 73, 64 73
+           C68 73, 71 72, 74 70
+           C78 67, 84 68, 86 72
+           C84 76, 78 78, 74 76
+           C71 74, 68 75, 64 75
+           C60 75, 57 74, 54 76
+           C50 78, 44 76, 42 72 Z"
+        fill="#c9a24b"/>
+  <path d="M48 72.5 C52 70.5, 58 71.5, 64 72 C70 71.5, 76 70.5, 80 72.5"
+        stroke="#e8c66a" stroke-width="0.8" fill="none" opacity=".55"/>
+
+  <!-- 剑茎 -->
+  <rect x="61.4" y="75" width="5.2" height="14" rx="1" fill="#b9892f"/>
+  <path d="M61.4 78.5 H66.6 M61.4 82.5 H66.6 M61.4 86 H66.6"
+        stroke="#e8c66a" stroke-width="0.9" stroke-linecap="round" opacity=".7"/>
+
+  <!-- 圆首 + 系环（挂穗） -->
+  <circle cx="64" cy="91.5" r="3" fill="#e8c66a"/>
+  <circle cx="64" cy="91.5" r="1.1" fill="#14110f"/>
+  <path d="M64 94.5 Q66 97 64 100 Q62 97 64 94.5"
+        fill="none" stroke="#e8c66a" stroke-width="1" opacity=".55"/>
+
+  <!-- 双峰 -->
+  <path d="M34 110 L48 100 L56 106 L70 97 L94 110"
+        fill="none" stroke="#e8c66a" stroke-width="1.5"
+        stroke-linecap="round" stroke-linejoin="round" opacity=".36"/>
+</svg>

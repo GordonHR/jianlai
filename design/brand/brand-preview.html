@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>剑来 · 品牌标识</title>
+<style>
+  :root{
+    --bg:#14110f; --bg2:#1d1712; --ink:#e8e0d2; --ink2:#b8ac98; --ink3:#8a7e6c;
+    --gold:#e8c66a; --line:#3a2f23;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;line-height:1.6;padding:48px 32px 80px}
+  .wrap{max-width:960px;margin:0 auto}
+  header{text-align:center;margin-bottom:36px}
+  header img{height:280px;width:auto}
+  header p{color:var(--ink2);font-size:13px;letter-spacing:4px;margin-top:12px}
+  h2{font-size:13px;color:var(--gold);letter-spacing:6px;font-weight:600;border-left:3px solid var(--gold);padding-left:12px;margin:44px 0 18px}
+  h2 span{color:var(--ink3);letter-spacing:2px;margin-left:8px;font-weight:400}
+  .grid{display:grid;gap:16px}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+  .card{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:10px}
+  .card.light{background:#e8e0d2;border-color:#c9b99a}
+  .card .label{font-size:12px;color:var(--ink3);letter-spacing:2px;text-align:center}
+  .card.light .label{color:#5c5346}
+  .card img{display:block;max-width:100%;height:auto}
+  .note{color:var(--ink3);font-size:13px;line-height:1.8;margin-top:12px;padding:14px 16px;border:1px dashed var(--line);border-radius:8px}
+  .note code{color:var(--gold);font-family:Consolas,monospace;font-size:12px}
+  footer{margin-top:56px;text-align:center;color:var(--ink3);font-size:12px;letter-spacing:3px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="logo-vertical-ink.png" alt="剑来"/>
+    <p>品牌标识 · 金石极草字面 · 中式长剑徽</p>
+  </header>
+
+  <h2>剑来 <span>Jianlai</span></h2>
+  <div class="grid g3">
+    <div class="card">
+      <img src="logo-vertical-ink.png" alt="竖排主标" width="210"/>
+      <div class="label">竖排主标</div>
+    </div>
+    <div class="card">
+      <img src="logo-primary-h-ink.png" alt="横排" width="340"/>
+      <div class="label">横排主标</div>
+    </div>
+    <div class="card">
+      <img src="calligraphy-jianlai-web.jpg" alt="字面" width="160"/>
+      <div class="label">金石极草字面</div>
+    </div>
+  </div>
+
+  <h2>问剑 <span>Wenjian</span></h2>
+  <div class="grid g3">
+    <div class="card">
+      <img src="logo-vertical-ink-wenjian.png" alt="问剑竖排" width="210"/>
+      <div class="label">竖排主标</div>
+    </div>
+    <div class="card">
+      <img src="logo-primary-h-ink-wenjian.png" alt="问剑横排" width="340"/>
+      <div class="label">横排主标</div>
+    </div>
+    <div class="card">
+      <img src="calligraphy-wenjian-web.jpg" alt="问剑字面" width="160"/>
+      <div class="label">金石极草字面</div>
+    </div>
+  </div>
+
+  <h2>剑徽 <span>Mark</span></h2>
+  <div class="grid g4">
+    <div class="card"><img src="logo-mark.svg" width="112" height="112"/><div class="label">彩色</div></div>
+    <div class="card light"><img src="logo-mark-mono.svg" width="112" height="112" style="color:#2a2118"/><div class="label">单色</div></div>
+    <div class="card"><img src="logo-mark.svg" width="64" height="64"/><div class="label">64px</div></div>
+    <div class="card"><img src="logo-mark.svg" width="40" height="40"/><div class="label">40px</div></div>
+  </div>
+
+  <h2>印章 <span>Seals</span></h2>
+  <div class="grid g4">
+    <div class="card light"><img src="seal-zhu-ink.png" width="130"/><div class="label">朱文「剑来」</div></div>
+    <div class="card"><img src="seal-bai-ink.png" width="130"/><div class="label">白文「剑来」</div></div>
+    <div class="card light"><img src="seal-zhu-wenjian.png" width="130"/><div class="label">朱文「问剑」</div></div>
+    <div class="card"><img src="seal-bai-wenjian.png" width="130"/><div class="label">白文「问剑」</div></div>
+    <div class="card light"><img src="seal-mark-graphic.svg" width="96"/><div class="label">图形印</div></div>
+  </div>
+
+  <h2>说明 <span>Notes</span></h2>
+  <div class="note">
+    字面统一为<b>金石极草</b>。主题字：剑来 / 问剑。<br/>
+    高清源：<code>calligraphy-jianlai-jinke.png</code> / <code>calligraphy-wenjian-jinke.png</code>
+  </div>
+
+  <footer>剑来 · 视觉标识 · 金石极草</footer>
+</div>
+</body>
+</html>

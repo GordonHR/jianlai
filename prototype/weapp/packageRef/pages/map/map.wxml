@@ -1,0 +1,118 @@
+<view class="mp" wx:if="{{v.ready}}">
+
+  <!-- ============ 世界总览 ============ -->
+  <block wx:if="{{v.level==='world'}}">
+    <view class="mp-intro">
+      <view class="mp-intro-t">浩然天下 · 五方九洲</view>
+      <view class="mp-intro-d">{{v.intro}}</view>
+    </view>
+
+    <view class="mp-sec">九 洲 <text class="mp-sec-sp">点洲下钻 · 阅其要地势力</text></view>
+    <view class="mp-grid">
+      <view class="mp-card" wx:for="{{v.worlds}}" wx:key="key" data-k="{{item.key}}" bindtap="drill">
+        <view class="mp-card-n">{{item.name}}</view>
+        <view class="mp-card-s">{{item.sub}}</view>
+      </view>
+    </view>
+
+    <view class="mp-sec">特 载</view>
+    <view class="mp-grid">
+      <view class="mp-card lizhu" bindtap="drillLizhu">
+        <view class="mp-card-n">{{v.lizhu.name}}</view>
+        <view class="mp-card-s">{{v.lizhu.sub}}</view>
+      </view>
+      <view class="mp-card manhuang">
+        <view class="mp-card-n">{{v.manhuang.name}}</view>
+        <view class="mp-card-s">{{v.manhuang.sub}}</view>
+      </view>
+    </view>
+    <view class="mp-foot">蛮荒天下为剑气长城以东妖族祖地，本图不另设内页，仅作方位标注。</view>
+  </block>
+
+  <!-- ============ 单洲详图 ============ -->
+  <block wx:elif="{{v.level==='zhou'}}">
+    <view class="mp-head">
+      <view class="mp-back" bindtap="backWorld">← 天下</view>
+      <view class="mp-head-t">
+        <view class="mp-title">{{v.name}}</view>
+        <view class="mp-sub">{{v.sub}}</view>
+      </view>
+    </view>
+
+    <block wx:if="{{v.realms.length}}">
+      <view class="mp-sec">势 力 范 围</view>
+      <view class="mp-room" wx:for="{{v.realms}}" wx:key="name">
+        <view class="mp-room-n">{{item.name}}</view>
+        <view class="mp-room-d">{{item.desc}}</view>
+      </view>
+    </block>
+
+    <view class="mp-sec">主 要 要 地 <text class="mp-sec-sp">点地阅其考据</text></view>
+    <view class="mp-grid">
+      <view class="mp-place" wx:for="{{v.places}}" wx:key="key" data-k="{{item.key}}" bindtap="showPlace">
+        <view class="mp-place-tag">{{item.tag}}</view>
+        <view class="mp-place-n">{{item.name}}</view>
+      </view>
+    </view>
+
+    <block wx:if="{{v.roads.length}}">
+      <view class="mp-sec">航 路 · 古 道</view>
+      <view class="mp-room" wx:for="{{v.roads}}" wx:key="name">
+        <view class="mp-room-n">{{item.name}}<text class="mp-via" wx:if="{{item.via}}">　{{item.via}}</text></view>
+        <view class="mp-room-d">{{item.desc}}</view>
+      </view>
+    </block>
+
+    <block wx:if="{{v.rels.length}}">
+      <view class="mp-sec">相 关 洲</view>
+      <view class="mp-chips">
+        <view class="mp-chip" wx:for="{{v.rels}}" wx:key="key" data-k="{{item.key}}" bindtap="drill">{{item.name}}</view>
+      </view>
+    </block>
+  </block>
+
+  <!-- ============ 骊珠洞天详图 ============ -->
+  <block wx:elif="{{v.level==='lizhu'}}">
+    <view class="mp-head">
+      <view class="mp-back" bindtap="backWorld">← 天下</view>
+      <view class="mp-head-t">
+        <view class="mp-title">{{v.name}}</view>
+        <view class="mp-sub">{{v.sub}}</view>
+      </view>
+    </view>
+
+    <view class="mp-intro">
+      <view class="mp-intro-d">{{v.intro}}</view>
+    </view>
+
+    <block wx:for="{{v.groups}}" wx:key="tag" wx:for-item="g">
+      <view class="mp-sec">{{g.tag}}</view>
+      <view class="mp-room" wx:for="{{g.places}}" wx:key="key" wx:for-item="p" data-k="{{p.key}}" bindtap="showLizhuPlace">
+        <view class="mp-room-n">{{p.name}}</view>
+        <view class="mp-room-d">{{p.desc}}</view>
+      </view>
+    </block>
+  </block>
+
+  <!-- ============ 要地/地点 详情浮层 ============ -->
+  <view class="mp-sheet-mask" wx:if="{{v.place}}" bindtap="closePlace"></view>
+  <view class="mp-sheet" wx:if="{{v.place}}">
+    <view class="mp-sheet-hd">
+      <view>
+        <text class="mp-sheet-tag" wx:if="{{v.place.tag}}">{{v.place.tag}}</text>
+        <text class="mp-sheet-n">{{v.place.name}}</text>
+      </view>
+      <view class="mp-sheet-x" bindtap="closePlace">✕</view>
+    </view>
+    <scroll-view scroll-y class="mp-sheet-bd">
+      <view class="mp-sheet-d">{{v.place.desc}}</view>
+      <view class="mp-chars" wx:if="{{v.place.chars && v.place.chars.length}}">
+        <view class="mp-chars-t">相关人物</view>
+        <view class="mp-chips">
+          <view class="mp-chip on" wx:for="{{v.place.chars}}" wx:key="*this">{{item}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+</view>

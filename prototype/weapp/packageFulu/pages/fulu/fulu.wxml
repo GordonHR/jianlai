@@ -1,35 +1,36 @@
 <view class="fulu">
   <view class="fl-bar">
-    <view class="btn ghost" bindtap="back">返回卷首</view>
     <view class="fl-count">原著符箓 · {{total}} 种</view>
   </view>
 
-  <view class="fl-hint">不涉战局，只翻阅符箓。名、功效、来历与出处皆依《剑来》原著；图形据古法符箓体例立意，非原著实绘。</view>
+  <view class="fl-hint">不涉战局，只翻阅符箓。名、功效、来历与出处皆依《剑来》原著；图样据古法符箓体例绘制。</view>
 
-  <view class="fl-sys">
+  <view class="fl-sys" wx:if="{{sys}}">
     <view class="fl-sys-h">符 箓 体 系</view>
     <view class="fl-sys-p"><text class="fl-b">写丹书·九品</text>{{sys.danShu}}</view>
-    <view class="fl-sys-p"><text class="fl-b">符纸与笔</text>{{sys.fuZhi}}</view>
-    <view class="fl-sys-p"><text class="fl-b">符胆·封山开山</text>{{sys.fuDan}}</view>
     <view class="fl-sys-note">{{sys.note}}</view>
   </view>
 
   <view class="fl-grid">
     <view wx:for="{{list}}" wx:key="id" class="fl-card" bindtap="open" data-i="{{index}}">
-      <view class="fl-name">{{item.name}}<text wx:if="{{item.alias}}" class="fl-alias">{{item.alias}}</text></view>
+      <image class="fl-thumb" src="{{item.img}}" mode="aspectFill"/>
+      <view class="fl-name">{{item.name}}</view>
       <view class="fl-type">{{item.type}}</view>
     </view>
   </view>
 
   <view wx:if="{{detail}}" class="fl-dt">
     <view class="fl-dt-scrim" bindtap="close"></view>
-    <view class="fl-dt-card" bindtap="close">
+    <view class="fl-fly {{fly?'on':''}}">
+      <image class="fl-fly-img" src="{{detail.img}}" mode="aspectFit"/>
+    </view>
+    <view class="fl-dt-card show">
+      <image class="fl-dt-img" src="{{detail.img}}" mode="widthFix" bindtap="close"/>
       <view class="fl-dt-name">{{detail.name}}<text wx:if="{{detail.alias}}" class="fl-dt-alias">{{detail.alias}}</text></view>
       <view class="fl-dt-type">{{detail.type}}</view>
       <view class="fl-dt-row"><text class="fl-dt-b">功效</text><text class="fl-dt-v">{{detail.desc}}</text></view>
       <view class="fl-dt-row"><text class="fl-dt-b">来历</text><text class="fl-dt-v">{{detail.caster}}</text></view>
       <view class="fl-dt-row"><text class="fl-dt-b">出处</text><text class="fl-dt-v fl-dt-src">{{detail.src}}</text></view>
-      <view class="fl-dt-row"><text class="fl-dt-b">图样</text><text class="fl-dt-v fl-dt-src">{{sys.note}}</text></view>
     </view>
   </view>
 </view>

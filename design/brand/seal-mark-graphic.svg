@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-label="剑来图形印">
+  <!-- 图形印 v2：免字体，角标 / 头像缩略用。修长竖剑 + 方框 -->
+  <path d="M8 12 Q8 7 14 7 L86 8 Q92 8 92 14 L91 86 Q91 92 85 92 L14 91 Q8 91 8 85 Z"
+        fill="none" stroke="#b4453c" stroke-width="4.2" stroke-linejoin="round"/>
+
+  <!-- 竖剑 -->
+  <path d="M50 16 L44.5 56 L50 59.5 L55.5 56 Z" fill="#b4453c"/>
+  <path d="M36 58 H64 L62.8 62.5 H37.2 Z" fill="#b4453c"/>
+  <rect x="47.5" y="62.5" width="5" height="14" rx="1" fill="#b4453c"/>
+  <circle cx="50" cy="79.5" r="3" fill="#b4453c"/>
+  <circle cx="50" cy="79.5" r="1.1" fill="#f7efe0"/>
+
+  <!-- 底横地平 -->
+  <path d="M24 86 H76" stroke="#b4453c" stroke-width="1.8" stroke-linecap="round" opacity=".5"/>
+</svg>

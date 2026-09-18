@@ -3339,7 +3339,7 @@ function renderTitle(app){
     + '<div class="ts-sub">江湖没什么好的，也就酒还行</div>'
 
     + '<div class="ts-group">'
-    +   '<div class="ts-group-title">对 战</div>'
+    +   '<div class="ts-group-title">对战</div>'
     +   '<div class="mode-grid">'
     +     '<div class="ts-mode" onclick="chooseMode(\'ai\')">' +
         '<div class="ts-mode-head"><h3>仗剑独行</h3><div class="ts-mode-ico"><svg viewBox="0 0 30 30" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><ellipse cx="9.8" cy="25.4" rx="5" ry="1" fill="currentColor" fill-opacity=".16" stroke="none"/><path d="M7.6 10.4 L10.9 10.4 L12.1 18.2 Q9.6 19 7.1 18.2 Z" fill="currentColor" fill-opacity=".13" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8.3 12 Q8.9 14.4 8.6 16.6" fill="none" stroke="currentColor" stroke-width="1" stroke-opacity=".4" stroke-linecap="round"/><path d="M9 18.6 L6.6 24.4 M10.3 18.6 L13 24.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9.2" cy="8" r="2.15" fill="currentColor" fill-opacity=".16" stroke="currentColor" stroke-width="1.6"/><path d="M17.5 4.6 L6 19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M18.2 5.2 L6.7 19.8" fill="none" stroke="currentColor" stroke-width=".9" stroke-opacity=".38" stroke-linecap="round"/><path d="M16.8 8.7 L13.6 6.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="18" cy="4.1" r=".9" fill="currentColor" fill-opacity=".35" stroke="currentColor" stroke-width="1.2"/></svg></div></div>'
@@ -3361,7 +3361,7 @@ function renderTitle(app){
     + '</div>'
 
     + '<div class="ts-group">'
-    +   '<div class="ts-group-title">问 心</div>'
+    +   '<div class="ts-group-title">问心</div>'
     +   '<div class="mode-grid">'
     +     '<div class="ts-mode" onclick="openAskLake()">' +
         '<div class="ts-mode-head"><h3>书简湖问心局</h3><div class="ts-mode-ico"><svg viewBox="0 0 30 30" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M9 5 L9 25 M15 5 L15 25 M21 5 L21 25" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M6 8 L24 8 M6 15 L24 15 M6 22 L24 22" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-opacity=".55"/><path d="M9 5 Q15 3 21 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div></div>'
@@ -3375,7 +3375,7 @@ function renderTitle(app){
     + '</div>'
 
     + '<div class="ts-group">'
-    +   '<div class="ts-group-title">经 营</div>'
+    +   '<div class="ts-group-title">经营</div>'
     +   '<div class="mode-grid">'
     +     '<div class="ts-mode" onclick="openSect()">' +
         '<div class="ts-mode-head"><h3>落魄山</h3><div class="ts-mode-ico"><svg viewBox="0 0 30 30" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 24 Q9 11 14 19 Q18 12 26 24 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><path d="M11 20 Q14 15 17 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-opacity=".5"/></svg></div></div>'
@@ -3393,7 +3393,7 @@ function renderTitle(app){
     + '</div>'
 
     + '<div class="ts-group">'
-    +   '<div class="ts-group-title">阅 览</div>'
+    +   '<div class="ts-group-title">阅览</div>'
     +   '<div class="mode-grid">'
     +     '<div class="ts-mode" onclick="openCodex()">' +
         '<div class="ts-mode-head"><h3>人物志</h3><div class="ts-mode-ico"><svg viewBox="0 0 30 30" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 6 Q5 6 5 9 L5 21 Q5 24 8 24 L22 24 Q25 24 25 21 L25 9 Q25 6 22 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><path d="M8 6 L22 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 11 L19 11 M11 15 L19 15 M11 19 L16 19" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-opacity=".55"/></svg></div></div>'
@@ -3417,7 +3417,7 @@ function renderTitle(app){
     + pfTitleCard()
 
     + '<div class="ts-group">'
-    +   '<div class="ts-group-title">设 置</div>'
+    +   '<div class="ts-group-title">设置</div>'
     +   '<div class="diff-row">'
     +     Object.keys(DIFF).map(k=>{
             const d = DIFF[k];
@@ -3456,7 +3456,7 @@ function pfTitleCard(){
     const head = '<div class="ts-mode-head"><h3>行迹录</h3><div class="ts-mode-ico">'+ICO+'</div></div>';
 
     if(!PF.path){
-      return '<div class="ts-group"><div class="ts-group-title">修 士</div><div class="mode-grid">'
+      return '<div class="ts-group"><div class="ts-group-title">修士</div><div class="mode-grid">'
         + '<div class="ts-mode" onclick="openProfile()">' + head
         + '<p>先在山中想一想：走剑修的路，还是练气士的路，或者干脆打磨自家这一副皮肉血气。择定之后，每一局棋都算修行。</p>'
         + '<div class="md-meta">尚未择道 · 点此立身</div></div></div></div>';
@@ -3466,7 +3466,7 @@ function pfTitleCard(){
     const nm = PF.name ? PF.name : '无名客';
     const meta = (b.total ? (b.win+' 胜 '+b.lose+' 负　·　') : '') + '道行 '+PF.xp;
     const nxt = nx ? ('下一境「'+nx.realm.n.replace(/\s/g,'')+'」尚需 '+nx.far) : '已至顶峰';
-    return '<div class="ts-group"><div class="ts-group-title">修 士</div><div class="mode-grid">'
+    return '<div class="ts-group"><div class="ts-group-title">修士</div><div class="mode-grid">'
       + '<div class="ts-mode" onclick="openProfile()">' + head
       + '<p><b style="color:#e8c66a;letter-spacing:1px">'+nm+'</b>　'+P.name.replace(/\s/g,'')
       + '　今天是「'+rl.n.replace(/\s/g,'')+'」——'+rl.grp+'。'
@@ -3629,7 +3629,7 @@ const AL_INTERLUDES = [
 /* 问心图：id → 节点 */
 const AL_NODES = {
 /* ============ 一 · 入湖 ============ */
-s1:{ ch:'一 · 入湖', t:'血，与笑', il:0,
+s1:{ ch:'一 · 入湖', t:'血，与笑', il:0, img:'assets/shujianhu/node_s1.jpg',
   d:'你收到顾璨的消息，连夜赶来。推开那扇门时，他正坐在血泊里擦剑，抬头看见你，咧嘴笑了：「哥，你来啦。」\n他笑得像小时候偷了别人家枣子被你抓住的样子。可地上那滩血，不是他的。',
   ch2:[
     { txt:'先听他说', note:'情动于衷，但未失分寸', eff:{ qing:8, li:2 }, npc:{ gucan:8 }, next:'s2a' },
@@ -3637,7 +3637,7 @@ s1:{ ch:'一 · 入湖', t:'血，与笑', il:0,
     { txt:'替他止血，余事再议', note:'手比道理快', eff:{ qing:15, knot:5 }, npc:{ gucan:12, mother:8 }, next:'s2c' }
   ]},
 
-s2a:{ ch:'一 · 入湖', t:'先下手为强',
+s2a:{ ch:'一 · 入湖', t:'先下手为强', img:'assets/shujianhu/node_s2a.jpg',
   d:'顾璨擦干净剑，语气很平常：「他们都要害我，我只是先下手为强。哥，这里就是这样的规矩——你不吃人，人就吃你。」\n他说得很理直气壮，理直气壮得让你心里发凉。',
   ch2:[
     { txt:'杀人就是杀人，没有理由', note:'一句也听不进去', eff:{ li:14, dao:4, qing:-6 }, npc:{ gucan:-12, zhongs:10 }, next:'s3' },
@@ -3645,7 +3645,7 @@ s2a:{ ch:'一 · 入湖', t:'先下手为强',
     { txt:'我帮你扛', note:'话出口的时候，湖面静了一下', eff:{ qing:18, knot:8 }, npc:{ gucan:18, zhongs:-15 }, next:'s3' }
   ]},
 
-s2b:{ ch:'一 · 入湖', t:'一叠血衣',
+s2b:{ ch:'一 · 入湖', t:'一叠血衣', img:'assets/shujianhu/node_s2b.jpg',
   d:'你没有去看顾璨，先去了湖边那间破屋。一个老妇跪在门口，怀里抱着一叠血衣，一件一个人。\n她不哭也不闹，只说：「小哥，你是他哥，你替我做回主。」',
   ch2:[
     { txt:'收下血衣，许她一个交代', note:'一叠布，三十七条命的重量', eff:{ li:12, dao:6, hope:10, dan:-5 }, npc:{ zhongs:16, gucan:-6 }, flag:'cloth', next:'s3' },
@@ -3653,7 +3653,7 @@ s2b:{ ch:'一 · 入湖', t:'一叠血衣',
     { txt:'让她先回去，容我想想', note:'想，往往就是拖', eff:{ li:-10, qing:8, hope:-8, knot:6 }, npc:{ zhongs:-10, gucan:10 }, next:'s3' }
   ]},
 
-s2c:{ ch:'一 · 入湖', t:'你不该来',
+s2c:{ ch:'一 · 入湖', t:'你不该来', img:'assets/shujianhu/node_s2c.jpg',
   d:'你替他把伤口包好。他一直看着你，忽然说：「哥，你不该来。」\n你问为什么。他说：「你来了，我就装不下去了。」',
   ch2:[
     { txt:'我来了，就不会走', note:'这句话你自己听着都沉', eff:{ qing:15, knot:5 }, npc:{ gucan:15, mother:6 }, next:'s3' },
@@ -3661,7 +3661,7 @@ s2c:{ ch:'一 · 入湖', t:'你不该来',
     { txt:'什么也不说，把药上完', note:'沉默有时候最重', eff:{ qing:12, knot:6 }, npc:{ gucan:8, mother:8 }, next:'s3' }
   ]},
 
-s3:{ ch:'一 · 入湖', t:'婶婶跪下了', il:1,
+s3:{ ch:'一 · 入湖', t:'婶婶跪下了', il:1, img:'assets/shujianhu/node_s3.jpg',
   d:'顾璨的母亲来了。她没哭天抢地，只是端端正正跪在你面前，像当年求你去看着点璨儿那样。\n「平安，婶婶不求别的。璨儿从小听你的，你救他一次。」',
   ch2:[
     { txt:'婶婶起来。我给他一个公道', note:'公道，也是护他的一种法子', eff:{ li:12, qing:6, dao:4 }, npc:{ mother:15, shuyuan:5 }, next:'s4' },
@@ -3670,7 +3670,7 @@ s3:{ ch:'一 · 入湖', t:'婶婶跪下了', il:1,
   ]},
 
 /* ============ 二 · 问心 ============ */
-s4:{ ch:'二 · 问心', t:'刘老成的酒席',
+s4:{ ch:'二 · 问心', t:'刘老成的酒席', img:'assets/shujianhu/node_s4.jpg',
   d:'刘老成派人来请。这人在书简湖活成了老辈，湖里每一桩血案，他都知道，也都没拦。\n席上他给你斟酒：「陈公子，湖里的规矩不是一天立起来的。你要拆，得先想清楚拆完拿什么补。」',
   ch2:[
     { txt:'赴宴，把他的话听完', note:'敌人的道理，也是道理', eff:{ li:8, hope:6 }, npc:{ liulao:15, zhongs:3 }, next:'s5' },
@@ -3678,7 +3678,7 @@ s4:{ ch:'二 · 问心', t:'刘老成的酒席',
     { txt:'去了，但把剑放在桌上', note:'先亮刀，再说话', eff:{ sword:-10, li:4, knot:4 }, npc:{ liulao:8, gucan:8, zhongs:-6 }, next:'s5' }
   ]},
 
-s5:{ ch:'二 · 问心', t:'先生的信',
+s5:{ ch:'二 · 问心', t:'先生的信', img:'assets/shujianhu/node_s5.jpg',
   d:'老秀才老爷子的信到了，只有一句话：\n「与亲近之人，不要说气话，不要说反话，不要不说话。」\n你把这张纸看了很久。先生从来不教你怎么做，只教你想清楚再做。',
   ch2:[
     { txt:'回信：弟子明白，会先讲道理', note:'把先生的规矩摆在前面', eff:{ li:10, dao:6 }, npc:{ shuyuan:12 }, flag:'letter', next:'s6' },
@@ -3686,7 +3686,7 @@ s5:{ ch:'二 · 问心', t:'先生的信',
     { txt:'烧了。先生不懂书简湖', note:'烧的是信，也是退路', eff:{ qing:15, knot:10, li:-6 }, npc:{ shuyuan:-22, gucan:8 }, next:'s6' }
   ]},
 
-s6:{ ch:'二 · 问心', t:'你是不是也觉得我该死', il:1,
+s6:{ ch:'二 · 问心', t:'你是不是也觉得我该死', il:1, img:'assets/shujianhu/node_s6.jpg',
   d:'夜里，顾璨坐在门槛上，背对着你，忽然问：\n「哥，你是不是也觉得我该死？」\n他问得很轻，像怕惊动什么。',
   ch2:[
     { txt:'你该活着。但得认', note:'活路和认账，缺一不可', eff:{ li:12, qing:8, dao:6 }, npc:{ gucan:6 }, flag:'admit', next:'s7' },
@@ -3697,7 +3697,7 @@ s6:{ ch:'二 · 问心', t:'你是不是也觉得我该死', il:1,
   ]},
 
 /* ============ 三 · 舍得 ============ */
-s7:{ ch:'三 · 舍得', t:'君子之道，在于舍得',
+s7:{ ch:'三 · 舍得', t:'君子之道，在于舍得', img:'assets/shujianhu/node_s7.jpg',
   d:'你一个人坐在湖边。齐先生当年说过：君子之道，在于舍得。\n那时候你觉得这四个字简单——舍了坏的，得着好的。如今才知道，书简湖让你舍的，和你想得的，是同一件东西。',
   ch2:[
     { txt:'若舍了公理，我便不是陈平安', note:'守住一样，就守住了所有', eff:{ li:15, dao:10 }, next:'s8' },
@@ -3705,7 +3705,7 @@ s7:{ ch:'三 · 舍得', t:'君子之道，在于舍得',
     { txt:'舍一样，才能保一样', note:'折中，也最耗心血', eff:{ li:8, qing:8, dao:4, knot:3 }, next:'s8' }
   ]},
 
-s8:{ ch:'三 · 舍得', t:'三十七户围门',
+s8:{ ch:'三 · 舍得', t:'三十七户围门', img:'assets/shujianhu/node_s8.jpg',
   d:'天没亮，门外站满了人。三十七户，老的少的，没人喊打喊杀，只是站着。\n领头的老妇说：「我们不要他偿命。我们要他认。认一句，我们回去好给死的人上香。」',
   ch2:[
     { txt:'开门。一户一户，赔罪', note:'三十七次低头，一次比一次低', eff:{ li:14, hope:16, dao:6, dan:-10, qing:4 },
@@ -3716,7 +3716,7 @@ s8:{ ch:'三 · 舍得', t:'三十七户围门',
       npc:{ zhongs:-26, gucan:10, liulao:-6 }, req:{ res:{ sword:55 } }, flag:'threat', next:'s9' }
   ]},
 
-s9:{ ch:'三 · 舍得', t:'第一个人',
+s9:{ ch:'三 · 舍得', t:'第一个人', img:'assets/shujianhu/node_s9.jpg',
   d:'你终于问出了那个一直不敢问的问题：「第一个呢？」\n顾璨愣了很久，说：「是个老油子。他要把我卖给湖底的那帮人，换三块灵石。我把他按在水里，按了很久。」\n他抬眼看你：「哥，第一个，我是为了活。」',
   ch2:[
     { txt:'第一个情有可原。第三个呢？第三十七个呢？', note:'起点无辜，不等于终点无辜', eff:{ li:14, dao:8, qing:-4 }, npc:{ gucan:-8, zhongs:6 }, next:'s10' },
@@ -3724,7 +3724,7 @@ s9:{ ch:'三 · 舍得', t:'第一个人',
     { txt:'我知道你怕。我也怕过。', note:'承认怕，也是一种认', eff:{ qing:14, knot:6, dao:2 }, npc:{ gucan:14, mother:6 }, next:'s10' }
   ]},
 
-s10:{ ch:'三 · 舍得', t:'千里之外', il:1,
+s10:{ ch:'三 · 舍得', t:'千里之外', il:1, img:'assets/shujianhu/node_s10.jpg',
   d:'宁姚的信来了，只有一行字：\n「陈平安，你在那边别把自己弄丢了。」\n你把信纸折了三折，收起来。有些话说出来，就不硬气了。',
   ch2:[
     { txt:'回信：我很好，勿念', note:'报喜不报忧，是怕她提剑来', eff:{ qing:6, dao:4 }, npc:{ ningyao:6 }, next:'s11' },
@@ -3733,7 +3733,7 @@ s10:{ ch:'三 · 舍得', t:'千里之外', il:1,
   ]},
 
 /* ============ 四 · 了断 ============ */
-s11:{ ch:'四 · 了断', t:'各方齐至',
+s11:{ ch:'四 · 了断', t:'各方齐至', img:'assets/shujianhu/node_s11.jpg',
   d:'该来的都来了。刘老成带着湖上的老辈坐在东边，三十七户站在院外，书院的使者捧着一份文书，顾璨站在你身后。\n所有人都在等你开口。',
   ch2:[
     { txt:'碎裂文胆，替他赎这一份因果', note:'以我之碎，换他一线生机', eff:{ dan:-60, li:14, qing:12, dao:14, hope:8 },
@@ -3751,7 +3751,7 @@ s11:{ ch:'四 · 了断', t:'各方齐至',
   ]},
 
 /* ============ 终局 ============ */
-fin_dan:{ ch:'四 · 了断', t:'文胆碎了', fin:1,
+fin_dan:{ ch:'四 · 了断', t:'文胆碎了', fin:1, img:'assets/shujianhu/node_fin_dan.jpg',
   d:'你一掌按在心口，文胆碎裂的声音只有你自己听见。\n血从嘴角下来，顾璨扑过来扶你，被你推开。三十七户的人不喊了，刘老成站起来了，连书院的使者都低下了头。\n这一湖的因果，从此有一份记在你身上。',
   ch2:[
     { txt:'把痛咽下去，先立规矩', note:'赎完罪，还得有人管这湖水', key:'dan_guilt',
@@ -3762,7 +3762,7 @@ fin_dan:{ ch:'四 · 了断', t:'文胆碎了', fin:1,
       eff:{ li:16, qing:-14, dao:6 }, npc:{ gucan:-16, zhongs:16, shuyuan:14 } }
   ]},
 
-fin_surrender:{ ch:'四 · 了断', t:'他自己走了出去', fin:1,
+fin_surrender:{ ch:'四 · 了断', t:'他自己走了出去', fin:1, img:'assets/shujianhu/node_fin_surrender.jpg',
   d:'顾璨看了你很久，然后自己推开门，走出去，跪在了三十七户面前。\n他跪下去的时候，你想起泥瓶巷那年他被人按在地上打，也是这副倔样子。',
   ch2:[
     { txt:'陪他一起跪下去', note:'他的账，你认一半', key:'sur_together',
@@ -3773,7 +3773,7 @@ fin_surrender:{ ch:'四 · 了断', t:'他自己走了出去', fin:1,
       eff:{ qing:14, li:-14, knot:16, hope:-8 }, npc:{ gucan:16, zhongs:-20, shuyuan:-12 } }
   ]},
 
-fin_blood:{ ch:'四 · 了断', t:'剑已经出鞘', fin:1,
+fin_blood:{ ch:'四 · 了断', t:'剑已经出鞘', fin:1, img:'assets/shujianhu/node_fin_blood.jpg',
   d:'你拔剑了。第一剑下去，湖上的风就变了味。\n顾璨跟在你身后，一边杀人一边笑，笑得比哭难看。',
   ch2:[
     { txt:'一路杀出去，谁拦谁死', note:'杀干净了，也把自己杀空了', key:'blood_all',
@@ -3784,7 +3784,7 @@ fin_blood:{ ch:'四 · 了断', t:'剑已经出鞘', fin:1,
       eff:{ knot:14, li:2, hope:-8, dao:4 }, npc:{ gucan:8, zhongs:-8, shuyuan:-4 } }
   ]},
 
-fin_court:{ ch:'四 · 了断', t:'书院的文书', fin:1,
+fin_court:{ ch:'四 · 了断', t:'书院的文书', fin:1, img:'assets/shujianhu/node_fin_court.jpg',
   d:'书院的使者展开文书，一条一条念。每一条都是顾璨做过的。\n念到第三十七条时，天已经黑了。',
   ch2:[
     { txt:'为他求情', note:'求情不是脱罪，是让人知道他也是人', key:'court_plea',
@@ -3795,7 +3795,7 @@ fin_court:{ ch:'四 · 了断', t:'书院的文书', fin:1,
       eff:{ li:18, qing:-20, dao:4, knot:6 }, npc:{ gucan:-24, mother:-20, zhongs:16, shuyuan:16 } }
   ]},
 
-fin_order:{ ch:'四 · 了断', t:'重立湖规', fin:1,
+fin_order:{ ch:'四 · 了断', t:'重立湖规', fin:1, img:'assets/shujianhu/node_fin_order.jpg',
   d:'你没有杀一个人，也没有放走一个人。你把三十七户、刘老成、还有湖上所有说得上话的，都请到了一起。\n规矩是死的，人是活的。你在湖边立了一块碑，碑上第一条写着：伤人者，偿。',
   ch2:[
     { txt:'我留下三十年', note:'三十年，够不够还三十七条命', key:'order_thirty',
@@ -3806,7 +3806,7 @@ fin_order:{ ch:'四 · 了断', t:'重立湖规', fin:1,
       eff:{ li:8, hope:10, dao:4, qing:-8, knot:6 }, npc:{ zhongs:10, shuyuan:6, gucan:-12 } }
   ]},
 
-fin_leave:{ ch:'四 · 了断', t:'走到渡口', fin:1,
+fin_leave:{ ch:'四 · 了断', t:'走到渡口', fin:1, img:'assets/shujianhu/node_fin_leave.jpg',
   d:'你转身走了。顾璨没有追，也没有喊。\n走到渡口的时候，天开始下雨。你忽然想起，小时候他走不动了，也是这样站在原地等你回头。',
   ch2:[
     { txt:'上了船，再没回头', note:'这一走，湖就成了心口的一块疤', key:'leave_true',
@@ -4180,6 +4180,7 @@ function renderAskLakeNode(a){
   h += '<div class="al-card">'
     + '<div class="al-ch">'+nd.ch+'　·　第 '+(a.step+1)+' 问</div>'
     + '<h3 class="al-q">'+nd.t+'</h3>'
+    + (nd.img ? '<img class="al-node-img" src="'+nd.img+'" onerror="this.style.display=\'none\'">' : '')
     + '<div class="al-d">'+nd.d.replace(/\n/g,'<br>')+'</div>'
     + '<div class="al-lake">'+alLakeLine(a)+'</div>'
     + '<div class="al-mood">'+alMoodLine(a)+'</div>'
