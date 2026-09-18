@@ -44,7 +44,12 @@
       "root": "packageRef",
       "pages": [
         "pages/baofu/baofu",
-        "pages/profile/profile",
+        "pages/profile/profile"
+      ]
+    },
+    {
+      "root": "packageMap",
+      "pages": [
         "pages/map/map"
       ]
     }
@@ -52,7 +57,7 @@
   "preloadRule": {
     "pages/title/title": {
       "network": "wifi",
-      "packages": ["packageArt", "packageLongque", "packageRef"]
+      "packages": ["packageMap", "packageLongque", "packageRef"]
     }
   },
   "window": {

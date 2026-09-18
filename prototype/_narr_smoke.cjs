@@ -11,7 +11,7 @@ const path = require('path');
 const fs = require('fs');
 const ROOT = __dirname;
 const sect = require(path.join(ROOT, 'weapp/utils/sect.js'));
-const shenci = require(path.join(ROOT, 'weapp/utils/shenci.js'));
+const shenci = require(path.join(ROOT, 'weapp/packageShui/utils/shenci.js'));
 
 /** 从源码文本中截取 `const NAME = {` 起、到花括号配平为止的整块并求值。
  *  扫描时跳过字符串/模板/注释，避免内容里的括号干扰配平。
@@ -144,7 +144,7 @@ console.log('  结局分布: '+JSON.stringify(allEndShen));
 // 结局全集：直接派生自源码，不用手写清单
 // （旧版手写清单混入了卡牌引擎的键如 siege_win/S/demon，导致 17 条全是假警报）
 const KNOWN_SECT = Object.keys(evalBlock('weapp/utils/sect.js', 'SECT_ENDINGS') || {});
-const KNOWN_SHEN = Object.keys(evalBlock('weapp/utils/shenci.js', 'SC_ENDINGS') || {});
+const KNOWN_SHEN = Object.keys(evalBlock('weapp/packageShui/utils/shenci.js', 'SC_ENDINGS') || {});
 if(!KNOWN_SECT.length || !KNOWN_SHEN.length){
   console.log('!! 结局表解析失败，可达性审计跳过（sect='+KNOWN_SECT.length+' shenci='+KNOWN_SHEN.length+'）');
 }

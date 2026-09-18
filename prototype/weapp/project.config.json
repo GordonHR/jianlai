@@ -1,7 +1,12 @@
 {
   "description": "剑来 · 卡牌对战 微信小程序",
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      { "type": "suffix", "value": ".py" },
+      { "type": "suffix", "value": ".cjs" },
+      { "type": "suffix", "value": ".txt" },
+      { "type": "suffix", "value": ".md" }
+    ],
     "include": []
   },
   "setting": {

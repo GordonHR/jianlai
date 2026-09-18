@@ -1,0 +1,114 @@
+<view class="mp">
+
+  <!-- 矢量地图画布：铺满全屏，控件浮于其上 -->
+  <view class="mp-stage">
+    <canvas type="2d" id="cv" class="mp-cv"
+      bindtouchstart="onTS" bindtouchmove="onTM" bindtouchend="onTE" bindtouchcancel="onTE"></canvas>
+  </view>
+
+  <!-- 状态栏渐隐 -->
+  <view class="mp-fade-t"></view>
+
+  <!-- 顶部浮动工具条 -->
+  <view class="mp-top">
+    <view class="mp-back" bindtap="goBack">‹ 返回</view>
+    <view class="mp-crumb">{{v.crumb}}</view>
+    <view class="mp-tbtn" bindtap="toggleStyle">画风</view>
+    <view class="mp-tbtn" bindtap="toggleLayer">图层</view>
+    <view class="mp-tbtn" bindtap="toggleSearch">搜</view>
+  </view>
+
+  <!-- 缩放 -->
+  <view class="mp-zoom">
+    <view class="mp-zbtn" bindtap="zoomIn">＋</view>
+    <view class="mp-zbtn" bindtap="zoomOut">－</view>
+    <view class="mp-zbtn" bindtap="zoomReset">⟳</view>
+  </view>
+
+  <!-- 设色面板 -->
+  <view class="mp-pop" wx:if="{{showStyle}}">
+    <view class="mp-pop-h">设色 · 六套传统画风</view>
+    <view class="mp-opts">
+      <view wx:for="{{v.styles}}" wx:key="k" class="mp-opt {{item.k===v.styleKey?'on':''}}"
+        data-k="{{item.k}}" bindtap="pickStyle">{{item.n}}</view>
+    </view>
+  </view>
+
+  <!-- 图层面板 -->
+  <view class="mp-pop right" wx:if="{{showLayer}}">
+    <view class="mp-pop-h">图层</view>
+    <view class="mp-opts">
+      <view class="mp-opt {{v.layers.names?'on':''}}" data-n="names" bindtap="pickLayer">地名</view>
+      <view class="mp-opt {{v.layers.roads?'on':''}}" data-n="roads" bindtap="pickLayer">路网</view>
+      <view class="mp-opt {{v.layers.roadLbl?'on':''}}" data-n="roadLbl" bindtap="pickLayer">路名</view>
+      <view class="mp-opt {{v.layers.realm?'on':''}}" data-n="realm" bindtap="pickLayer">势力</view>
+      <view class="mp-opt {{v.layers.sea?'on':''}}" data-n="sea" bindtap="pickLayer">海名</view>
+      <view class="mp-opt {{v.layers.wall?'on':''}}" data-n="wall" bindtap="pickLayer">长城</view>
+    </view>
+  </view>
+
+  <!-- 搜地名 -->
+  <view class="mp-pop wide" wx:if="{{showSearch}}">
+    <input class="mp-input" value="{{q}}" bindinput="onInput" confirm-type="search"
+      placeholder="搜地名 · 如 骊珠洞天 / 倒悬山" placeholder-class="mp-ph"/>
+    <scroll-view scroll-y class="mp-hits" wx:if="{{hits.length}}">
+      <view wx:for="{{hits}}" wx:key="name" class="mp-hit" data-i="{{index}}" bindtap="pickHit">
+        <text class="mp-hit-n">{{item.name}}</text>
+        <text class="mp-hit-s">{{item.zhouName || item.sub}}</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 世界视图：九洲快捷条 -->
+  <scroll-view scroll-x class="mp-strip" wx:if="{{v.level==='world'}}" enable-flex>
+    <view class="mp-chip" bindtap="openLizhu">骊珠洞天</view>
+    <view class="mp-chip" wx:for="{{v.zhous}}" wx:key="k" data-k="{{item.k}}" bindtap="drillZhou">{{item.n}}</view>
+  </scroll-view>
+
+  <!-- 洲视图：要地快捷条 -->
+  <scroll-view scroll-x class="mp-strip" wx:if="{{v.level==='zhou'}}" enable-flex>
+    <view class="mp-chip" wx:for="{{v.places}}" wx:key="k" data-k="{{item.k}}" bindtap="pickPlace">{{item.n}}</view>
+  </scroll-view>
+
+  <!-- 骊珠洞天 · 地名考据 -->
+  <view class="mp-sheet lizhu" wx:if="{{v.level==='lizhu'}}">
+    <view class="mp-sheet-hd">
+      <text class="mp-sheet-tag">骊珠洞天</text>
+      <text class="mp-sheet-n">地名考据 · {{v.lizhu.count}} 处</text>
+      <view class="mp-sheet-x" bindtap="goBack">✕</view>
+    </view>
+    <scroll-view scroll-y class="mp-sheet-bd">
+      <block wx:for="{{v.lizhu.groups}}" wx:key="tag" wx:for-item="g">
+        <view class="mp-lz-tag">{{g.tag}}</view>
+        <view wx:for="{{g.items}}" wx:key="key" wx:for-item="it" class="mp-lz-item"
+          data-k="{{it.key}}" bindtap="toggleLizhuItem">
+          <view class="mp-lz-n">{{it.name}}</view>
+          <view class="mp-lz-d" wx:if="{{expanded[it.key]}}">{{it.desc}}</view>
+        </view>
+      </block>
+      <view class="mp-foot">村社级矢量舆图（房屋 / 龙窑 / 城门 / 桥梁）后续版本接入，此处先存文字详目。</view>
+    </scroll-view>
+  </view>
+
+  <!-- 要地详情 -->
+  <view class="mp-mask" wx:if="{{v.place}}" bindtap="closePlace"></view>
+  <view class="mp-sheet" wx:if="{{v.place}}">
+    <view class="mp-sheet-hd">
+      <text class="mp-sheet-tag" wx:if="{{v.place.tag}}">{{v.place.tag}}</text>
+      <text class="mp-sheet-n">{{v.place.name}}</text>
+      <view class="mp-sheet-x" bindtap="closePlace">✕</view>
+    </view>
+    <scroll-view scroll-y class="mp-sheet-bd">
+      <view class="mp-sheet-d">{{v.place.desc}}</view>
+      <view class="mp-chars" wx:if="{{v.place.chars.length}}">
+        <view class="mp-chars-t">相关人物</view>
+        <view class="mp-chips">
+          <view class="mp-chip on" wx:for="{{v.place.chars}}" wx:key="k" data-k="{{item.k}}"
+            bindtap="gotoCodex">{{item.n}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="mp-home" bindtap="goHome">返回目录</view>
+</view>

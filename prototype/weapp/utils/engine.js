@@ -21,10 +21,14 @@ let pendingChoice = null;
 let pendingMulti = null;
 let pendingTarget = null;
 
-// 音效无副作用（小程序无 WebAudio；如需震动可在各方法内调用 wx.vibrateShort）
+// 小程序无 WebAudio → 用轻触觉补偿关键节拍（PC 端走 24 条 WebAudio 音效）
+// vb() 复用 sect/shenci/baofuzhai/profile 的同一范式；wx 缺失时（Node 测试环境）自动降级为无副作用。
+function vb(t){ try{ if (typeof wx !== 'undefined' && wx.vibrateShort){ wx.vibrateShort({ type:(t||'light') }); } }catch(e){} }
 const SFX = {
-  set(){}, isOn(){ return false; }, click(){}, draw(){}, turn(){}, slash(){}, hit(){},
-  heal(){}, die(){}, win(){}, lose(){}, breakout(){}, execute(){}, swordrain(){}, mist(){},
+  set(){}, isOn(){ return false; },
+  click(){ vb('light'); }, draw(){ vb('light'); }, turn(){ vb('medium'); }, slash(){ vb('medium'); }, hit(){ vb('medium'); },
+  heal(){ vb('light'); }, die(){ vb('heavy'); }, win(){ vb('heavy'); }, lose(){ vb('heavy'); }, breakout(){ vb('medium'); },
+  execute(){ vb('heavy'); }, swordrain(){ vb('medium'); }, mist(){ vb('light'); },
 };
 
 const sleep = ms => new Promise(r => setTimeout(r, Math.max(0, Math.round(ms * speedMul))));

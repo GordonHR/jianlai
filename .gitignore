@@ -10,6 +10,20 @@ prototype/_pf_smoke_out.txt
 **/tmp_*.jpeg
 **/tmp_*.webp
 
+# 会话级临时脚本 / 诊断输出 / 生成草图（根目录）
+/_audit*.py
+/_audit*_out.txt
+/_clean*.py
+/_clean*_err.txt
+/_diag.py
+/_diag.txt
+/_place_fulu.py
+/edited-*.png
+/generated-*.jpg
+/prototype/*_report.txt
+/prototype/*_out.txt
+/prototype/weapp/_selftest_report.txt
+
 # ── 可再生成的预览图（体积大、可重跑脚本产出）────
 generated-images/
 
