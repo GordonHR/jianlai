@@ -1,4 +1,37 @@
 <view class="title-screen">
+  <!-- 开场：底层剑来始终在 · 立绘单页向左合上 · 随合页逐渐清晰 -->
+  <view class="op" wx:if="{{opShow}}" catchtouchmove="noop">
+    <view class="op-bg"></view>
+
+    <view class="op-book">
+      <view class="op-spine"></view>
+
+      <!-- 书页栈：左缘固定，右缘向后合页 -->
+      <view
+        wx:for="{{opPages}}"
+        wx:key="id"
+        class="op-page {{item.anim}}"
+        style="z-index:{{item.z}}"
+      >
+        <image class="op-img" src="{{item.src}}" mode="aspectFill"/>
+        <view class="op-page-shade"></view>
+      </view>
+    </view>
+
+    <!-- 「剑来」全程在场：叠在书页上方，随合页由糊变清 -->
+    <view class="op-logo-layer">
+      <image class="op-logo-img {{logoClass}}" src="/assets/opening/calligraphy.png" mode="aspectFit"/>
+      <image class="op-sc {{logoClass}}" src="/assets/opening/seal-sc.png" mode="aspectFit"/>
+    </view>
+
+    <view class="op-flash {{opFlash}}"></view>
+
+    <!-- 收束按钮（书法已由底层露出） -->
+    <view class="op-finbar" wx:if="{{opFin}}">
+      <view class="op-btn {{opEnter?'on':''}}" catchtap="opEnter">开始问剑</view>
+    </view>
+  </view>
+
   <image class="ts-bg" src="/assets/bg/cover.jpg" mode="aspectFill" />
   <view class="ts-scrim"></view>
   <view class="ts-mark">剑来</view>

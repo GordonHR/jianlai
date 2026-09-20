@@ -2,10 +2,10 @@
 > 只存跨会话铁律；当日细节见 `YYYY-MM-DD.md`
 
 ## 0. 硬约束（微信小程序分包）
-- **绝对路径 require 禁令**：分包引主包须相对路径 `../../../utils/x.js`；主包 `utils/*` 共享模块自身也禁止 `/utils/..` 绝对路径（被子包引到时真机分包构建解析失败→整页空白）。全项目只有 packageArt 用绝对路径。
+- **绝对路径 require 禁令**：分包引主包须相对路径 `../../../utils/x.js`；主包 `utils/*` 共享模块自身也禁止 `/utils/..` 绝对路径（被子包引到时真机分包构建解析失败→整页空白）。**分包内资源用「带包前缀的绝对路径」**（packageArt/packageShui/packageShujianhu 均如此，如 `/packageShujianhu/assets/shujianhu/`）——这是微信合法写法，区别于上面的「跨层绝对路径」。
 - **主包不能引用分包资源**（图/JS 都不行）；反向合法。正确解法是把页面移进就近资源所在子包，而非把图搬回主包。
-- **包体实算（2026-09-18）**：主包 1342.5KB(余~705KB)；子包 Art 1752.7KB(86%/余295KB,最紧)、Shui 1500(73%)、Fulu 1301.4(64%)、Media 754.2、Longque 166.3、Map 122.8、Ref 75.8；合计 6.85MB。主包 assets 大头 `assets/shujianhu` 598.9KB（被 packageShui 引用，暂不动）。加图/音效先算该包余量。
-- **⚠️ preloadRule 是"合计"2MB**：同一页面预下载的分包总和≤2MB，违反报 `80058`。门禁 `_wx_size_guard.cjs`（主包/单包/预下载合计/总计四条线+90%预警）。`pages/title/title` 现只预下载 `packageMap+packageLongque+packageRef`(≈365KB)；**packageArt 已达86%，别再塞进 preloadRule**。
+- **包体实算（2026-09-18 实测，脚本 `_wx_size_guard.cjs`）**：主包 859.6KB(余1188.4)；子包 Art 1883.5KB(92%/余164.5,最紧预警)、Shui 1500(73%)、Fulu 1301.2(64%)、Shujianhu 654(32%)、Media 155.4(8%)、Longque 166.3(8%)、Map 122.8(6%)、Ref 75.8(4%)；合计 6.56MB。⚠️ **书简湖已建独立分包 `packageShujianhu`（654KB/32%）**：`asklake` 页+`shujianhu.js`+27图从主包迁入，图绝对路径 `/assets/shujianhu/`→`/packageShujianhu/assets/shujianhu/`、`title.js:122` 跳转同步改包前缀；主包因此减负 ~483KB。⚠️ **书简湖(asklake) ≠ packageShui 的 `shui` 页**（后者走 `shenci.js` 山水祠）；不能并入 packageShui（1500+599>2MB 单包限）。**`packageMedia/assets/shujianhu/` 死副本已删**（Media 754→155KB）。加图/音效先算该包余量。
+- **⚠️ preloadRule 是"合计"2MB**：同一页面预下载的分包总和≤2MB，违反报 `80058`。门禁 `_wx_size_guard.cjs`（主包/单包/预下载合计/总计四条线+90%预警）。`pages/title/title` 现只预下载 `packageMap+packageLongque+packageRef`(≈365KB)；**packageArt 已达92%，别再塞进 preloadRule**。
 - **开发文件排除出包**：`project.config.json` 的 `packOptions.ignore` 已加 `.py/.cjs/.txt/.md`；开发文件别放 `weapp/utils/`。
 - **立绘死文件判据（两条来源都查）**：① `data.js` 的 `artUrl(k)` 只用 CHARS key；② `utils/sect.js` 的 `SECT_ART_SET` + `art:'名字'` 字面量、`pages/wushipai` 的 `w:'名字'` 字面量（中文名/别名，与 CHARS key 不重合）。⚠️ 误删坑：曾按①删15个误删 `顾璨.jpg`/`米裕.jpg`（被②硬引用，已恢复）。真正可删13个：佛祖/周密/宁姚/文圣/曹慈/白也/白泽/礼圣/道祖/阿良/陈平安/陈清都/齐静春。门禁 `_port_ref_guard.cjs`；删立绘前后必跑。
 - **工程图为 canvas 矢量真地图**：独立分包 `packageMap`(122.8KB)，`mapgeo.js` 由 `_map_extract_weapp.cjs` 程序化抽取（九洲真 coastline+6套设色31KB，不需28.6MB底图）；cover初始相机+屏幕空间海洋+双指以中点为锚缩放+平移钳制+`navigationStyle:custom`全屏浮层。回归 `_map_verify.cjs`(91项)。
@@ -20,6 +20,7 @@
 
 ## 1. 原著纪律
 - 人物/技能/飞剑贴原著；本命飞剑仅剑修；未载标 `src:'推定'`、明载标 `src:'原著'`。
+- **本命飞剑分化（2026-09-18）**：7 角色 CHARS 加 `sword` 字段（阿良饮者/米裕霞满天/陈清都浮萍/陆芝抱朴·北斗/火龙真人火龙/刘景龙规矩/于樾惊鸟·百花），`gen_data.js` 自动同步 `data.js`；PC 端 `game.js:1255/2148` 的 startequip/炼器显示 `本命飞剑·<剑名>`；**weapp `engine.js` 无 startequip 派发、暂未消费 sword**（待授权再 port）。`feijian` 的 `sub` 全库无逻辑读取，纯标签，分化靠 sword 数据层+显示名。
 - 荀渊=玉圭宗老宗主/飞升境；石柔双端对齐；李宝瓶非陈平安弟子，顾粲是好友。
 - 书简湖设局人=崔瀺；神仙钱 1谷雨=10小暑=1000雪花；山水神道冲仙人境需渡天劫。
 - 原著无「飞升之争」，sect.js"第五年飞升之争"是游戏原创，待改。

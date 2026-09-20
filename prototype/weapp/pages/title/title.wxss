@@ -25,3 +25,181 @@
 .p { font-size: 23rpx; color: #b6ad9c; line-height: 1.6; flex: 1; }
 .md-meta { font-size: 21rpx; color: #7d756a; margin-top: 16rpx; }
 .ts-foot { text-align: center; color: #6f675c; font-size: 24rpx; margin-top: 60rpx; }
+
+/* ========== 开场：合书 · 底层剑来渐清 ========== */
+.op {
+  position: fixed; left:0; top:0; right:0; bottom:0; z-index: 999;
+  overflow: hidden; background: #0c0a08;
+}
+.op-bg {
+  position:absolute; inset:0;
+  background: radial-gradient(ellipse 90% 70% at 40% 45%, #1c1410 0%, #0c0a08 70%), #0c0a08;
+}
+
+/* 「剑来」叠在书页上方：全程可见，随合页由糊变清
+   blur/opacity 写在 image 上（小程序对 view 的 filter 支持不稳） */
+.op-logo-layer {
+  position:absolute; inset:0; z-index:25;
+  display:flex; align-items:center; justify-content:center;
+  pointer-events:none;
+}
+.op-logo-img {
+  width: 480rpx; height: 666rpx;
+  transform: translateY(-4vh);
+  /* 过渡保证每次合页都能看见渐清 */
+  transition: filter .65s ease, opacity .65s ease;
+  will-change: filter, opacity;
+}
+.op-sc {
+  position:absolute; left:12%; bottom:28%;
+  width:72rpx; height:72rpx;
+  opacity:0;
+  transition: opacity .55s ease, filter .55s ease;
+  filter: blur(8rpx);
+}
+
+/* 清晰度档位（作用在 image 上） */
+.op-logo-img.lv0   { filter: blur(36rpx); opacity: .20; }
+.op-logo-img.lv0-5 { filter: blur(30rpx); opacity: .28; }
+.op-logo-img.lv1   { filter: blur(24rpx); opacity: .36; }
+.op-logo-img.lv1-6 { filter: blur(18rpx); opacity: .46; }
+.op-logo-img.lv2-2 { filter: blur(14rpx); opacity: .56; }
+.op-logo-img.lv2-8 { filter: blur(10rpx); opacity: .66; }
+.op-logo-img.lv3-4 { filter: blur(6rpx);  opacity: .76; }
+.op-logo-img.lv4   { filter: blur(3rpx);  opacity: .86; }
+.op-logo-img.lv4-6 { filter: blur(1rpx);  opacity: .94; }
+.op-logo-img.lv5   { filter: blur(0);     opacity: 1;
+  filter: drop-shadow(0 0 36rpx rgba(232,198,106,.45)); }
+
+/* 印章：接近收尾才显影 */
+.op-sc.lv0, .op-sc.lv0-5, .op-sc.lv1, .op-sc.lv1-6,
+.op-sc.lv2-2, .op-sc.lv2-8, .op-sc.lv3-4, .op-sc.lv4, .op-sc.lv4-6 {
+  opacity: 0; filter: blur(8rpx);
+}
+.op-sc.lv5 {
+  opacity: 1; filter: blur(0) drop-shadow(0 4rpx 10rpx rgba(0,0,0,.45));
+}
+
+/* 合书舞台 */
+.op-book {
+  position:absolute; inset:0;
+  perspective: 2200rpx;
+  perspective-origin: 6% 50%;
+  transform-style: preserve-3d;
+  z-index:5;
+}
+.op-spine {
+  position:absolute; left:0; top:0; bottom:0; width:22rpx; z-index:20;
+  background: linear-gradient(90deg, #0a0806, #2a2218 40%, rgba(232,198,106,.28) 50%, #2a2218 60%, #0a0806);
+  box-shadow: 6rpx 0 20rpx rgba(0,0,0,.5);
+  pointer-events:none;
+}
+
+/* 书页：左缘固定=装订线；合页=右缘向后转，无位移 */
+.op-page {
+  position:absolute; left:22rpx; right:0; top:0; bottom:0;
+  transform-origin: left center; /* 左缘钉死 */
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  overflow:hidden;
+  background:#0c0a08;
+  z-index:10;
+  opacity:1;
+  transform: perspective(2200rpx) rotateY(0deg);
+  filter: brightness(1);
+}
+/* 立绘略透，叠在上面的剑来水印能透出来，合页过程渐清可见 */
+.op-img { width:100%; height:100%; display:block; opacity:.9; }
+.op-page-shade {
+  position:absolute; inset:0; pointer-events:none; opacity:0;
+  /* 合页时右侧先暗，像纸背转入后方 */
+  background: linear-gradient(90deg,
+    rgba(0,0,0,.15) 0%,
+    rgba(0,0,0,.05) 40%,
+    rgba(0,0,0,.55) 100%);
+}
+
+/* 停在场：正对我们，不动 */
+.op-page.rest {
+  opacity:1;
+  transform: perspective(2200rpx) rotateY(0deg);
+  filter: brightness(1);
+  animation: none;
+}
+
+/* 进入：只淡入，不平移 */
+.op-page.drop {
+  animation: pageFade .35s ease-out both;
+}
+@keyframes pageFade {
+  0% { opacity:0; transform: perspective(2200rpx) rotateY(0deg); }
+  100% { opacity:1; transform: perspective(2200rpx) rotateY(0deg); }
+}
+
+/* 合上：左缘不动，右缘向后（rotateY+）转过去 */
+.op-page.close {
+  animation: pageShut .58s cubic-bezier(.4,.05,.65,.5) both;
+  z-index: 20;
+  pointer-events: none;
+}
+@keyframes pageShut {
+  0% {
+    opacity: 1;
+    transform: perspective(2200rpx) rotateY(0deg);
+  }
+  70% {
+    opacity: 1;
+    transform: perspective(2200rpx) rotateY(62deg);
+  }
+  100% {
+    opacity: 0;
+    transform: perspective(2200rpx) rotateY(88deg);
+  }
+}
+.op-page.close .op-page-shade {
+  animation: shadeOn .58s linear both;
+}
+@keyframes shadeOn {
+  0% { opacity: 0; }
+  50% { opacity: .45; }
+  100% { opacity: .85; }
+}
+
+.op-flash {
+  position:absolute; inset:0; z-index:50; pointer-events:none; opacity:0;
+  background: rgba(232,198,106,.14);
+  transition: opacity .32s ease-out;
+}
+.op-flash.on { opacity:.18; }
+
+/* 仅按钮靠下 */
+.op-finbar {
+  position:absolute; inset:0; z-index:30; pointer-events:none;
+}
+.op-btn {
+  position:absolute; z-index:31;
+  left:50%;
+  bottom: calc(140rpx + env(safe-area-inset-bottom, 0px));
+  margin-left: -150rpx;
+  width: 300rpx; height: 88rpx; line-height: 88rpx;
+  text-align: center;
+  border: 2rpx solid #e8c66a;
+  border-radius: 999rpx;
+  background: linear-gradient(180deg, rgba(232,198,106,.22), rgba(232,198,106,.06));
+  color: #e8c66a;
+  font-size: 32rpx; letter-spacing: 12rpx; padding-left: 12rpx;
+  opacity:0; pointer-events:none;
+  transform: translateY(16rpx);
+}
+.op-btn.on {
+  opacity:1; pointer-events:auto;
+  animation: btnIn .35s ease-out both, btnPulse 1.6s ease-in-out infinite;
+}
+@keyframes btnIn {
+  0% { opacity:0; transform: translateY(20rpx); }
+  100% { opacity:1; transform: translateY(0); }
+}
+@keyframes btnPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(232,198,106,.3); }
+  50% { box-shadow: 0 0 0 20rpx rgba(232,198,106,0); }
+}

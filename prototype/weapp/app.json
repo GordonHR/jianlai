@@ -1,7 +1,6 @@
 {
   "pages": [
-    "pages/title/title",
-    "pages/asklake/asklake"
+    "pages/title/title"
   ],
   "subPackages": [
     {
@@ -51,6 +50,12 @@
       "root": "packageMap",
       "pages": [
         "pages/map/map"
+      ]
+    },
+    {
+      "root": "packageShujianhu",
+      "pages": [
+        "pages/asklake/asklake"
       ]
     }
   ],

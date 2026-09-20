@@ -34,55 +34,55 @@ const AL_ORIGINS = [
 /* 随机插曲 */
 const AL_INTERLUDES = [
   { t:'雨夜卖酒', d:'一个不认识的少年在雨里卖酒，说湖上今天死了人，酒卖得快。你买了一坛，没喝。',
-    eff:{ dao:4, hope:3 }, npc:{ zhongs:3 }, img:'/assets/shujianhu/rain_wine.jpg' },
+    eff:{ dao:4, hope:3 }, npc:{ zhongs:3 }, img:'/packageShujianhu/assets/shujianhu/rain_wine.jpg' },
   { t:'旧信一封', d:'有人在门缝里塞了封信，是顾璨早年写的：「哥，这里的人都欺负我，我学会还手了。」',
-    eff:{ qing:8, knot:3 }, npc:{ gucan:6 }, img:'/assets/shujianhu/old_letter.jpg' },
+    eff:{ qing:8, knot:3 }, npc:{ gucan:6 }, img:'/packageShujianhu/assets/shujianhu/old_letter.jpg' },
   { t:'湖底浮尸', d:'一具尸体浮上来，是昨天还跟你打过招呼的船家。湖上没人围观，都习惯了。',
-    eff:{ li:6, knot:4 }, npc:{ zhongs:-4 }, img:'/assets/shujianhu/lake_corpse.jpg' },
+    eff:{ li:6, knot:4 }, npc:{ zhongs:-4 }, img:'/packageShujianhu/assets/shujianhu/lake_corpse.jpg' },
   { t:'刘老成的酒', d:'刘老成派人送来一坛酒，附一张纸条：「年轻人，湖里的规矩不是一天立起来的。」',
-    eff:{ li:5 }, npc:{ liulao:8 }, img:'/assets/shujianhu/liulao_wine.jpg' },
+    eff:{ li:5 }, npc:{ liulao:8 }, img:'/packageShujianhu/assets/shujianhu/liulao_wine.jpg' },
   { t:'孩子扔石头', d:'几个孩子朝顾璨的院子扔石头，边扔边喊小魔头。你站了一会儿，他们就跑了。',
-    eff:{ qing:5, hope:-4 }, npc:{ gucan:-3, zhongs:3 }, img:'/assets/shujianhu/kids_stones.jpg' },
+    eff:{ qing:5, hope:-4 }, npc:{ gucan:-3, zhongs:3 }, img:'/packageShujianhu/assets/shujianhu/kids_stones.jpg' },
   { t:'远方剑鸣', d:'夜里有一道剑光自西北来，绕湖一圈，又走了。宁姚从不问你难不难，只告诉你她在。',
-    eff:{ dao:6, qing:4 }, npc:{ ningyao:12 }, img:'/assets/shujianhu/distant_sword.jpg' },
+    eff:{ dao:6, qing:4 }, npc:{ ningyao:12 }, img:'/packageShujianhu/assets/shujianhu/distant_sword.jpg' },
   { t:'三十七炷香', d:'有人在湖边点了三十七炷香，一炷一个人。香烧完之前，没人说话。',
-    eff:{ li:8, hope:5 }, npc:{ zhongs:8 }, img:'/assets/shujianhu/thirtyseven_incense.jpg' },
+    eff:{ li:8, hope:5 }, npc:{ zhongs:8 }, img:'/packageShujianhu/assets/shujianhu/thirtyseven_incense.jpg' },
   { t:'旧刀生锈', d:'你在顾璨床下看见一把锈了的刀，是泥瓶巷那年你送他的。他一直留着。',
-    eff:{ qing:10 }, npc:{ gucan:8 }, img:'/assets/shujianhu/old_knife_rust.jpg' }
+    eff:{ qing:10 }, npc:{ gucan:8 }, img:'/packageShujianhu/assets/shujianhu/old_knife_rust.jpg' }
 ];
 
 /* 问心图：节点 */
 const AL_NODES = {
   /* 一 · 入湖 */
-  s1:{ ch:'一 · 入湖', t:'血，与笑', il:0, img:'/assets/shujianhu/node_s1.jpg',
+  s1:{ ch:'一 · 入湖', t:'血，与笑', il:0, img:'/packageShujianhu/assets/shujianhu/node_s1.jpg',
     d:'你收到顾璨的消息，连夜赶来。推开那扇门时，他正坐在血泊里擦剑，抬头看见你，咧嘴笑了：「哥，你来啦。」\n他笑得像小时候偷了别人家枣子被你抓住的样子。可地上那滩血，不是他的。',
     ch2:[
       { txt:'先听他说', note:'情动于衷，但未失分寸', eff:{ qing:8, li:2 }, npc:{ gucan:8 }, next:'s2a' },
       { txt:'先问：地上这些人，是谁', note:'先把死者的名字问清楚', eff:{ li:12, qing:-4 }, npc:{ zhongs:10, gucan:-8 }, next:'s2b' },
       { txt:'替他止血，余事再议', note:'手比道理快', eff:{ qing:15, knot:5 }, npc:{ gucan:12, mother:8 }, next:'s2c' }
     ]},
-  s2a:{ ch:'一 · 入湖', t:'先下手为强', img:'/assets/shujianhu/node_s2a.jpg',
+  s2a:{ ch:'一 · 入湖', t:'先下手为强', img:'/packageShujianhu/assets/shujianhu/node_s2a.jpg',
     d:'顾璨擦干净剑，语气很平常：「他们都要害我，我只是先下手为强。哥，这里就是这样的规矩——你不吃人，人就吃你。」\n他说得很理直气壮，理直气壮得让你心里发凉。',
     ch2:[
       { txt:'杀人就是杀人，没有理由', note:'一句也听不进去', eff:{ li:14, dao:4, qing:-6 }, npc:{ gucan:-12, zhongs:10 }, next:'s3' },
       { txt:'你受苦了。可总得有个交代', note:'先认他的苦，再问他的账', eff:{ qing:10, li:6 }, npc:{ gucan:6 }, next:'s3' },
       { txt:'我帮你扛', note:'话出口的时候，湖面静了一下', eff:{ qing:18, knot:8 }, npc:{ gucan:18, zhongs:-15 }, next:'s3' }
     ]},
-  s2b:{ ch:'一 · 入湖', t:'一叠血衣', img:'/assets/shujianhu/node_s2b.jpg',
+  s2b:{ ch:'一 · 入湖', t:'一叠血衣', img:'/packageShujianhu/assets/shujianhu/node_s2b.jpg',
     d:'你没有去看顾璨，先去了湖边那间破屋。一个老妇跪在门口，怀里抱着一叠血衣，一件一个人。\n她不哭也不闹，只说：「小哥，你是他哥，你替我做回主。」',
     ch2:[
       { txt:'收下血衣，许她一个交代', note:'一叠布，三十七条命的重量', eff:{ li:12, dao:6, hope:10, dan:-5 }, npc:{ zhongs:16, gucan:-6 }, flag:'cloth', next:'s3' },
       { txt:'给她银钱，让她先过日子', note:'钱能买米，买不回人', eff:{ li:-6, qing:6, hope:-6, knot:4 }, npc:{ zhongs:-4 }, next:'s3' },
       { txt:'让她先回去，容我想想', note:'想，往往就是拖', eff:{ li:-10, qing:8, hope:-8, knot:6 }, npc:{ zhongs:-10, gucan:10 }, next:'s3' }
     ]},
-  s2c:{ ch:'一 · 入湖', t:'你不该来', img:'/assets/shujianhu/node_s2c.jpg',
+  s2c:{ ch:'一 · 入湖', t:'你不该来', img:'/packageShujianhu/assets/shujianhu/node_s2c.jpg',
     d:'你替他把伤口包好。他一直看着你，忽然说：「哥，你不该来。」\n你问为什么。他说：「你来了，我就装不下去了。」',
     ch2:[
       { txt:'我来了，就不会走', note:'这句话你自己听着都沉', eff:{ qing:15, knot:5 }, npc:{ gucan:15, mother:6 }, next:'s3' },
       { txt:'我来，是怕你再错', note:'把话说明白，也是一种护', eff:{ qing:8, li:10, dao:4 }, npc:{ gucan:-4 }, next:'s3' },
       { txt:'什么也不说，把药上完', note:'沉默有时候最重', eff:{ qing:12, knot:6 }, npc:{ gucan:8, mother:8 }, next:'s3' }
     ]},
-  s3:{ ch:'一 · 入湖', t:'婶婶跪下了', il:1, img:'/assets/shujianhu/node_s3.jpg',
+  s3:{ ch:'一 · 入湖', t:'婶婶跪下了', il:1, img:'/packageShujianhu/assets/shujianhu/node_s3.jpg',
     d:'顾璨的母亲来了。她没哭天抢地，只是端端正正跪在你面前，像当年求你去看着点璨儿那样。\n「平安，婶婶不求别的。璨儿从小听你的，你救他一次。」',
     ch2:[
       { txt:'婶婶起来。我给他一个公道', note:'公道，也是护他的一种法子', eff:{ li:12, qing:6, dao:4 }, npc:{ mother:15, shuyuan:5 }, next:'s4' },
@@ -91,21 +91,21 @@ const AL_NODES = {
     ]},
 
   /* 二 · 问心 */
-  s4:{ ch:'二 · 问心', t:'刘老成的酒席', img:'/assets/shujianhu/node_s4.jpg',
+  s4:{ ch:'二 · 问心', t:'刘老成的酒席', img:'/packageShujianhu/assets/shujianhu/node_s4.jpg',
     d:'刘老成派人来请。这人在书简湖活成了老辈，湖里每一桩血案，他都知道，也都没拦。\n席上他给你斟酒：「陈公子，湖里的规矩不是一天立起来的。你要拆，得先想清楚拆完拿什么补。」',
     ch2:[
       { txt:'赴宴，把他的话听完', note:'敌人的道理，也是道理', eff:{ li:8, hope:6 }, npc:{ liulao:15, zhongs:3 }, next:'s5' },
       { txt:'不去。这酒喝不得', note:'干净，但也断了消息', eff:{ li:-4, dao:4 }, npc:{ liulao:-15, zhongs:8 }, next:'s5' },
       { txt:'去了，但把剑放在桌上', note:'先亮刀，再说话', eff:{ sword:-10, li:4, knot:4 }, npc:{ liulao:8, gucan:8, zhongs:-6 }, next:'s5' }
     ]},
-  s5:{ ch:'二 · 问心', t:'先生的信', img:'/assets/shujianhu/node_s5.jpg',
+  s5:{ ch:'二 · 问心', t:'先生的信', img:'/packageShujianhu/assets/shujianhu/node_s5.jpg',
     d:'老秀才老爷子的信到了，只有一句话：\n「与亲近之人，不要说气话，不要说反话，不要不说话。」\n你把这张纸看了很久。先生从来不教你怎么做，只教你想清楚再做。',
     ch2:[
       { txt:'回信：弟子明白，会先讲道理', note:'把先生的规矩摆在前面', eff:{ li:10, dao:6 }, npc:{ shuyuan:12 }, flag:'letter', next:'s6' },
       { txt:'把信收进怀里，不与顾璨争辩', note:'忍住一时，未必忍得住一世', eff:{ qing:10, li:4 }, npc:{ gucan:4 }, next:'s6' },
       { txt:'烧了。先生不懂书简湖', note:'烧的是信，也是退路', eff:{ qing:15, knot:10, li:-6 }, npc:{ shuyuan:-22, gucan:8 }, next:'s6' }
     ]},
-  s6:{ ch:'二 · 问心', t:'你是不是也觉得我该死', il:1, img:'/assets/shujianhu/node_s6.jpg',
+  s6:{ ch:'二 · 问心', t:'你是不是也觉得我该死', il:1, img:'/packageShujianhu/assets/shujianhu/node_s6.jpg',
     d:'夜里，顾璨坐在门槛上，背对着你，忽然问：\n「哥，你是不是也觉得我该死？」\n他问得很轻，像怕惊动什么。',
     ch2:[
       { txt:'你该活着。但得认', note:'活路和认账，缺一不可', eff:{ li:12, qing:8, dao:6 }, npc:{ gucan:6 }, flag:'admit', next:'s7' },
@@ -116,14 +116,14 @@ const AL_NODES = {
     ]},
 
   /* 三 · 舍得 */
-  s7:{ ch:'三 · 舍得', t:'君子之道，在于舍得', img:'/assets/shujianhu/node_s7.jpg',
+  s7:{ ch:'三 · 舍得', t:'君子之道，在于舍得', img:'/packageShujianhu/assets/shujianhu/node_s7.jpg',
     d:'你一个人坐在湖边。齐先生当年说过：君子之道，在于舍得。\n那时候你觉得这四个字简单——舍了坏的，得着好的。如今才知道，书简湖让你舍的，和你想得的，是同一件东西。',
     ch2:[
       { txt:'若舍了公理，我便不是陈平安', note:'守住一样，就守住了所有', eff:{ li:15, dao:10 }, next:'s8' },
       { txt:'有些人，我舍不掉', note:'舍不掉，就得一直背着', eff:{ qing:15, knot:8 }, next:'s8' },
       { txt:'舍一样，才能保一样', note:'折中，也最耗心血', eff:{ li:8, qing:8, dao:4, knot:3 }, next:'s8' }
     ]},
-  s8:{ ch:'三 · 舍得', t:'三十七户围门', img:'/assets/shujianhu/node_s8.jpg',
+  s8:{ ch:'三 · 舍得', t:'三十七户围门', img:'/packageShujianhu/assets/shujianhu/node_s8.jpg',
     d:'天没亮，门外站满了人。三十七户，老的少的，没人喊打喊杀，只是站着。\n领头的老妇说：「我们不要他偿命。我们要他认。认一句，我们回去好给死的人上香。」',
     ch2:[
       { txt:'开门。一户一户，赔罪', note:'三十七次低头，一次比一次低', eff:{ li:14, hope:16, dao:6, dan:-10, qing:4 },
@@ -133,14 +133,14 @@ const AL_NODES = {
       { txt:'再闹，我就不客气了', note:'剑出鞘一寸，道理就少一分', eff:{ sword:-25, hope:-20, li:-8, knot:12 },
         npc:{ zhongs:-26, gucan:10, liulao:-6 }, req:{ res:{ sword:55 } }, flag:'threat', next:'s9' }
     ]},
-  s9:{ ch:'三 · 舍得', t:'第一个人', img:'/assets/shujianhu/node_s9.jpg',
+  s9:{ ch:'三 · 舍得', t:'第一个人', img:'/packageShujianhu/assets/shujianhu/node_s9.jpg',
     d:'你终于问出了那个一直不敢问的问题：「第一个呢？」\n顾璨愣了很久，说：「是个老油子。他要把我卖给湖底的那帮人，换三块灵石。我把他按在水里，按了很久。」\n他抬眼看你：「哥，第一个，我是为了活。」',
     ch2:[
       { txt:'第一个情有可原。第三个呢？第三十七个呢？', note:'起点无辜，不等于终点无辜', eff:{ li:14, dao:8, qing:-4 }, npc:{ gucan:-8, zhongs:6 }, next:'s10' },
       { txt:'从第一个起，你就不该自己动手', note:'把活路和规矩分清楚', eff:{ li:18, qing:-6 }, npc:{ gucan:-16, zhongs:12, shuyuan:8 }, next:'s10' },
       { txt:'我知道你怕。我也怕过。', note:'承认怕，也是一种认', eff:{ qing:14, knot:6, dao:2 }, npc:{ gucan:14, mother:6 }, next:'s10' }
     ]},
-  s10:{ ch:'三 · 舍得', t:'千里之外', il:1, img:'/assets/shujianhu/node_s10.jpg',
+  s10:{ ch:'三 · 舍得', t:'千里之外', il:1, img:'/packageShujianhu/assets/shujianhu/node_s10.jpg',
     d:'宁姚的信来了，只有一行字：\n「陈平安，你在那边别把自己弄丢了。」\n你把信纸折了三折，收起来。有些话说出来，就不硬气了。',
     ch2:[
       { txt:'回信：我很好，勿念', note:'报喜不报忧，是怕她提剑来', eff:{ qing:6, dao:4 }, npc:{ ningyao:6 }, next:'s11' },
@@ -149,7 +149,7 @@ const AL_NODES = {
     ]},
 
   /* 四 · 了断 */
-  s11:{ ch:'四 · 了断', t:'各方齐至', img:'/assets/shujianhu/node_s11.jpg',
+  s11:{ ch:'四 · 了断', t:'各方齐至', img:'/packageShujianhu/assets/shujianhu/node_s11.jpg',
     d:'该来的都来了。刘老成带着湖上的老辈坐在东边，三十七户站在院外，书院的使者捧着一份文书，顾璨站在你身后。\n所有人都在等你开口。',
     ch2:[
       { txt:'碎裂文胆，替他赎这一份因果', note:'以我之碎，换他一线生机', eff:{ dan:-60, li:14, qing:12, dao:14, hope:8 },
@@ -167,7 +167,7 @@ const AL_NODES = {
     ]},
 
   /* 终局 */
-  fin_dan:{ ch:'四 · 了断', t:'文胆碎了', fin:1, img:'/assets/shujianhu/node_fin_dan.jpg',
+  fin_dan:{ ch:'四 · 了断', t:'文胆碎了', fin:1, img:'/packageShujianhu/assets/shujianhu/node_fin_dan.jpg',
     d:'你一掌按在心口，文胆碎裂的声音只有你自己听见。\n血从嘴角下来，顾璨扑过来扶你，被你推开。三十七户的人不喊了，刘老成站起来了，连书院的使者都低下了头。\n这一湖的因果，从此有一份记在你身上。',
     ch2:[
       { txt:'把痛咽下去，先立规矩', note:'赎完罪，还得有人管这湖水', key:'dan_guilt',
@@ -177,7 +177,7 @@ const AL_NODES = {
       { txt:'碎胆之后，仍把他交出去', note:'情还了，理不能还', key:'dan_strict',
         eff:{ li:16, qing:-14, dao:6 }, npc:{ gucan:-16, zhongs:16, shuyuan:14 } }
     ]},
-  fin_surrender:{ ch:'四 · 了断', t:'他自己走了出去', fin:1, img:'/assets/shujianhu/node_fin_surrender.jpg',
+  fin_surrender:{ ch:'四 · 了断', t:'他自己走了出去', fin:1, img:'/packageShujianhu/assets/shujianhu/node_fin_surrender.jpg',
     d:'顾璨看了你很久，然后自己推开门，走出去，跪在了三十七户面前。\n他跪下去的时候，你想起泥瓶巷那年他被人按在地上打，也是这副倔样子。',
     ch2:[
       { txt:'陪他一起跪下去', note:'他的账，你认一半', key:'sur_together',
@@ -187,7 +187,7 @@ const AL_NODES = {
       { txt:'嘴上让他去，暗中安排他逃', note:'道理讲完了，人心还软着', key:'sur_lie',
         eff:{ qing:14, li:-14, knot:16, hope:-8 }, npc:{ gucan:16, zhongs:-20, shuyuan:-12 } }
     ]},
-  fin_blood:{ ch:'四 · 了断', t:'剑已经出鞘', fin:1, img:'/assets/shujianhu/node_fin_blood.jpg',
+  fin_blood:{ ch:'四 · 了断', t:'剑已经出鞘', fin:1, img:'/packageShujianhu/assets/shujianhu/node_fin_blood.jpg',
     d:'你拔剑了。第一剑下去，湖上的风就变了味。\n顾璨跟在你身后，一边杀人一边笑，笑得比哭难看。',
     ch2:[
       { txt:'一路杀出去，谁拦谁死', note:'杀干净了，也把自己杀空了', key:'blood_all',
@@ -197,7 +197,7 @@ const AL_NODES = {
       { txt:'杀到一半，停手', note:'停在最难停的时候', key:'blood_half',
         eff:{ knot:14, li:2, hope:-8, dao:4 }, npc:{ gucan:8, zhongs:-8, shuyuan:-4 } }
     ]},
-  fin_court:{ ch:'四 · 了断', t:'书院的文书', fin:1, img:'/assets/shujianhu/node_fin_court.jpg',
+  fin_court:{ ch:'四 · 了断', t:'书院的文书', fin:1, img:'/packageShujianhu/assets/shujianhu/node_fin_court.jpg',
     d:'书院的使者展开文书，一条一条念。每一条都是顾璨做过的。\n念到第三十七条时，天已经黑了。',
     ch2:[
       { txt:'为他求情', note:'求情不是脱罪，是让人知道他也是人', key:'court_plea',
@@ -207,7 +207,7 @@ const AL_NODES = {
       { txt:'请从严', note:'把自己那一刀也砍下去', key:'court_hard',
         eff:{ li:18, qing:-20, dao:4, knot:6 }, npc:{ gucan:-24, mother:-20, zhongs:16, shuyuan:16 } }
     ]},
-  fin_order:{ ch:'四 · 了断', t:'重立湖规', fin:1, img:'/assets/shujianhu/node_fin_order.jpg',
+  fin_order:{ ch:'四 · 了断', t:'重立湖规', fin:1, img:'/packageShujianhu/assets/shujianhu/node_fin_order.jpg',
     d:'你没有杀一个人，也没有放走一个人。你把三十七户、刘老成、还有湖上所有说得上话的，都请到了一起。\n规矩是死的，人是活的。你在湖边立了一块碑，碑上第一条写着：伤人者，偿。',
     ch2:[
       { txt:'我留下三十年', note:'三十年，够不够还三十七条命', key:'order_thirty',
@@ -217,7 +217,7 @@ const AL_NODES = {
       { txt:'碑立好了，我走', note:'立法的人不必守法', key:'order_leave',
         eff:{ li:8, hope:10, dao:4, qing:-8, knot:6 }, npc:{ zhongs:10, shuyuan:6, gucan:-12 } }
     ]},
-  fin_leave:{ ch:'四 · 了断', t:'走到渡口', fin:1, img:'/assets/shujianhu/node_fin_leave.jpg',
+  fin_leave:{ ch:'四 · 了断', t:'走到渡口', fin:1, img:'/packageShujianhu/assets/shujianhu/node_fin_leave.jpg',
     d:'你转身走了。顾璨没有追，也没有喊。\n走到渡口的时候，天开始下雨。你忽然想起，小时候他走不动了，也是这样站在原地等你回头。',
     ch2:[
       { txt:'上了船，再没回头', note:'这一走，湖就成了心口的一块疤', key:'leave_true',
