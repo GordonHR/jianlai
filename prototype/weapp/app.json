@@ -57,6 +57,12 @@
       "pages": [
         "pages/asklake/asklake"
       ]
+    },
+    {
+      "root": "packageTales",
+      "pages": [
+        "pages/tales/tales"
+      ]
     }
   ],
   "preloadRule": {

@@ -14,6 +14,7 @@ Page({
     tales: TALES,
     selTale: null,
     lastNote: '',
+    collapsed: false,      // 详情滚动折叠：false=立绘全屏态 true=顶部小头像条态
   },
   onLoad(options){
     const mode = (options && options.mode==='tales') ? 'tales' : 'chars';
@@ -53,6 +54,11 @@ Page({
       .sort((a,b)=>FAC_ORDER.indexOf(a)-FAC_ORDER.indexOf(b))
       .map(f=>map[f]);
     this.setData({ groups, tab:mode });
+    /* 折叠阈值 = 立绘高(60vh) × 0.5：滑过一半立绘即收成顶部小条 */
+    try{
+      const info = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
+      this._collapsePx = (info.windowHeight || info.screenHeight || 667) * 0.3;
+    }catch(err){ this._collapsePx = 200; }
   },
   open(e){
     const key = e.currentTarget.dataset.key;
@@ -80,5 +86,16 @@ Page({
     this.setData({ selTale:t });
   },
   noop(){},
-  close(){ this.setData({ sel:null, selTale:null }); }
+  close(){ this.setData({ sel:null, selTale:null, collapsed:false }); },
+  /* 自定义导航后的列表态返回：优先出栈，栈空兜底回标题页 */
+  back(){
+    wx.navigateBack({ delta:1, fail:()=>{ wx.reLaunch({ url:'/pages/title/title' }); } });
+  },
+  /* 详情滚动折叠：滑过约半个立绘高度后固定成顶部小头像条。
+     仅在布尔值跨越阈值时 setData（非逐帧），避免滚动 setData 抖动。 */
+  onScroll(e){
+    if(!this._collapsePx) return;
+    const c = e.detail.scrollTop > this._collapsePx;
+    if(c !== this.data.collapsed) this.setData({ collapsed:c });
+  }
 });

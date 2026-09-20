@@ -1043,6 +1043,11 @@ function juiceWipe(){
 }
 /* 技能特效 */
 function skillFx(p, s){
+  if(p && p._triggered && s){
+    const _fxl = {sword:'剑气',shield:'护体',lotus:'莲华',flame:'烈焰',thunder:'惊雷',mist:'雾隐',rune:'符箓',forge:'炼器',star:'星辉',blood:'血祭',scroll:'卷宗',aura:'罡气'};
+    const _nm = (s && s.n) || _fxl[(s && s.f)] || '技法';
+    if(p._triggered.indexOf(_nm) < 0) p._triggered.push(_nm);
+  }
   const f = (s && s.f) || 'aura';
   const id = p.id;
   switch(f){
@@ -1125,6 +1130,7 @@ function makePlayer(key, id, side){
     attackUsed:0, stats:newStats(),
     // 连击：同一回合内每成功命中一次即累加；第 2 次起每层 +1 伤害（上限 +2）
     hitThisTurn:0, combo:0,
+    _triggered:[],
     seatNo,
   };
   // 落魄山联动：若此角色曾在经营中受训，依其境界增益气血
@@ -1235,6 +1241,7 @@ function startGame(keys, mode){
   };
   const players = keys.map((k,i)=>makePlayer(k, i, null));
   state.players = players;
+  state.tianxiang = rollTianxiang();   // 天象：开局定局，整局不变
 
   // 包袱斋：随身法宝与悟道印记随我方入场（群雄论剑为同席切磋，不带私物）
   if(typeof bfApplyLoadout==='function'){ try{ bfApplyLoadout(players, mode); }catch(e){} }
@@ -1267,6 +1274,7 @@ function startGame(keys, mode){
     state.log = [];
     log('蛮荒叩关，剑气长城告急——守住五波！', 'sys');
     players.forEach(p=>draw(p,2));    // 守方先手优势
+    txAnnounce();
     nextWave();                       // 生成第 1 波（内含守方回气补牌）
     runTurn(true);
     return;
@@ -1287,6 +1295,7 @@ function startGame(keys, mode){
     state.log = [];
     players.forEach(p=>draw(p, 4 + (p.id===boss.id ? D.foeDraw : D.allyDraw)));
     log('共伐'+boss.name+'！巨寇气血 '+boss.maxHp+'，每轮威压渐盛。', 'big');
+    txAnnounce();
     runTurn(true);
     return;
   }
@@ -1298,6 +1307,7 @@ function startGame(keys, mode){
   });
   state.log = [];
   log('群雄聚首，剑气干云。', 'sys');
+  txAnnounce();
   runTurn(true);
 }
 
@@ -1384,9 +1394,11 @@ function beginTurn(p){
   p.caociUsed=false;   p.lifestealUsed=false; p.wuweiUsed=false; p.attackUsed=0;
   p.jiyuanUsed=false; p.fengmangUsed=false;
   p.hitThisTurn=0; p.combo=0;            // 连击每回合清零
+  state.players && state.players.forEach(x=>{ if(x) x._triggered = []; });  // 技法徽记：每回合清零，仅当前行棋者累计
   p._atkThisTurn=0;
   p.judgeBuff=false;                     // 判定阶段「气势」加成，每回合清零
   draw(p,2);
+  if(state.tianxiang && state.tianxiang.key==='fengqi'){ draw(p,1); log('【风起】'+p.name+' 借风多摸 1 张。', 'heal'); }
   if(!isFlagship(p) && talentOf(p)==='耕读') draw(p,1);
   const _db = sumK(p,'draw'); if(_db>0){ draw(p,_db); const _ds=firstK(p,'draw'); if(_ds) log('【'+_ds.n+'】'+p.name+' 多摸 '+_db+' 张。', 'heal'); }
   log('—— '+p.name+'（'+p.faction+'）行棋 ——', 'sys');
@@ -1450,6 +1462,40 @@ function synthJudgeCard(){             // 牌库见底时的兜底判定牌，�
   const t = T[Math.floor(Math.random()*T.length)];
   return { uid:++cardUid, type:t[0], name:t[1], sub:(t[0]==='trick'?'duel':t[0]) };
 }
+
+/* ===================== 天象 =====================
+   原著「天时 / 地利 / 人和」是十四境合道三条途径（game.js:236 明载），
+   概念不能撞车，故战斗环境修饰机制命名为「天象」。
+   开局从固定池抽 1 张，全局生效、双方同受，整局不变。 */
+const TIANXIANG_POOL = [
+  { key:'fengqi',   name:'风起',  desc:'风助帆势，每回合行棋者多摸 1 张。' },
+  { key:'yuehui',   name:'月晦',  desc:'月隐星沉，道心蒙尘，判定点数 -1。' },
+  { key:'qingming', name:'清明',  desc:'天清道明，判定点数 +1。' },
+  { key:'leize',    name:'雷泽',  desc:'雷霆万钧，所有剑气伤害 +1。' },
+  { key:'dawu',     name:'大雾',  desc:'雾锁重关，所有剑气伤害 -1（最低 0）。' },
+  { key:'taiping',  name:'太平',  desc:'四海清平，本局无额外天象。' },
+];
+function rollTianxiang(){
+  const t = TIANXIANG_POOL[Math.floor(Math.random()*TIANXIANG_POOL.length)];
+  return { key:t.key, name:t.name, desc:t.desc };
+}
+function txAnnounce(){
+  if(!state.tianxiang) return;
+  if(state.tianxiang.key==='taiping') log('【天象 · 太平】四海清平，本局无额外天象。', 'sys');
+  else log('【天象 · '+state.tianxiang.name+'】'+state.tianxiang.desc, 'big');
+}
+function txJudgeAdj(){
+  if(!state || !state.tianxiang) return 0;
+  if(state.tianxiang.key==='yuehui')   return -1;
+  if(state.tianxiang.key==='qingming') return 1;
+  return 0;
+}
+function txDamageAdj(){
+  if(!state || !state.tianxiang) return 0;
+  if(state.tianxiang.key==='leize') return 1;
+  if(state.tianxiang.key==='dawu')  return -1;
+  return 0;
+}
 function _hiCard(arr){ return arr.reduce((a,b)=> cardPoint(b)>cardPoint(a)?b:a, arr[0]); }
 function _loCard(arr){ return arr.reduce((a,b)=> cardPoint(b)<cardPoint(a)?b:a, arr[0]); }
 async function judgePhase(p){
@@ -1504,7 +1550,27 @@ async function judgePhase(p){
     if(rep){ state.discard.push(jc); removeFromHand(changer, rep); jc = rep; log('【棋】'+changer.name+' 落子，'+p.name+' 判定牌易为「'+jc.name+'」（'+cardPoint(jc)+'）。', 'sys'); skillFx(changer, firstK(changer,'jChange')); }
   }
 
-  const jp = judgePoint(p, jc);
+  let jp = judgePoint(p, jc) + txJudgeAdj();
+  if(txJudgeAdj()!==0) log('（天象 '+state.tianxiang.name+'，判定 '+(txJudgeAdj()>0?'+':'')+txJudgeAdj()+'）', 'sys');
+  // —— 讲道理深化（D）：拥有 judge 的角色可主动消耗一张手牌「讲道理」，其点数计入判定 ——
+  if(sumK(p,'judge')>0 && p.hand.length){
+    const _best = _hiCard(p.hand);
+    if((jp < JP_THRESHOLD) && (jp + cardPoint(_best) >= JP_THRESHOLD)){
+      let spend = null;
+      if(isAI(p)){ spend = _best; }
+      else {
+        const opts = p.hand.map(c=>({ v:c.uid, t:'讲「'+c.name+'」（'+cardPoint(c)+'）道理' }));
+        opts.push({ v:'skip', t:'不予置喙' });
+        const ch = await ask(p, p.name+' 可消耗一张手牌「讲道理」（点数计入判定，或跳过）', opts, ()=> _best.uid);
+        if(ch!=='skip') spend = p.hand.find(c=>c.uid===ch);
+      }
+      if(spend){
+        removeFromHand(p, spend); state.discard.push(spend);
+        jp += cardPoint(spend);
+        log('【讲道理】'+p.name+' 以「'+spend.name+'」（'+cardPoint(spend)+'）立规矩，判定 +'+cardPoint(spend)+'。', 'big');
+      }
+    }
+  }
   if(jp >= JP_THRESHOLD){
     p.judgeBuff = true;
     log('【道心通明】'+p.name+' 判定 '+jp+' ≥ '+JP_THRESHOLD+'，本回合剑气气势如虹（首剑 +1）。', 'big');
@@ -1760,6 +1826,8 @@ function swordDamage(attacker, target, apply){
     dmg += fat;
     if(apply) log('【天道势压】第 '+state.round+' 轮，剑气 +'+fat+'。', 'sys');
   }
+  if(state.tianxiang && state.tianxiang.key==='leize'){ dmg += 1; if(apply) log('【雷泽】雷霆加威，剑气 +1。', 'sys'); }
+  if(state.tianxiang && state.tianxiang.key==='dawu'){ dmg = Math.max(0, dmg - 1); if(apply) log('【大雾】雾锁重关，剑气 -1。', 'sys'); }
   return dmg;
 }
 
@@ -1772,8 +1840,10 @@ async function resolveAttack(attacker, target){
   const _parts = atkBonusParts(attacker, target);
   if(_hadBuff) _parts.push({ n:'气势', v:1 });
   if(_fat > 0) _parts.push({ n:'天道势压', v:_fat });
+  const _txd = txDamageAdj();
+  if(_txd !== 0) _parts.push({ n: state.tianxiang.name, v:_txd });
   // 每剑都播报伤害，便于玩家看清「剑气多少点」（含无加成的基础一剑），反馈更及时
-  log('　剑气 '+dmg+' 点' + (_parts.length ? '：'+_parts.map(x=>x.n+' +'+x.v).join('、') : '。'), 'sys');
+  log('　剑气 '+dmg+' 点' + (_parts.length ? '　'+_parts.map(x=>'<span class="dmg-chip" style="border-color:'+dmgChipColor(x.n)+';color:'+dmgChipColor(x.n)+'">'+x.n+' +'+x.v+'</span>').join('') : '。'), 'sys');
 
   const swordheart = (attacker.key==='ningyao');
   const _nd = firstK(attacker,'nododge',target);
@@ -2209,6 +2279,7 @@ async function useSkillCore(p, key){
     p.chenqingduUsed = true;
     log('陈清都【一剑】弃 '+X+' 牌，剑意贯虹，造 '+dmg+' 伤！', 'big');
     shout('一 剑', '#ff8a6b');
+    if(isFlagship(p)) flagshipInk(p, '一剑');
     await bladeFx(p, t);
     await applyDamage(p, t, dmg);
     return;
@@ -2218,6 +2289,7 @@ async function useSkillCore(p, key){
     const a=p.hand.pop(), b=p.hand.pop(); state.discard.push(a,b);
     let n=2; if(a.type==='trick'||b.type==='trick') n=3;
     draw(p,n); log('道祖【道法自然】弃 2 摸 '+n+'。', 'heal'); shout('道法自然', '#9ed4be');
+    if(isFlagship(p)) flagshipInk(p, '道法自然');
     return;
   }
   if(key==='suanji'){
@@ -2235,6 +2307,7 @@ async function useSkillCore(p, key){
     if(!t) return;
     p.noDodgeFrom.add(t.id);
     log(p.name+'【问剑】'+t.name+' 本回合不得守心。', ''); shout('问 剑', '#e8c66a');
+    if(isFlagship(p)) flagshipInk(p, '问剑');
     return;
   }
   if(key==='jiaohua'){
@@ -2246,6 +2319,7 @@ async function useSkillCore(p, key){
     if(t.faction===p.faction && p.hand.length){
       const c=p.hand.pop(); t.hand.push(c);
       log(p.name+'【教化】授 '+t.name+' 一卷书。', 'heal'); shout('教 化', '#9ed4be');
+      if(isFlagship(p)) flagshipInk(p, '教化');
     } else log('教化只可授同阵营之人。', 'sys');
     return;
   }
@@ -2304,6 +2378,7 @@ async function useSkillCore(p, key){
       if(p.hand.length){ const d=p.hand.pop(); state.discard.push(d); }
       draw(p,2); log('【一气化三清·变】'+p.name+' 弃一摸二。', 'big'); skillFx(p,{f:'rune'});
     }
+    if(isFlagship(p)) flagshipInk(p, '一气化三清');
     return;
   }
   if(key==='qizi'){
@@ -2314,6 +2389,7 @@ async function useSkillCore(p, key){
     t._noAttackNext = state.round + 1;
     log('【棋子】'+p.name+' 落子，'+t.name+' 下回合不得出剑气。', 'big');
     skillFx(p, {f:'rune'});
+    if(isFlagship(p)) flagshipInk(p, '棋子');
     return;
   }
 }
@@ -2582,6 +2658,31 @@ function shout(text, color){
   const s = document.getElementById('shout'); if(!s) return;
   s.innerHTML = '<span class="sh-txt" style="--sc:'+(color||'#e8c66a')+'">'+text+'</span>';
   s.classList.remove('go'); void s.offsetWidth; s.classList.add('go');
+}
+/* 旗舰主动技出招：全屏水墨一笔 + 朱印落款（纯演出层，绝不冒泡到结算链）
+ * 仅在 useSkillCore 真正出招成功（已 shout）的分支调用；
+ * vm / 无 DOM 环境（_sc_battle 自走）直接 return，不抛异常。 */
+function flagshipInk(p, name){
+  if(typeof document === 'undefined' || !document.getElementById) return;
+  const root = document.getElementById('fsink'); if(!root) return;
+  const who = (p && p.name) || '';
+  const fac = (p && p.faction && FACTIONS[p.faction]) ? FACTIONS[p.faction] : '#e8c66a';
+  const inst = document.createElement('div');
+  inst.className = 'fsink-stroke';
+  inst.innerHTML =
+    '<svg viewBox="0 0 1200 700" preserveAspectRatio="none">'
+    + '<path class="fsink-brush inkdraw" d="M110 472 C 350 358, 560 548, 760 432 S 1040 318, 1124 360" />'
+    + '<path class="fsink-brush dry" d="M176 504 C 420 412, 646 562, 884 470 S 1082 402, 1112 432" />'
+    + '<circle class="fsink-dot" cx="1124" cy="360" r="9" />'
+    + '<circle class="fsink-dot" cx="150" cy="472" r="6" />'
+    + '</svg>'
+    + '<div class="fsink-seal"><div class="seal-box" style="border-color:'+fac+';color:'+fac+'">'
+    +   '<div class="seal-name">'+name+'</div><div class="seal-who">'+(who||'')+'</div>'
+    + '</div></div>';
+  root.appendChild(inst);
+  requestAnimationFrame(()=>{ void inst.offsetWidth; inst.classList.add('go'); });
+  setTimeout(()=>{ inst.classList.add('out'); }, 1400);
+  setTimeout(()=>{ if(inst.parentNode) inst.parentNode.removeChild(inst); }, 1750);
 }
 function banner(name, sub){
   const b = document.getElementById('banner'); if(!b) return;
@@ -3197,14 +3298,16 @@ function renderCodex(app){
   if(state.codexTab==='tales'){
     html = '<div class="codex-head"><h1>戏 里 戏 外</h1>'
       + '<span class="codex-stat">原著小记 · 共 <b>'+(typeof TALES!=='undefined'?TALES.length:0)+'</b> 则</span></div>'
-      + '<button class="btn ghost" style="margin:8px 0 18px" onclick="state={phase:\'title\',sel:[],log:[]};render()">返回卷首</button>';
+      + '<button class="btn ghost" style="margin:8px 0 18px" onclick="leaveCodex()">返回卷首</button>';
     html += renderTales();
     app.innerHTML = html; return;
   }
   html = '<div class="codex-head"><h1>人 物 志</h1>'
     + '<span class="codex-stat">共 <b>'+total+'</b> 人 · '
     + Object.keys(FACTIONS).map(f=>f+' <b>'+(perFac[f]||0)+'</b>').join(' · ')
-    + '</span></div>';
+    + '</span>'
+    + '<button class="btn ghost" style="margin-left:auto;font-size:11px;padding:4px 10px" onclick="replayCodexIntro()" title="重播人物志片头">重播片头</button>'
+    + '</div>';
   html += '<p class="hint">点击任一人查看立绘、技能与原著简报。此处不涉战局。</p>';
 
   html += '<div class="filterbar">';
@@ -3213,7 +3316,7 @@ function renderCodex(app){
     html += '<button class="fbtn'+(state.filter===f?' on':'')+'" onclick="setFilter(\''+f+'\')">'+f+' '+n+'</button>';
   });
   html += '<input class="fsearch" placeholder="搜人物" value="'+q+'" oninput="setQuery(this.value)">';
-  html += '<button class="btn ghost" onclick="state={phase:\'title\',sel:[],log:[]};render()">返回卷首</button>';
+  html += '<button class="btn ghost" onclick="leaveCodex()">返回卷首</button>';
   html += '</div>';
 
   html += '<div class="codex-grid">';
@@ -3258,13 +3361,15 @@ function renderTales(){
   let h = '<p class="hint">原著中的小故事 · 取《剑来》本意，不杜撰情节。</p>';
   h += '<div class="cx-tales">';
   (typeof TALES!=='undefined' ? TALES : []).forEach(t=>{
-    h += '<div class="cx-tale" onclick="showTale(\''+t.id+'\')">'
+    const art = 'assets/tales/'+t.id+'.jpg';
+    h += '<div class="cx-tale has-art" onclick="showTale(\''+t.id+'\')">'
+      + '<div class="cx-tale-art"><img src="'+art+'" alt="" loading="lazy" onerror="this.style.display=\'none\'"/></div>'
+      + '<div class="cx-tale-shade"></div>'
+      + '<div class="cx-tale-body">'
       + '<div class="cx-tl">'+t.title+'</div>'
       + '<div class="cx-tmeta"><span class="cx-mchip">'+t.era+'</span><span class="cx-mchip">'+t.place+'</span></div>'
-      + '<div class="cx-tpeople">'+t.people.map(p=>'<span class="cx-pchip">'+p+'</span>').join('')+'</div>'
       + '<div class="cx-tlead">'+t.lead+'</div>'
-      + '<div class="cx-tmore">细 看 ›</div>'
-      + '</div>';
+      + '</div></div>';
   });
   h += '</div>';
   return h;
@@ -3277,26 +3382,29 @@ const TALE_RIVER_SVG = '<div class="tale-river" aria-hidden="true">'
   + '<i class="tr-glow g2"></i>'
   + '</div>';
 function renderTaleDetail(t){
-  /* 画卷外壳：.tale-sway 居中容器（不晃动）/ .tale-scroll 居中摊卷 + 波纹光阴长河 + 圆木画轴 */
-  let h = '<div class="tale-sway">'
-    + '<div class="tale-scroll">'
-    + '<div class="tale-axis left"></div><div class="tale-axis right"></div>'
-    + '<span class="tale-seal-tl">剑来</span><span class="tale-seal-br">戏外</span>'
-    + TALE_RIVER_SVG
-    + '<div class="cx-tale-detail">'
-    + '<div class="cx-dname" style="color:#c9a24b">'+t.title+'</div>'
-    + '<div class="cx-tmeta"><span class="cx-mchip">'+t.era+'</span><span class="cx-mchip">'+t.place+'</span></div>'
-    + '<div class="cx-tpeople">'+t.people.map(p=>'<span class="cx-pchip">'+p+'</span>').join('')+'</div>'
-    + '<div class="cx-tlead">'+t.lead+'</div>'
+  /* 对齐人物志：配图铺顶（文档流）+ 信息卡上滑；整页可滚，介绍滑上去 */
+  const art = 'assets/tales/'+t.id+'.jpg';
+  let sheet = '<div class="cx-tpeople">'+(t.people||[]).map(p=>'<span class="cx-pchip">'+p+'</span>').join('')+'</div>'
+    + '<div class="cx-tlead tale-full-lead">'+t.lead+'</div>'
     + '<div class="cx-sec">— 故 事 —</div>';
   (t.beats||[]).forEach(b=>{
-    h += '<div class="cx-beat"><div class="cx-bt">'+b.t+'</div><div class="cx-bd">'+b.d+'</div></div>';
+    sheet += '<div class="cx-beat"><div class="cx-bt">'+b.t+'</div><div class="cx-bd">'+b.d+'</div></div>';
   });
-  if(t.quote) h += '<div class="cx-quote">「'+t.quote+'」</div>';
-  if(t.note) h += '<div class="cx-note">'+t.note+'</div>';
-  h += '<div style="text-align:center;margin-top:18px"><button class="btn ghost" onclick="showTale(null)">收 卷</button></div>';
-  h += '</div></div></div>';
-  return h;
+  if(t.quote) sheet += '<div class="cx-quote">「'+t.quote+'」</div>';
+  if(t.note) sheet += '<div class="cx-note">'+t.note+'</div>';
+  sheet += '<div style="text-align:center;margin-top:18px"><button class="btn ghost" onclick="showTale(null)">收 卷</button></div>';
+  return '<div class="tale-full">'
+    + '<div class="tale-hero">'
+    +   '<img class="tale-full-bg" src="'+art+'" alt="" onerror="this.style.opacity=0"/>'
+    +   '<div class="tale-full-shade"></div>'
+    +   '<button type="button" class="tale-full-back" onclick="showTale(null)" aria-label="关闭">✕</button>'
+    +   '<div class="tale-full-head">'
+    +     '<div class="tale-full-title">'+t.title+'</div>'
+    +     '<div class="cx-tmeta tale-full-meta"><span class="cx-mchip">'+t.era+'</span><span class="cx-mchip">'+t.place+'</span></div>'
+    +   '</div>'
+    + '</div>'
+    + '<div class="tale-full-sheet">'+sheet+'</div>'
+    + '</div>';
 }
 function parseSkills(txt){
   if(!txt) return [];
@@ -3381,6 +3489,10 @@ function renderTitle(app){
         '<div class="ts-mode-head"><h3>包袱斋</h3><div class="ts-mode-ico"><svg viewBox="0 0 30 30" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M15 7 L23 13 L23 24 Q23 26 21 26 L9 26 Q7 26 7 24 L7 13 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 13 Q15 16 21 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M12 9 Q15 5 18 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M15 5 L15 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div></div>'
     +       '<p>不做剑客，做行商。老祖师的和气斋有九十九间屋子，一间只卖一物；没有落脚地儿的散修摊子，才最考眼力——捡漏还是打眼，全凭你读过几本书。</p>'
     +       '<div class="md-meta">行商 · 拣漏 · 悟道 · 赊欠</div></div>'
+    +     '<div class="ts-mode" onclick="showCultivationOverview()">'
+    +       '<div class="ts-mode-head"><h3>修为总览</h3><div class="ts-mode-ico"><svg viewBox="0 0 30 30" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="6" y="5" width="18" height="20" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 10 H21 M9 14 H21 M9 18 H16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-opacity=".55"/><circle cx="15" cy="7.5" r="1.3" fill="currentColor" fill-opacity=".5"/></svg></div></div>'
+    +       '<p>不做剑客，做账房。雪花钱、香火功德、金精铜钱与人情、声望道行——四套账册各记各的，此处一并清点。</p>'
+    +       '<div class="md-meta">跨模块 · 资源对账</div></div>'
     +   '</div>'
     + '</div>'
 
@@ -3473,12 +3585,433 @@ function chooseMode(mode){
 }
 function openCodex(){
   SFX.set(true); SFX.click();
-  state = { phase:'codex', mode:'codex', sel:[], filter:'全部', q:'', log:[], codexTab:'chars', selTale:null };
+  endCodexIntro(true);
+  const mode = codexIntroMode();
+  state = { phase:'codex', mode:'codex', sel:[], filter:'全部', q:'', log:[], codexTab:'chars', selTale:null, codexIntro:mode };
   render();
+  if(mode === 'full') playCodexIntro('full');
+  else if(mode === 'short') landCodexGrid();
+  if(mode === 'full'){
+    try{ localStorage.setItem(CODEX_INTRO_KEY, '1'); }catch(e){}
+  }
 }
 function openTales(){
   SFX.set(true); SFX.click();
+  endCodexIntro(true);
   state = { phase:'codex', mode:'codex', sel:[], filter:'全部', q:'', log:[], codexTab:'tales', selTale:null };
+  render();
+}
+
+/* ===================== 人物志 · 银幕点映（PC） =====================
+ * 首访完整片头：熄灯 → 三行交替轮映全量立绘 → 定格海报 → 题字 → 落墙。
+ * 轮映：每行只挂 CODEX_MARQUEE_CELLS 格 DOM，用 JS 换图扫过 codexSort 全量 key，
+ * 避免一次加载 127 张大图。复访/减弱动效只做栅格落墙。 */
+const CODEX_INTRO_KEY = 'jianlai_codex_intro_v1';
+const CODEX_MARQUEE_CELLS = 9;
+const CODEX_CELL_W = 92;
+const CODEX_CELL_GAP = 12;
+const CODEX_CAST = [
+  'chenpingan','aliang','qijingchun','chenqingdu','daozu','fozu','ningyao','zhoumi',
+  '老秀才','崔瀺','李宝瓶','顾粲','裴钱','阮秀','托月山','魏檗','崔东山','宋集薪',
+  '杨老头','贺小凉','郭竹酒','稚圭','刘羡阳','郑大风'
+];
+let _codexIntro = null;
+
+function codexIntroMode(){
+  try{
+    const w = (typeof window !== 'undefined') ? window : null;
+    if(w && w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches) return 'skip';
+  }catch(e){}
+  try{
+    const seen = localStorage.getItem(CODEX_INTRO_KEY);
+    return seen ? 'short' : 'full';
+  }catch(e){ return 'short'; }
+}
+function pickCodexCast(n){
+  n = n || 10;
+  const valid = CODEX_CAST.filter(k => !!(typeof CHARS !== 'undefined' && CHARS[k]));
+  if(!valid.length) return [];
+  let seed = 0;
+  try{ seed = parseInt(localStorage.getItem('jianlai_codex_cast') || '0', 10) || 0; }catch(e){}
+  seed = (seed + 1) % valid.length;
+  try{ localStorage.setItem('jianlai_codex_cast', String(seed)); }catch(e){}
+  const out = [];
+  for(let i = 0; i < n && i < valid.length; i++) out.push(valid[(seed + i) % valid.length]);
+  return out;
+}
+/* 全量人物志 key（阵营次序），供卷帘一轮扫完 */
+function allCodexKeys(){
+  const keys = Object.keys((typeof CHARS !== 'undefined' && CHARS) ? CHARS : {});
+  if(!keys.length) return [];
+  try{ return codexSort(keys); }catch(e){ return keys; }
+}
+/* 三行交替：行0/2 左→右，行1 右→左；全量 key 按行轮转分配 */
+function splitCodexCastRows(cast, rowCount){
+  rowCount = rowCount || 3;
+  const rows = [];
+  for(let r = 0; r < rowCount; r++) rows.push([]);
+  cast.forEach(function(k, i){ rows[i % rowCount].push(k); });
+  return rows;
+}
+function codexArtUrl(key){
+  return 'art/_mq/' + key + '.jpg';
+}
+function updateCodexCell(cellEl, key){
+  if(!cellEl || typeof CHARS === 'undefined' || !CHARS[key]) return;
+  const c = CHARS[key];
+  const col = (typeof FACTIONS !== 'undefined' ? (FACTIONS[c.faction] || '#666') : '#666');
+  try{ cellEl.style.setProperty('--fc', col); }catch(e){}
+  const ph = cellEl.querySelector ? cellEl.querySelector('.cxi-ph') : null;
+  const img = cellEl.querySelector ? cellEl.querySelector('img') : null;
+  const span = cellEl.querySelector ? cellEl.querySelector('.cxi-nm') : null;
+  const nm = c.name || key;
+  if(ph) ph.textContent = nm.charAt(0);
+  if(span) span.textContent = nm;
+  if(img){
+    try{
+      if(img.getAttribute('data-k') === key){
+        img.style.display = '';
+        return;
+      }
+      const mq = codexArtUrl(key);
+      const full = 'art/' + key + '.png';
+      img.setAttribute('data-k', key);
+      img.removeAttribute('data-fb');
+      img.decoding = 'async';
+      img.onerror = function(){
+        if(this.getAttribute('data-fb') !== '1'){
+          this.setAttribute('data-fb', '1');
+          this.src = full;
+        }else{
+          this.style.display = 'none';
+        }
+      };
+      /* 解码完成再上屏：旧图先留着，避免换格闪白/主线程卡顿 */
+      const probe = new Image();
+      probe.decoding = 'async';
+      probe.onload = function(){
+        try{
+          if(!img || img.getAttribute('data-k') !== key) return;
+          img.src = mq;
+          img.style.display = '';
+        }catch(e){}
+      };
+      probe.onerror = function(){
+        try{
+          if(!img || img.getAttribute('data-k') !== key) return;
+          img.src = full;
+          img.style.display = '';
+        }catch(e){}
+      };
+      probe.src = mq;
+    }catch(e){}
+  }
+}
+/* 预载后续立绘（缩略图优先） */
+function preloadCodexArt(keys, fromIdx, count){
+  try{
+    if(typeof Image === 'undefined') return;
+    const n = count || 6;
+    for(let i = 0; i < n; i++){
+      const k = keys[(fromIdx + i) % keys.length];
+      if(!k) continue;
+      const im = new Image();
+      im.decoding = 'async';
+      im.src = codexArtUrl(k);
+    }
+  }catch(e){}
+}
+function codexNowMs(){
+  try{
+    return (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+  }catch(e){ return Date.now(); }
+}
+function codexCanRaf(){
+  try{
+    if(typeof requestAnimationFrame !== 'function' || typeof cancelAnimationFrame !== 'function') return false;
+    if(typeof navigator !== 'undefined' && navigator && navigator.userAgent === 'node') return false;
+    return true;
+  }catch(e){ return false; }
+}
+function landCodexGrid(){
+  const grid = (typeof document !== 'undefined') ? document.querySelector('#app .codex-grid') : null;
+  if(!grid || !grid.classList) return;
+  grid.classList.add('cx-landing');
+  const cards = grid.querySelectorAll ? grid.querySelectorAll('.codex-card') : [];
+  const cap = Math.min(cards.length, 36);
+  for(let i = 0; i < cap; i++){
+    if(cards[i] && cards[i].style) cards[i].style.setProperty('--ci', String(i));
+  }
+}
+function endCodexIntro(silent){
+  if(!_codexIntro) return;
+  const el = _codexIntro.el;
+  const rec = _codexIntro;
+  rec.done = true;
+  if(rec.timers && rec.timers.length){
+    rec.timers.forEach(function(id){ try{ clearTimeout(id); }catch(e){} });
+  }
+  if(rec.mqTimer){
+    try{
+      if(rec.useRaf && typeof cancelAnimationFrame === 'function') cancelAnimationFrame(rec.mqTimer);
+      else clearTimeout(rec.mqTimer);
+    }catch(e){}
+    rec.mqTimer = null;
+  }
+  _codexIntro = null;
+  if(!el) return;
+  try{
+    el.onclick = null;
+    el.className = 'cx-intro ph-out';
+    if(silent){
+      el.hidden = true;
+      el.innerHTML = '';
+    }else{
+      const t = setTimeout(function(){
+        try{ el.hidden = true; el.innerHTML = ''; el.className = 'cx-intro'; el.onclick = null; }catch(e){}
+      }, 320);
+      void t;
+    }
+  }catch(e){}
+}
+function replayCodexIntro(){
+  if(typeof state === 'undefined' || !state || state.phase !== 'codex') return;
+  playCodexIntro('full');
+}
+/* 三行流畅轮映：rAF + translate3d，每格只在越界时换 1 张图（不整行刷 src） */
+function startCodexMarquee(rec, tracks, slotMs, beamMs, progEl){
+  const step = CODEX_CELL_W + CODEX_CELL_GAP;
+  const speed = step / Math.max(80, slotMs); // px/ms → 每格停留 slotMs
+  const useRaf = codexCanRaf();
+  rec.useRaf = useRaf;
+  const t0 = codexNowMs();
+  let lastTs = t0;
+  let lastProg = 0;
+  let recycled = 0;
+  const totalKeys = tracks.reduce(function(a, tr){ return a + tr.keys.length; }, 0);
+
+  tracks.forEach(function(tr){
+    tr.el = (rec.el && rec.el.querySelector) ? rec.el.querySelector('.cxi-strip.r' + tr.ri) : null;
+    if(!tr.el) return;
+    tr.cells = tr.el.querySelectorAll ? Array.prototype.slice.call(tr.el.querySelectorAll('.cxi-cell')) : [];
+    tr.idx = 0;
+    tr.x = 0;
+    /* 初始铺满：按 keys 顺序 */
+    for(let i = 0; i < tr.cells.length; i++){
+      const k = tr.keys[i % tr.keys.length];
+      updateCodexCell(tr.cells[i], k);
+    }
+    if(tr.keys.length) preloadCodexArt(tr.keys, tr.cells.length, 4);
+    try{
+      tr.el.style.transform = 'translate3d(0,0,0)';
+      tr.el.style.backfaceVisibility = 'hidden';
+      tr.el.style.webkitBackfaceVisibility = 'hidden';
+    }catch(e){}
+  });
+
+  function recycleOne(tr){
+    if(!tr.el || !tr.cells || !tr.cells.length || !tr.keys.length) return;
+    tr.idx = (tr.idx + 1) % tr.keys.length;
+    const nextKey = tr.keys[(tr.idx + tr.cells.length - 1) % tr.keys.length];
+    if(tr.dir === 'ltr'){
+      /* 内容向右流：末格进首（从左侧入场） */
+      const cell = tr.el.lastElementChild || tr.cells[tr.cells.length - 1];
+      updateCodexCell(cell, nextKey);
+      if(tr.el.insertBefore && cell) tr.el.insertBefore(cell, tr.el.firstElementChild);
+      tr.cells.unshift(tr.cells.pop());
+    }else{
+      /* 内容向左流：首格进末（从右侧入场） */
+      const cell = tr.el.firstElementChild || tr.cells[0];
+      updateCodexCell(cell, nextKey);
+      if(tr.el.appendChild && cell) tr.el.appendChild(cell);
+      tr.cells.push(tr.cells.shift());
+    }
+    recycled++;
+    preloadCodexArt(tr.keys, (tr.idx + tr.cells.length) % tr.keys.length, 3);
+  }
+
+  function frame(ts){
+    if(!rec || rec.done) return;
+    const now = (typeof ts === 'number' && isFinite(ts)) ? ts : codexNowMs();
+    const elapsed = now - t0;
+    let dt = now - lastTs;
+    if(!(dt > 0)) dt = 16;
+    if(dt > 48) dt = 48; // 掉帧时封顶，避免一次跳太远
+    lastTs = now;
+
+    tracks.forEach(function(tr){
+      if(!tr.el || !tr.cells || !tr.cells.length) return;
+      const dirSign = (tr.dir === 'ltr') ? 1 : -1;
+      tr.x += dirSign * speed * dt;
+      /* 越界回收：一次最多补 3 格，防止后台回来猛跳 */
+      let guard = 0;
+      while(guard < 3){
+        if(tr.dir === 'ltr' && tr.x >= step){ tr.x -= step; recycleOne(tr); }
+        else if(tr.dir === 'rtl' && tr.x <= -step){ tr.x += step; recycleOne(tr); }
+        else break;
+        guard++;
+      }
+      try{ tr.el.style.transform = 'translate3d(' + tr.x.toFixed(2) + 'px,0,0)'; }catch(e){}
+    });
+
+    if(progEl && (now - lastProg) > 240){
+      lastProg = now;
+      const pct = totalKeys ? Math.min(100, Math.round(recycled * 100 / totalKeys)) : 100;
+      try{
+        if(!progEl.querySelector || !progEl.querySelector('b')){
+          progEl.innerHTML = '群像轮映 · <b>0%</b> · 全量立绘';
+        }
+        const b = progEl.querySelector ? progEl.querySelector('b') : null;
+        if(b) b.textContent = pct + '%';
+      }catch(e){}
+    }
+
+    if(rec.done || elapsed >= beamMs){
+      return;
+    }
+    if(useRaf && typeof requestAnimationFrame === 'function'){
+      rec.mqTimer = requestAnimationFrame(frame);
+    }else{
+      rec.mqTimer = setTimeout(function(){ frame(codexNowMs()); }, 16);
+    }
+  }
+
+  if(useRaf && typeof requestAnimationFrame === 'function'){
+    rec.mqTimer = requestAnimationFrame(frame);
+  }else{
+    rec.mqTimer = setTimeout(function(){ frame(codexNowMs()); }, 16);
+  }
+}
+function playCodexIntro(mode){
+  endCodexIntro(true);
+  if(mode !== 'full'){ landCodexGrid(); return; }
+  /* 全量人物志 key，三行轮映扫完一轮 */
+  const cast = allCodexKeys();
+  if(!cast.length || typeof CHARS === 'undefined') return;
+  const hero = (CHARS.chenpingan ? 'chenpingan' : cast[0]);
+  const hc = CHARS[hero];
+  const hcol = (typeof FACTIONS !== 'undefined' ? (FACTIONS[hc.faction] || null) : null) || '#e8c66a';
+  const total = cast.length;
+
+  let el = (typeof document !== 'undefined') ? document.getElementById('codexIntro') : null;
+  if(!el && typeof document !== 'undefined' && document.createElement){
+    el = document.createElement('div');
+    el.id = 'codexIntro';
+    el.className = 'cx-intro';
+    if(document.body) document.body.appendChild(el);
+  }
+  if(!el) return;
+
+  function cellHtml(k, i){
+    const c = CHARS[k];
+    const col = (typeof FACTIONS !== 'undefined' ? (FACTIONS[c.faction] || '#666') : '#666');
+    return '<div class="cxi-cell" style="--i:' + i + ';--fc:' + col + '">'
+      + '<div class="cxi-ph">' + ((c && c.name) || '?').charAt(0) + '</div>'
+      + '<img src="' + codexArtUrl(k) + '" alt="" decoding="async" '
+      +   'onerror="this.onerror=function(){this.style.display=\'none\'};this.src=\'art/' + k + '.png\'">'
+      + '<span class="cxi-nm">' + ((c && c.name) || k) + '</span></div>';
+  }
+  const rows = splitCodexCastRows(cast, 3);
+  const nCells = CODEX_MARQUEE_CELLS;
+  const tracks = rows.map(function(row, ri){
+    const keys = row.length ? row : cast.slice();
+    const dir = (ri % 2 === 0) ? 'ltr' : 'rtl';
+    let cells = '';
+    for(let i = 0; i < nCells; i++) cells += cellHtml(keys[i % keys.length], i);
+    return { ri: ri, dir: dir, keys: keys, html: cells };
+  });
+  const strips = tracks.map(function(tr){
+    return '<div class="cxi-strip ' + tr.dir + ' r' + tr.ri + '">' + tr.html + '</div>';
+  }).join('');
+
+  const maxRow = Math.max(1, tracks.reduce(function(m, tr){ return Math.max(m, tr.keys.length); }, 1));
+  /* 每格停留：全量一轮目标约 7–9s；最少 140ms 防闪得太快 */
+  const slotMs = Math.max(140, Math.min(320, Math.round(8000 / maxRow)));
+  const beamMs = maxRow * slotMs + 500;
+  const freezeAt = 400 + beamMs;
+  const titleAt = freezeAt + 600;
+  const endAt = titleAt + 700;
+
+  el.hidden = false;
+  el.className = 'cx-intro ph-dim';
+  el.innerHTML =
+    '<div class="cxi-veil"></div>'
+    + '<div class="cxi-grain"></div>'
+    + '<div class="cxi-beam"></div>'
+    + '<div class="cxi-prog"></div>'
+    + '<div class="cxi-strips">' + strips + '</div>'
+    + '<div class="cxi-freeze" style="--fc:' + hcol + '">'
+    +   '<div class="cxi-fz-frame">'
+    +     '<div class="cxi-fz-ph">' + ((hc && hc.name) || '?').charAt(0) + '</div>'
+    +     '<img src="art/' + hero + '.png" alt="" onerror="this.style.display=\'none\'">'
+    +     '<span class="cxi-fz-fac">' + ((hc && hc.faction) || '') + '</span>'
+    +     '<div class="cxi-fz-name">' + ((hc && hc.name) || hero) + '</div>'
+    +   '</div>'
+    + '</div>'
+    + '<div class="cxi-title">'
+    +   '<div class="cxi-t-mark">人 物 志</div>'
+    +   '<div class="cxi-t-rule"></div>'
+    +   '<div class="cxi-t-sub">共 <b style="color:#e8c66a">' + total + '</b> 人 · 群像轮映</div>'
+    + '</div>'
+    + '<button class="cxi-skip" type="button">跳过</button>'
+    + '<div class="cxi-hint">点击任意处跳过 · 卷帘扫完全部立绘</div>';
+
+  const timers = [];
+  const rec = { el: el, timers: timers, done: false, mqTimer: null };
+  _codexIntro = rec;
+
+  const progEl = el.querySelector ? el.querySelector('.cxi-prog') : null;
+  startCodexMarquee(rec, tracks, slotMs, beamMs, progEl);
+
+  function finish(){
+    if(!rec || rec.done) return;
+    rec.done = true;
+    timers.forEach(function(id){ try{ clearTimeout(id); }catch(e){} });
+    if(rec.mqTimer){
+      try{
+        if(rec.useRaf && typeof cancelAnimationFrame === 'function') cancelAnimationFrame(rec.mqTimer);
+        else clearTimeout(rec.mqTimer);
+      }catch(e){}
+      rec.mqTimer = null;
+    }
+    try{
+      el.className = 'cx-intro ph-out';
+      el.onclick = null;
+      const sk = el.querySelector ? el.querySelector('.cxi-skip') : null;
+      if(sk) sk.onclick = null;
+    }catch(e){}
+    landCodexGrid();
+    _codexIntro = null;
+    const hide = setTimeout(function(){
+      try{ el.hidden = true; el.innerHTML = ''; el.className = 'cx-intro'; el.onclick = null; }catch(e){}
+    }, 320);
+    void hide;
+  }
+  function onSkip(){ finish(); }
+
+  el.onclick = onSkip;
+  try{
+    const sk = el.querySelector ? el.querySelector('.cxi-skip') : null;
+    if(sk) sk.onclick = function(ev){ if(ev && ev.stopPropagation) ev.stopPropagation(); finish(); };
+  }catch(e){}
+
+  timers.push(setTimeout(function(){
+    try{ el.classList.add('can-skip'); }catch(e){}
+  }, 480));
+  timers.push(setTimeout(function(){
+    try{ el.className = 'cx-intro ph-beam can-skip'; }catch(e){}
+  }, 400));
+  timers.push(setTimeout(function(){
+    try{ el.className = 'cx-intro ph-freeze can-skip'; }catch(e){}
+  }, freezeAt));
+  timers.push(setTimeout(function(){
+    try{ el.className = 'cx-intro ph-title can-skip'; }catch(e){}
+  }, titleAt));
+  timers.push(setTimeout(finish, endAt));
+}
+function leaveCodex(){
+  endCodexIntro(true);
+  state = { phase:'title', sel:[], log:[] };
   render();
 }
 function openFulu(){
@@ -4352,9 +4885,65 @@ function renderAskLakeCodex(a){
 /* ---------- 书简湖问心局 · END ---------- */
 
 
-/* ---------- 选人 ---------- */
-function setFilter(f){ state.filter=f; render(); }
+/* ---------- 选人 / 人物志筛选 ---------- */
+function setFilter(f){
+  const prev = state.filter;
+  state.filter = f;
+  render();
+  /* 仅人物志网格换阵营时播金尘；setup 选人筛选用同函数但不过场，避免吵 */
+  if(typeof state !== 'undefined' && state && state.phase === 'codex'
+     && state.codexTab === 'chars' && prev !== f){
+    playCodexDust(f);
+  }
+}
 function setQuery(v){ state.q=v; render(); }
+
+/* 人物志阵营切换：金尘过场 + 栅格轻微重入（纯演出层） */
+function playCodexDust(f){
+  if(typeof document === 'undefined' || !document.getElementById) return;
+  const col = (f && f !== '全部' && typeof FACTIONS !== 'undefined' && FACTIONS[f]) ? FACTIONS[f] : '#e8c66a';
+  let host = document.getElementById('codexDust');
+  if(!host){
+    host = document.createElement('div');
+    host.id = 'codexDust';
+    if(document.body) document.body.appendChild(host);
+  }
+  let sparks = '';
+  for(let i = 0; i < 18; i++){
+    const x = 8 + (i * 17) % 84;
+    const y = 22 + (i * 29) % 56;
+    const dx = 30 + (i * 13) % 70;
+    const dy = -12 - (i * 7) % 28;
+    const sd = (0.55 + (i % 5) * 0.07).toFixed(2);
+    const dl = (i * 0.028).toFixed(3);
+    sparks += '<span class="cd-spark" style="left:' + x + '%;top:' + y + '%;--dx:' + dx + 'px;--dy:' + dy + 'px;--sd:' + sd + 's;--dl:' + dl + 's"></span>';
+  }
+  host.style.setProperty('--cc', col);
+  host.innerHTML =
+    '<div class="cd-veil"></div>'
+    + '<div class="cd-grain"></div>'
+    + sparks;
+  host.classList.remove('go');
+  try{ void host.offsetWidth; }catch(e){}
+  host.classList.add('go');
+  try{
+    const grid = document.querySelector('#app .codex-grid');
+    if(grid && grid.classList){
+      grid.classList.remove('cx-dust');
+      const cards = grid.querySelectorAll ? grid.querySelectorAll('.codex-card') : [];
+      const cap = Math.min(cards.length, 36);
+      for(let i = 0; i < cap; i++){
+        if(cards[i] && cards[i].style) cards[i].style.setProperty('--ci', String(i));
+      }
+      try{ void grid.offsetWidth; }catch(e){}
+      grid.classList.add('cx-dust');
+    }
+  }catch(e){}
+  const t1 = setTimeout(function(){
+    try{ host.classList.remove('go'); host.innerHTML = ''; }catch(e){}
+  }, 820);
+  void t1;
+}
 
 function renderSetup(app){
   const sa = loadSectAllies();
@@ -4674,6 +5263,10 @@ function cardDesc(c){
   })[c.type] || '未知牌。';
 }
 /* PC 专属「装备 · 状态」坞：一眼看清当前持有（手机端屏窄故省去） */
+function dmgChipColor(n){
+  return ({'气势':'#9b6fd4','天道势压':'#c0584f','雷泽':'#5fa8d8','大雾':'#8aa0a8',
+           '本命飞剑':'#e8c66a','齐心':'#5fb8a6','问剑':'#c9a23f','托月':'#e8c66a'})[n] || '#e8c66a';
+}
 function statusStripHtml(p){
   const chips=[];
   if(p.equip) chips.push({t:'本命飞剑', s:p.equip.name, c:'#e8c66a'});
@@ -4681,10 +5274,22 @@ function statusStripHtml(p){
   if(p.judgeBuff) chips.push({t:'气势', s:'道心通明', c:'#9b6fd4'});
   if(hasAlly(p)) chips.push({t:'齐心', s:'同阵营+1', c:'#5fb8a6'});
   (p.extraSkills||[]).forEach(s=>{ if(s && s.n) chips.push({t:'法宝', s:s.n, c:'#caa15a'}); });
-  if(!chips.length) return '';
-  let h='<div class="status-strip"><span class="ss-label">装 备 · 状 态</span>';
-  chips.forEach(c=>{ h+='<span class="ss-chip" style="border-color:'+c.c+';color:'+c.c+'"><b>'+c.t+'</b>'+c.s+'</span>'; });
-  h+='</div>';
+  if(hasK(p,'taunt')) chips.push({t:'嘲讽', s:'须先过其关', c:'#d98c5f'});
+  const _locked = state.players && state.players.some(o=>o!==p && o.noDodgeFrom && o.noDodgeFrom.has && o.noDodgeFrom.has(p.id));
+  if(_locked) chips.push({t:'禁攻', s:'不得守心', c:'#d96f6f'});
+  const trig = (p._triggered && p._triggered.length) ? p._triggered : [];
+  if(!chips.length && !trig.length) return '';
+  let h='';
+  if(chips.length){
+    h+='<div class="status-strip"><span class="ss-label">装 备 · 状 态</span>';
+    chips.forEach(c=>{ h+='<span class="ss-chip" style="border-color:'+c.c+';color:'+c.c+'"><b>'+c.t+'</b>'+c.s+'</span>'; });
+    h+='</div>';
+  }
+  if(trig.length){
+    h+='<div class="status-strip"><span class="ss-label">本回合 · 技 法</span>';
+    trig.forEach(n=>{ h+='<span class="ss-chip sk"><b>技</b>'+n+'</span>'; });
+    h+='</div>';
+  }
   return h;
 }
 /* 两步出牌确认条：选中牌后浮现于手牌区下方 */
@@ -4787,6 +5392,7 @@ function renderGame(app){
   }
   html +=     '<span class="turn">'+p.name+'</span>';
   html +=     '<span class="tfac" style="color:'+(FACTIONS[p.faction]||'#999')+'">'+p.faction+'</span>';
+  if(state.tianxiang) html += '<span class="phase" title="'+state.tianxiang.desc+'">天象 · '+state.tianxiang.name+'</span>';
   html +=     '<span class="stepper">'
          +      '<span class="st'+(state.tphase==='draw'?' on':(state.tphase==='judge'||state.tphase==='play'||state.tphase==='discard'?' done':''))+'">摸牌</span>'
          +      '<span class="arw">›</span>'
@@ -4826,7 +5432,24 @@ function renderGame(app){
   html +=   '</div>';
 
   html +=   '<div class="bf-log"><div class="log"><div class="logtitle">战 报</div>';
-  state.log.slice(-40).forEach(l=>{ html += '<div class="lg-'+l.c+'">'+l.t+'</div>'; });
+  (function(){
+    const lines = state.log.slice(-40);
+    let i=0;
+    while(i<lines.length){
+      const l = lines[i];
+      if(/摸\s*\d+\s*张/.test(l.t)){
+        let j=i, total=0, cnt=0; const raw=[];
+        while(j<lines.length && /摸\s*\d+\s*张/.test(lines[j].t)){
+          const m = lines[j].t.match(/摸\s*(\d+)\s*张/); if(m) total += (+m[1]); cnt++; raw.push(lines[j].t); j++;
+        }
+        const txt = cnt>1 ? ('摸牌 ×'+cnt+'（共 '+total+' 张）') : lines[i].t;
+        html += '<div class="lg-fold" title="'+raw.join(' ｜ ').replace(/"/g,'&quot;')+'">'+txt+'</div>';
+        i=j;
+      } else {
+        html += '<div class="lg-'+l.c+'">'+l.t+'</div>'; i++;
+      }
+    }
+  })();
   html +=   '</div></div>';
 
   html += '</div>';
@@ -5059,11 +5682,21 @@ function showCharBrief(key){
   const sparks = [[12,8,0],[78,6,1.1],[30,10,2.0],[62,7,2.9],[48,9,1.6],[88,5,.6],[6,6,3.4]]
     .map(s=>'<span class="portrait-spark" style="left:'+s[0]+'%;top:'+s[1]+'%;'
         + 'width:'+(5+s[0]%4)+'px;height:'+(5+s[0]%4)+'px;animation-delay:'+s[2]+'s"></span>').join('');
+  const sealChar = (c.name || key || '').charAt(0) || '人';
+  const inkLayer =
+    '<div class="brief-ink" aria-hidden="true">'
+    + '<svg viewBox="0 0 320 420" preserveAspectRatio="none">'
+    +   '<path class="bi-brush" d="M24 78 C 90 48, 170 110, 250 62 S 300 90, 298 120" />'
+    +   '<path class="bi-dry" d="M40 360 C 120 320, 200 380, 286 340" />'
+    + '</svg>'
+    + '<div class="bi-seal" style="--bcol:'+col+'"><div class="bi-box">'+sealChar+'</div></div>'
+    + '</div>';
   const portrait =
     '<div class="brief-portrait">'
     + '<div class="portrait-aura"></div><div class="portrait-halo"></div><div class="portrait-halo inner"></div>'
     + sparks + '<div class="portrait-glow"></div>'
     + '<img class="portrait-img" src="art/'+key+'.png" alt="'+c.name+'" onerror="this.style.display=\'none\'">'
+    + inkLayer
     + '<div class="portrait-mirror"></div><div class="portrait-ring"></div>'
     + '<div class="pm-badges">'
       + '<span class="badge badge-fac" style="color:'+col+'">'+c.faction+'</span>'
@@ -5140,6 +5773,15 @@ function showCharBrief(key){
   m.onclick = e=>{ if(e.target === m) closeModal(); };
   m.style.display='flex';
   lockBody(true);
+  /* 笔锋入卷：下一帧再挂类，保证 clip-path/描边动画从头播 */
+  try{
+    const boxEl = m.querySelector ? m.querySelector('.brief-modal') : null;
+    if(boxEl && boxEl.classList){
+      requestAnimationFrame(function(){
+        try{ boxEl.classList.add('ink-in'); }catch(e){}
+      });
+    }
+  }catch(e){}
 }
 
 /* 弹窗统一开关：打开时锁整页滚动，关闭时解锁 */

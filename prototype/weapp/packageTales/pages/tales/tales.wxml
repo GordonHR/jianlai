@@ -1,0 +1,57 @@
+<view class="tales-page">
+  <view class="tales-top">
+    <view class="tales-back" bindtap="goBack">‹</view>
+    <text class="tales-top-title">戏 里 戏 外</text>
+  </view>
+  <view class="cx-tip">原著中的小故事 · 取《剑来》本意，不杜撰情节</view>
+  <view class="cx-tales">
+    <view wx:for="{{tales}}" wx:key="id" class="cx-tale" bindtap="openTale" data-id="{{item.id}}">
+      <!-- 图作整卡背景（非独立左图区）；卡片固定高度 -->
+      <image class="cx-tale-bg" src="{{item.img}}" mode="aspectFill"/>
+      <view class="cx-tale-shade"></view>
+      <view class="cx-tale-body">
+        <view class="cx-tl">{{item.title}}</view>
+        <view class="cx-tmeta">
+          <text class="cx-mchip">{{item.era}}</text>
+          <text class="cx-mchip">{{item.place}}</text>
+        </view>
+        <view class="cx-tlead">{{item.lead}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 详情对齐人物志：配图铺顶（文档流）+ 信息卡上滑；整页滚动，介绍可滑上去 -->
+  <scroll-view wx:if="{{selTale}}" scroll-y class="tale-full {{collapsed?'collapsed':''}}" bindscroll="onScroll">
+    <view wx:if="{{collapsed}}" class="tale-mini">
+      <view class="tale-mini-back" catchtap="close">‹</view>
+      <image class="tale-mini-img" src="{{selTale.img}}" mode="aspectFill"/>
+      <view class="tale-mini-name">{{selTale.title}}</view>
+    </view>
+    <view class="tale-hero">
+      <image class="tale-full-bg" src="{{selTale.img}}" mode="aspectFill"/>
+      <view class="tale-full-shade"></view>
+      <view class="tale-full-back" catchtap="close">✕</view>
+      <view class="tale-full-head">
+        <view class="tale-full-title">{{selTale.title}}</view>
+        <view class="cx-tmeta tale-full-meta">
+          <text class="cx-mchip">{{selTale.era}}</text>
+          <text class="cx-mchip">{{selTale.place}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="tale-full-sheet">
+      <view class="cx-tpeople">
+        <text wx:for="{{selTale.people}}" wx:for-item="p" wx:key="*this" class="cx-pchip">{{p}}</text>
+      </view>
+      <view class="cx-tlead tale-full-lead">{{selTale.lead}}</view>
+      <view class="cx-sec">— 故 事 —</view>
+      <view wx:for="{{selTale.beats}}" wx:for-item="b" wx:key="t" class="cx-beat">
+        <view class="cx-bt">{{b.t}}</view>
+        <view class="cx-bd">{{b.d}}</view>
+      </view>
+      <view class="cx-quote" wx:if="{{selTale.quote}}">「{{selTale.quote}}」</view>
+      <view class="cx-note" wx:if="{{selTale.note}}">{{selTale.note}}</view>
+      <view class="cx-close" bindtap="close">收 卷</view>
+    </view>
+  </scroll-view>
+</view>

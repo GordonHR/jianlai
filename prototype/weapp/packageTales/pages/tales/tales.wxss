@@ -1,0 +1,210 @@
+/* 戏里戏外 · packageTales
+ * 列表：左图右文；详情对齐人物志「配图铺顶 + 信息卡上滑」
+ * 整页滚动容器：图随内容滚走，卡片负 margin 压住图底；介绍可滑上去
+ * 不用 perspective / preserve-3d
+ */
+page { background:#14110f; color:#e8e0d2; }
+
+.tales-page {
+  padding: calc(env(safe-area-inset-top, 24px) + 72rpx) 24rpx calc(env(safe-area-inset-bottom, 20px) + 24rpx);
+  box-sizing: border-box;
+  min-height: 100vh;
+}
+.tales-top {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; gap: 16rpx;
+  margin: calc(-1 * (env(safe-area-inset-top, 24px) + 72rpx)) 0 8rpx;
+  padding: calc(env(safe-area-inset-top, 24px) + 16rpx) 8rpx 12rpx;
+  background: linear-gradient(180deg, #14110f 70%, rgba(20,17,15,0));
+  pointer-events: none;
+}
+.tales-back {
+  pointer-events: auto;
+  width: 60rpx; height: 60rpx; line-height: 56rpx; text-align: center;
+  font-size: 40rpx; color: #e8e0d2;
+  background: rgba(20,17,15,.35); border: 1rpx solid rgba(232,224,210,.28);
+  border-radius: 50%;
+}
+.tales-top-title {
+  pointer-events: none;
+  font-family: var(--kai, serif);
+  font-size: 28rpx; letter-spacing: 6rpx;
+  color: rgba(232,198,106,.85);
+}
+
+.cx-tip { text-align:center; font-size:20rpx; color:#6a5e4c; margin:0 0 18rpx; letter-spacing:1rpx; }
+/* 列表卡：图作整卡背景 + 固定高度
+   文案铺在下半区：标题/年代/引子占满可用高度，避免「上半空、底部挤」 */
+.cx-tales { display:flex; flex-direction:column; gap:20rpx; }
+.cx-tale {
+  position:relative; display:block;
+  height:200rpx;
+  border-radius:16rpx; overflow:hidden;
+  background:#1d1712; border:1rpx solid #3a2f23;
+  box-sizing:border-box;
+}
+.cx-tale-bg {
+  position:absolute; left:0; top:0; width:100%; height:100%;
+  background:#2a2118;
+}
+.cx-tale-shade {
+  position:absolute; left:0; right:0; top:0; bottom:0; pointer-events:none;
+  background:linear-gradient(180deg,
+    rgba(20,17,15,.12) 0%,
+    rgba(20,17,15,.28) 28%,
+    rgba(20,17,15,.62) 52%,
+    rgba(20,17,15,.88) 78%,
+    rgba(20,17,15,.94) 100%);
+}
+.cx-tale-body {
+  position:absolute; left:0; right:0; top:0; bottom:0; z-index:2;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  padding:20rpx 28rpx 22rpx; box-sizing:border-box;
+}
+.cx-tl {
+  font-size:32rpx; font-weight:bold; color:#f2e8d5;
+  line-height:1.3; margin-bottom:10rpx;
+  text-shadow:0 2rpx 8rpx rgba(0,0,0,.55);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.cx-tmeta { display:flex; flex-wrap:nowrap; gap:8rpx; margin-bottom:10rpx; overflow:hidden; }
+.cx-mchip {
+  font-size:18rpx; color:#e0d6c2; background:rgba(36,28,16,.78);
+  border:1rpx solid rgba(74,58,29,.9); border-radius:8rpx;
+  padding:4rpx 12rpx; flex:none; max-width:48%;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.cx-tlead {
+  font-size:22rpx; color:#f0e6d4; font-style:normal; line-height:1.55;
+  margin:0;
+  display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2;
+  overflow:hidden;
+}
+
+/* ========== 详情 · 人物志式「图铺顶 + 卡片上滑」整页滚动 ========== */
+.tale-full {
+  position:fixed; inset:0; z-index:100;
+  width:100%; height:100%;
+  background:#14110f;
+  overflow-y:auto; -webkit-overflow-scrolling:touch;
+  animation:talePageIn .45s cubic-bezier(.2,.8,.3,1) both;
+}
+@keyframes talePageIn {
+  0%   { opacity:0; transform:translateY(4%); }
+  100% { opacity:1; transform:none; } }
+
+/* 立绘铺顶：文档流（非 absolute）——上滑时随内容滚走 */
+.tale-hero {
+  position:relative; width:100%;
+  height: calc(100vw * 2 / 3);
+  max-height: 56vh;
+  overflow:hidden; background:#2a2118;
+}
+.tale-full-bg { width:100%; height:100%; display:block; }
+.tale-full-shade {
+  position:absolute; left:0; right:0; bottom:0; height:42%; pointer-events:none;
+  background:linear-gradient(180deg, rgba(20,17,15,0) 0%, rgba(20,17,15,.5) 55%, rgba(20,17,15,.92) 100%);
+}
+.tale-full-back {
+  position:absolute; z-index:5;
+  top: calc(env(safe-area-inset-top, 24px) + 20rpx);
+  left: 28rpx;
+  width:64rpx; height:64rpx; line-height:60rpx; text-align:center;
+  font-size:32rpx; color:#e8e0d2;
+  background:rgba(20,17,15,.45);
+  border:1rpx solid rgba(232,224,210,.35); border-radius:50%;
+}
+/* 标题压在立绘底部，给信息卡留呼吸 */
+.tale-full-head {
+  position:absolute; left:36rpx; right:36rpx; bottom:72rpx; z-index:4;
+}
+.tale-full-title {
+  font-family:var(--kai, serif); font-size:42rpx; font-weight:bold; line-height:1.35;
+  color:#f2e8d5; text-shadow:0 2rpx 12rpx rgba(0,0,0,.65); letter-spacing:2rpx;
+  text-align:left;
+}
+.tale-full-meta { margin-top:12rpx; }
+
+/* 信息卡：负 margin 压住立绘底部；内距放宽，避免底部挤、中部空 */
+.tale-full-sheet {
+  position:relative; z-index:2;
+  margin:-36rpx 20rpx 40rpx;
+  border-radius:28rpx 28rpx 20rpx 20rpx;
+  background:#1a1611;
+  border:1rpx solid rgba(201,162,75,.45);
+  padding:36rpx 36rpx calc(env(safe-area-inset-bottom, 20px) + 72rpx);
+  box-sizing:border-box;
+  /* 不写 min-height：内容多长卡就多长，避免「空一段再挤一段」 */
+  box-shadow:0 -8rpx 24rpx rgba(0,0,0,.5), 0 10rpx 30rpx rgba(0,0,0,.4);
+  animation:taleSheetUp .48s cubic-bezier(.2,.8,.3,1) both;
+}
+@keyframes taleSheetUp {
+  from { transform:translateY(24rpx); opacity:0; }
+  to   { transform:translateY(0); opacity:1; } }
+
+.tale-full-lead {
+  margin:8rpx 0 20rpx; font-size:27rpx; line-height:1.85; color:#d4c9a8;
+  font-style:normal;
+}
+.cx-sec { font-size:26rpx; line-height:1.8; color:#c9a24b; margin:28rpx 0 16rpx;
+          letter-spacing:4rpx; }
+.cx-beat { margin-bottom:28rpx; }
+.cx-beat:last-of-type { margin-bottom:20rpx; }
+.cx-bt { font-size:28rpx; font-weight:bold; color:#9ed4be; margin-bottom:10rpx;
+         border-left:6rpx solid #c9a24b; padding-left:14rpx; line-height:1.4; }
+.cx-bd { font-size:27rpx; line-height:1.95; color:#cfc4ae; }
+.cx-quote {
+  font-size:27rpx; color:#e8c66a; line-height:1.85; margin:24rpx 0 8rpx;
+  padding:20rpx 24rpx; border-left:4rpx solid #c9a24b;
+  background:rgba(201,162,75,.08); border-radius:0 12rpx 12rpx 0;
+}
+.cx-note {
+  font-size:25rpx; color:#9a8f7c; line-height:1.9; margin-top:20rpx;
+  border-top:1rpx solid #2a2118; padding-top:20rpx;
+}
+.cx-close {
+  margin-top:36rpx; text-align:center; padding:22rpx;
+  border:1rpx solid rgba(201,162,75,.65); border-radius:12rpx;
+  color:#c9a24b; font-size:27rpx; letter-spacing:6rpx;
+  background:rgba(201,162,75,.06);
+}
+
+/* 滑过半个立绘后：顶部小图条（与人物志 .cx-mini 同思路，fixed 钉住） */
+.tale-mini {
+  position:fixed; top:0; left:0; right:0; z-index:6;
+  display:flex; align-items:center;
+  height: calc(env(safe-area-inset-top, 24px) + 120rpx);
+  padding: calc(env(safe-area-inset-top, 24px) + 12rpx) 24rpx 12rpx;
+  background:linear-gradient(180deg, rgba(20,17,15,.96) 0%, rgba(20,17,15,.88) 100%);
+  border-bottom:1rpx solid rgba(201,162,75,.35);
+}
+.tale-full.collapsed .tale-full-sheet {
+  padding-top: calc(env(safe-area-inset-top, 24px) + 140rpx);
+}
+.tale-mini-back {
+  flex:none; width:56rpx; height:56rpx; line-height:52rpx; text-align:center;
+  font-size:38rpx; color:#e8e0d2;
+  border:1rpx solid rgba(232,224,210,.35); border-radius:50%;
+  margin-right:16rpx;
+}
+.tale-mini-img {
+  flex:none; width:100rpx; height:68rpx; border-radius:8rpx;
+  border:1rpx solid rgba(201,162,75,.5); background:#2a2118;
+}
+.tale-mini-name {
+  flex:1; margin-left:18rpx; font-size:28rpx; font-weight:bold; color:#f2e8d5;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+
+.tale-full-lead { margin:4rpx 0 8rpx; font-size:26rpx; line-height:1.85; color:#c9b98f; font-style:italic; }
+.cx-sec { font-size:27rpx; line-height:1.8; color:#e8e0d2; margin-top:18rpx; }
+.cx-beat { margin-bottom:20rpx; }
+.cx-bt { font-size:27rpx; font-weight:bold; color:#9ed4be; margin-bottom:8rpx;
+         border-left:6rpx solid #c9a24b; padding-left:12rpx; }
+.cx-bd { font-size:26rpx; line-height:1.9; color:#b8ac98; }
+.cx-quote { font-size:26rpx; color:#e8c66a; line-height:1.9; margin:16rpx 0; padding:16rpx 20rpx;
+            border-left:4rpx solid #c9a24b; background:rgba(201,162,75,.06); border-radius:0 10rpx 10rpx 0; }
+.cx-note { font-size:25rpx; color:#8a7e6c; line-height:1.9; margin-top:10rpx;
+           border-top:1rpx solid #2a2118; padding-top:16rpx; }
+.cx-close { margin-top:28rpx; text-align:center; padding:18rpx; border:1rpx solid #c9a24b;
+            border-radius:12rpx; color:#c9a24b; font-size:26rpx; letter-spacing:4rpx; }

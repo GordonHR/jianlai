@@ -1,4 +1,4 @@
-﻿# 剑来项目 · 长期约定
+# 剑来项目 · 长期约定
 > 只存跨会话铁律；当日细节见 `YYYY-MM-DD.md`
 
 ## 0. 硬约束（微信小程序分包）
@@ -29,15 +29,28 @@
 - `state.phase`/`state.tphase` 不混用；endTurn→advanceTurn 不 await；伤害唯一源 `swordDamage`；外部技能入口 `skillsOf`；调数值前跑≥40局A/B。
 - **常驻门禁12项**（`prototype/` 下 `_sc_keys`/`_sc_smoke`/`_sc_battle`/`_narr_smoke`/`_pf_smoke`/`_pf_int`/`_lq_smoke`/`_map_verify`/`_wx_size_guard`/`_port_ref_guard`/`_dual_const_guard` + `weapp/_selftest.cjs`）。⚠️ 旧 `_wx_probe`/`_pc_combo` 全库不存在（幻觉名单）。**统一入口 `prototype/regress.cjs`**（编排全部12项、写 `_regress_report.txt`、任一失败退出码1、`--list` 仅列清单）；子进程复用 `process.execPath`。**发布前必跑 `node prototype/regress.cjs`**。
 - `_narr_smoke.cjs` 的 shenci 路径已随分包重构更正：`weapp/utils/shenci.js` → `weapp/packageShui/utils/shenci.js`（第14行 require + 第147行 evalBlock 两处）。
+- **天象机制（B，2026-09-18 落地 PC端 `game.js`，weapp 待授权）**：开局 `rollTianxiang()` 从固定 6 池（风起/月晦/清明/雷泽/大雾/太平）抽 1 张存 `state.tianxiang`，全局生效、双方同受、整局不变。四注入点：① `beginTurn` 风起=每回合行棋者多摸 1 张；② `judgePhase` 月晦判定 -1 / 清明 +1（`txJudgeAdj`）；③ `swordDamage` 雷泽伤害 +1 / 大雾 -1（最低 0，`txDamageAdj`，并写进 `resolveAttack` 的 `_parts` 伤害分解）；④ 顶栏加「天象 · <名>」徽标（tooltip=desc）。**命名铁律**：原著「天时/地利/人和」= 十四境合道三条途径，概念撞车故战斗环境机制只能叫「天象」，禁叫"天时"。
+- **讲道理深化（D，同轮落地 PC端 `game.js`）**：在 `judgePhase` 内，拥有 `judge` 技能者当 `jp<阈值 且 弃最高手牌可翻盘` 时，可主动弃 1 张手牌「讲道理」、其点数计入判定（把被动概率升级为主动投入，**不另起"暗牌比点数"第二套规则**，复用现有 judge 链 + ask UI）；AI 自动弃最高牌、人类弹窗可跳过。验证：`node prototype/regress.cjs` 12/12 PASS（`_sc_battle` 30 局 AI 自走证天象随机 + 讲道理 AI-spend 无 hang/无回归）。
+- **PC 对战 UI 收尾（2026-09-20，仅 PC端 `game.js`/`index.html`，weapp 未 port）**：① `statusStripHtml` 补 **禁攻**（受害方 `state.players` 反查 `noDodgeFrom.has(p.id)`→"不得守心"）+ **嘲讽**（`hasK(p,'taunt')` 常驻→"须先过其关"）；`index.html` 给 `.ss-chip` 加 `ssIn` 进场动画（进出场）。② 战报降噪：渲染时把连续 `摸\s*\d+\s*张` 行折叠成「摸牌 ×k（共 N 张）」，原始行进 `title` 悬停，非摸牌行不动。③ 伤害构成 chips：把 `resolveAttack` 的 `_parts`「名 +N」文本转 `.dmg-chip` span（`dmgChipColor` 配色：气势/天道势压/雷泽/大雾/本命飞剑/齐心/问剑/托月）。④ **技能常驻徽记**：`skillFx` 记录唯一触发名（`s.n` 或 fx 类型映射：sword→剑气…）入 `p._triggered`；`beginTurn` 清所有玩家 `_triggered`，只让当前行棋者累计；`statusStripHtml` 渲染独立「本回合 · 技 法」条（`.ss-chip.sk` 金描边）。验证：`node prototype/regress.cjs` 12/12 PASS。**这些是从"他"提的 5 条 UI 建议里挑出的 PC 零风险项；旗舰主动技画意加强（PC 润色）已于 2026-09-20 落地（`flagshipInk` 全屏水墨一笔+朱印落款，挂 `useSkillCore` 6 个旗舰出招分支+`isFlagship` 保险，vm 无 DOM 时 return 不崩溃），仅剩"小程序印章舞台（需授权）"未做**。
 
 ## 3. 叙事/经营模块
 sect(6幕/54选/17结局)、shenci(48旬/ap3/五维)、baofuzhai(跨模块闭环)、wushipai(80面)、profile(行迹录)、tales(戏里戏外)。
+
+## 3b. 人物志 · 银幕点映（PC only，2026-09-20）
+- **入口**：`openCodex` → `codexIntroMode()`（`jianlai_codex_intro_v1`：无=full，有=short；`prefers-reduced-motion`=skip）。
+- **完整片头**：熄灯 → **三行交替全量轮映**（`allCodexKeys()`=codexSort 全 CHARS，约 136 key 均分 3 行；行0/2 向右、行1 向左）→ 定格海报 → 题字 → 落墙。
+- **流畅轮映**：每行只挂 9 格 DOM，**rAF + translate3d** 位移；越界时只回收 1 格并换图（禁止整行刷 src）；图源优先 `art/_mq/<key>.jpg`（Pillow 缩略图 184×276 q72，约 11KB/张，共 109 张），`onerror` 回退原图；换图走 `new Image()` 解码成功再上屏。beam 时长≈`maxRow*slotMs`，slotMs=`clamp(140,320,8000/maxRow)`。
+- **实现**：`game.js` `playCodexIntro/startCodexMarquee/endCodexIntro/allCodexKeys/splitCodexCastRows/codexArtUrl`；CSS/`#codexIntro` 在 `index.html`。标题旁「重播片头」。
+- **跳过**：0.5s 后点击可跳过；复访只做栅格落墙。weapp **未 port**。
+- **验证**：`_codex_intro_smoke.cjs` 全 PASS（136 keys / 27 DOM cells / r-ltr+rtl）；无头截图三行缩略图在卷帘中可见。
+- **坑**：① 用大图 PNG 做卷帘必卡 → 必须走 `_mq` 缩略图；② setTimeout 步进+整行换 src 会掉帧 → rAF+单格回收；③ title 相位 freeze 要压暗下移；④ `game.js?v=` 需 bump。
 
 ## 4. 交互
 只呈现选择本身不剧透后果；禁用态不降整块 opacity；标题疏排主菜单卡片只用 `letter-spacing`。
 
 ## 5. 配图
-符箓/云篆须真符箓体例（黄纸·云篆·符头符胆符脚·朱砂·朱印）；ImageGen 1024²→`_fulu_process.py` 去水印转 jpg q88；山水祠新图 1408×704 q88；手机图≤12KB。
+- 符箓/云篆须真符箓体例（黄纸·云篆·符头符胆符脚·朱砂·朱印）；ImageGen 1024²→`_fulu_process.py` 去水印转 jpg q88；山水祠新图 1408×704 q88；手机图≤12KB。
+- **戏里戏外配图 + 独立分包 `packageTales`（2026-09-20，用户改此前「不配图」决策）**：27 则各一张开场同风格电影感夜景（1536×1024）。PC：`prototype/assets/tales/<id>.jpg` q88；小程序：`packageTales/assets/tales/<id>.jpg` 宽750、单张≤40KB（`_tales_process.py`）。数据仍在主包 `utils/tales.js`，图路径渲染层拼包前缀 `/packageTales/assets/tales/`。入口：`title.js goTales`→`/packageTales/pages/tales/tales`；`packageArt/codex` 人物志不动，旧 `mode=tales` 纯文字卷轴保留兜底。**packageArt 已 92%，禁止再塞图**。
 
 ## 6. 踩坑（沙箱/环境）
 - PowerShell stdout 常被吞→一切输出写文件再 Read；`2>`/`Out-File` 可能写 UTF-16→python 内 `open(...,encoding='utf-8')` 自写；`Add-Type` 被安全策略拦截。

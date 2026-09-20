@@ -1,5 +1,10 @@
 <view class="codex">
-  <!-- 标题与返回由顶部导航栏承担，页内不再重复 -->
+  <!-- 自定义顶部条（页面 navigationStyle:custom，系统导航不再渲染）：仅列表态显示，详情/故事弹框打开时不渲染 -->
+  <view class="cx-nav" wx:if="{{!sel && !selTale}}">
+    <view class="cx-nav-back" bindtap="back">‹</view>
+    <view class="cx-nav-title">{{tab==='tales' ? '戏里戏外' : '人物志'}}</view>
+    <view class="cx-nav-ph"></view>
+  </view>
 
   <!-- 人物志 -->
   <block wx:if="{{tab==='chars'}}">
@@ -37,25 +42,35 @@
     </view>
   </block>
 
-  <!-- 人物详情 -->
+  <!-- 人物详情：全屏「立绘铺顶 + 信息卡上滑」版式（戏里戏外仍用卷轴版式） -->
   <view wx:if="{{sel}}" class="cx-mask" bindtap="close">
-    <view class="cx-detail" catchtap="noop">
-      <view class="cx-river"></view>
-      <view class="seal-tl">剑来</view><view class="seal-br">人物</view>
-      <view class="cx-dport">
-        <text wx:if="{{!sel.art}}" class="cx-initial big" style="color:{{sel.col}}">剑来</text>
-        <image wx:else src="{{sel.art}}" class="cx-dimg" mode="aspectFill"/>
+    <scroll-view scroll-y class="cx-detail cx-char {{collapsed?'collapsed':''}}" style="{{sel.art ? 'background-image:url(' + sel.art + ')' : ''}}" catchtap="noop" bindscroll="onScroll">
+      <!-- 折叠后的顶部小头像条：滑过半个立绘高度后固定于此 -->
+      <view wx:if="{{collapsed}}" class="cx-mini">
+        <view class="cx-mini-back" catchtap="close">‹</view>
+        <image wx:if="{{sel.art}}" src="{{sel.art}}" class="cx-mini-img" mode="aspectFill"/>
+        <view class="cx-mini-name">{{sel.name}}</view>
       </view>
-      <view class="cx-dname" style="color:{{sel.col}}">{{sel.name}}</view>
-      <view class="cx-dpos">{{sel.pos}}</view>
-      <view class="cx-dline">
-        <text class="cx-k">阵营</text><text style="color:{{sel.col}}">{{sel.faction}}</text>
-        <text class="cx-k">境</text>{{sel.realm}}
-        <text class="cx-k">气血</text>{{sel.hp}}
+      <view class="cx-hero">
+        <image wx:if="{{sel.art}}" src="{{sel.art}}" class="cx-hero-img" mode="aspectFill"/>
+        <view wx:else class="cx-hero-fb" style="color:{{sel.col}}">剑来</view>
+        <view class="cx-hero-shade"></view>
+        <view class="seal-tl">剑来</view>
+        <view class="cx-hero-back" catchtap="close">‹</view>
+        <view class="cx-hero-head">
+          <view class="cx-dname">{{sel.name}}</view>
+          <view class="cx-dpos" wx:if="{{sel.pos}}">{{sel.pos}}</view>
+        </view>
       </view>
-      <view class="cx-dline" wx:if="{{sel.sect}}">
-        <text class="cx-k">宗门</text><text style="color:#c9a24b">{{sel.sect}}</text>
-      </view>
+      <view class="cx-sheet">
+        <view class="cx-dline">
+          <text class="cx-k">阵营</text><text style="color:{{sel.col}}">{{sel.faction}}</text>
+          <text class="cx-k">境</text>{{sel.realm}}
+          <text class="cx-k">气血</text>{{sel.hp}}
+        </view>
+        <view class="cx-dline" wx:if="{{sel.sect}}">
+          <text class="cx-k">宗门</text><text style="color:#c9a24b">{{sel.sect}}</text>
+        </view>
       <view class="cx-sec" wx:if="{{sel.skills.length}}">【本命神通】 {{sel.skills}}</view>
       <view class="cx-sec" wx:if="{{sel.intro}}">{{sel.intro}}</view>
       <view class="cx-sec" wx:if="{{sel.look.length}}">— 形 貌 —</view>
@@ -86,8 +101,10 @@
       </block>
       <view class="cx-sec" wx:if="{{sel.verdict}}">— 评 —</view>
       <view class="cx-verdict" wx:if="{{sel.verdict}}">{{sel.verdict}}</view>
+      <view class="seal-br">人物</view>
       <view class="cx-close" bindtap="close">收 卷</view>
-    </view>
+      </view>
+    </scroll-view>
   </view>
 
   <!-- 戏里戏外 · 故事详情 = 展开画卷：圆木画轴 + 光阴长河 + 顶/底淡出 mask 提示滚动边界。

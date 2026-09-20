@@ -6,6 +6,12 @@ const dir = __dirname;
 const files = ['briefs.js', 'figfx.js', 'juice.js', 'game.js', 'sect.js', 'shenci.js', 'tales.js', 'wushipai.js'];
 let src = '';
 files.forEach(f => { src += fs.readFileSync(path.join(dir, f), 'utf8') + '\n;\n'; });
+/* VM 内无 require：提前在 Node 侧读出 packageTales 导航样式，注入断言 */
+let __talesNavStyle = 'missing';
+try {
+  const _pj = JSON.parse(fs.readFileSync(path.join(dir, 'weapp', 'packageTales', 'pages', 'tales', 'tales.json'), 'utf8'));
+  __talesNavStyle = _pj.navigationStyle || '';
+} catch (e) { __talesNavStyle = 'missing'; }
 
 const stub = `
 var __els = {};
@@ -174,28 +180,44 @@ T('12 不剧透纪律 · 选项须有后果但不得外挂提示字段', functio
   if(bad.length) throw new Error('存在剧透字段: ' + bad.slice(0,6).join(' | '));
 });
 
-T('13 戏里戏外 · 故事画卷外壳结构（tale-scroll/轴/印/光阴长河）', function(){
+T('13 戏里戏外 · 详情=人物志式图铺顶+信息卡上滑（整页滚动）', function(){
   state = { phase:'codex', mode:'codex', sel:[], filter:'全部', q:'', log:[], codexTab:'tales', selTale:'yanghuan' };
   render();
   var h = app.innerHTML;
-  if(h.indexOf('class="tale-scroll"') < 0) throw new Error('缺画卷外壳 tale-scroll');
-  if(h.indexOf('class="tale-axis left"') < 0 || h.indexOf('class="tale-axis right"') < 0) throw new Error('缺卷轴金线');
-  if(h.indexOf('class="tale-seal-tl">剑来') < 0 || h.indexOf('class="tale-seal-br">戏外') < 0) throw new Error('缺朱印');
-  if(h.indexOf('class="cx-quote"') < 0 || h.indexOf('onclick="showTale(null)"') < 0) throw new Error('缺引句/收卷');
+  if(h.indexOf('class="tale-full"') < 0) throw new Error('缺全屏外壳 tale-full');
+  if(h.indexOf('class="tale-hero"') < 0) throw new Error('缺立绘区 tale-hero（文档流铺顶）');
+  if(h.indexOf('class="tale-full-bg"') < 0) throw new Error('缺配图 tale-full-bg');
+  if(h.indexOf('class="tale-full-sheet"') < 0) throw new Error('缺信息卡 tale-full-sheet');
+  if(h.indexOf('class="tale-full-head"') < 0) throw new Error('缺压图标题区 tale-full-head');
+  if(h.indexOf('showTale(null)') < 0) throw new Error('缺关闭入口');
+  if(h.indexOf('class="cx-quote"') < 0) throw new Error('缺引句');
+  if(h.indexOf('class="tale-scroll"') >= 0) throw new Error('仍残留旧画卷弹框 tale-scroll');
+  if(h.indexOf('tale-full-brand') >= 0) throw new Error('详情仍带顶栏题字 tale-full-brand');
+  /* 整页滚动 + 卡片负 margin：CSS 侧对齐人物志 .cx-sheet 思路 */
+  if(cssText.indexOf('.tale-hero') < 0) throw new Error('缺 .tale-hero 样式');
+  if(cssText.indexOf('.tale-full-sheet') < 0) throw new Error('缺 .tale-full-sheet 样式');
+  if(!/margin\s*:\s*-/.test(cssText.split('.tale-full-sheet')[1] || '')) throw new Error('信息卡应为负 margin 压住立绘底部');
+  if(cssText.indexOf('overflow-y:auto') < 0) throw new Error('详情容器应整页 overflow-y:auto 可滚');
+  if(typeof __talesNavStyle === 'undefined' || __talesNavStyle !== 'custom') throw new Error('tales.json 应为 navigationStyle:custom，实际 ' + __talesNavStyle);
   if(typeof TALES === 'undefined' || TALES.length < 9) throw new Error('TALES 数量异常: ' + (TALES?TALES.length:'undefined'));
 });
+
 
 T('14 戏里戏外 · 全部故事均可开卷不崩', function(){
   state.codexTab = 'tales';
   for(var i=0;i<TALES.length;i++){
     state.selTale = TALES[i].id; render();
-    if(app.innerHTML.indexOf('tale-scroll') < 0) throw new Error('故事无法开卷: ' + TALES[i].id);
+    if(app.innerHTML.indexOf('tale-full') < 0) throw new Error('故事无法开卷: ' + TALES[i].id);
+    if(app.innerHTML.indexOf('tale-full-sheet') < 0) throw new Error('开卷缺内容卡: ' + TALES[i].id);
   }
 });
 
 T('15 戏里戏外 · 收卷返回列表', function(){
   state.selTale = null; render();
-  if(app.innerHTML.indexOf('细 看') < 0) throw new Error('收卷后未见列表');
+  var h = app.innerHTML;
+  if(h.indexOf('class="tale-full"') >= 0) throw new Error('收卷后详情未关闭');
+  if(h.indexOf('cx-tale') < 0) throw new Error('收卷后未见列表卡片');
+  if(h.indexOf('原著中的小故事') < 0) throw new Error('收卷后未见列表提示');
 });
 
 T('16 旬中转页 · 账本六行且逐行带图标', function(){
@@ -266,21 +288,24 @@ T('19 无事牌 · 顶部栏已撤 + 80 张 + 模糊立绘 + 底部纹路 + 无�
   if(cssText.indexOf('wspSheen') < 0) throw new Error('缺斜光影横扫动画 wspSheen');
 });
 
-T('20 画卷 · 蒙版后的流动光影且无晃动', function(){
+T('20 画卷 · 全屏图上滑动画且无晃动/无透视劫持', function(){
   state = { phase:'codex', mode:'codex', sel:[], filter:'全部', q:'', log:[],
             codexTab:'tales', selTale: TALES[0].id };
   render();
   var h = app.innerHTML;
-  if(h.indexOf('class="tale-river"') < 0) throw new Error('缺光阴长河层');
-  if(h.indexOf('tr-glow') < 0) throw new Error('缺柔光层 tr-glow');
-  /* 线条水波平铺在 tile 接缝处是硬折角（用户反馈"波纹很不连续"），已换柔光光斑 */
-  if(h.indexOf('tr-waves') >= 0) throw new Error('仍存在线条水波 tr-waves');
+  if(h.indexOf('class="tale-full"') < 0) throw new Error('缺全屏详情外壳');
+  if(h.indexOf('tale-full-bg') < 0) throw new Error('缺全屏底图节点');
+  if(h.indexOf('tale-full-sheet') < 0) throw new Error('缺底部上滑内容卡');
   if(h.indexOf('taleSway') >= 0) throw new Error('仍存在左右晃动 taleSway');
-  if(h.indexOf('riverFlow') >= 0) throw new Error('仍存在直直的光束 riverFlow');
-  /* CSS 侧：两处画轴（戏里戏外 / 人物志）都必须是柔光平铺 + 无缝循环 */
-  if(cssText.indexOf('@keyframes trDriftA') < 0) throw new Error('缺戏里戏外柔光漂移动画 trDriftA');
+  if(h.indexOf('class="tale-scroll"') >= 0) throw new Error('仍渲染旧画卷弹框 tale-scroll');
+  /* 新版式：图淡入 + 内容卡上滑；perspective/preserve-3d 会劫持 touchmove，禁用 */
+  if(cssText.indexOf('@keyframes taleSheetUp') < 0) throw new Error('缺底部上滑动画 taleSheetUp');
+  if(cssText.indexOf('@keyframes taleBgIn') < 0) throw new Error('缺底图淡入动画 taleBgIn');
+  if(cssText.indexOf('.tale-full-sheet') < 0) throw new Error('缺 .tale-full-sheet 样式');
+  if(/tale-full[^{]*\{[^}]*perspective/.test(cssText)) throw new Error('tale-full 使用了 perspective（会劫持 touchmove）');
+  if(/tale-full[^{]*\{[^}]*preserve-3d/.test(cssText)) throw new Error('tale-full 使用了 preserve-3d（会劫持 touchmove）');
+  /* 人物志画轴柔光仍保留（另一模块） */
   if(cssText.indexOf('@keyframes briefRiverDrift') < 0) throw new Error('缺人物志画轴柔光漂移动画 briefRiverDrift');
-  if(cssText.indexOf('tr-glow') < 0) throw new Error('缺 .tr-glow 柔光层样式');
   if(cssText.indexOf('riverFlow2') >= 0) throw new Error('仍残留已废弃的 riverFlow2 关键帧');
 });
 
@@ -393,7 +418,7 @@ globalThis.__SMOKE = LOG;
 `;
 
 const cssText = fs.readFileSync(path.join(dir, 'index.html'), 'utf8');
-const ctx = vm.createContext({ console, Math, Date, JSON, parseInt, parseFloat, isNaN, String, Number, Array, Object, RegExp, Error, cssText });
+const ctx = vm.createContext({ console, Math, Date, JSON, parseInt, parseFloat, isNaN, String, Number, Array, Object, RegExp, Error, cssText, __talesNavStyle });
 try {
   vm.runInContext(stub + '\n' + src + '\n' + drv, ctx, { timeout: 120000 });
 } catch (e) {

@@ -1,34 +1,45 @@
 <view class="title-screen">
-  <!-- 开场：底层剑来始终在 · 立绘单页向左合上 · 随合页逐渐清晰 -->
+  <!-- 开场 v3：少年 → 拉开全局 → 轻推回少年 → 书法 -->
   <view class="op" wx:if="{{opShow}}" catchtouchmove="noop">
-    <view class="op-bg"></view>
-
-    <view class="op-book">
-      <view class="op-spine"></view>
-
-      <!-- 书页栈：左缘固定，右缘向后合页 -->
-      <view
-        wx:for="{{opPages}}"
-        wx:key="id"
-        class="op-page {{item.anim}}"
-        style="z-index:{{item.z}}"
-      >
-        <image class="op-img" src="{{item.src}}" mode="aspectFill"/>
-        <view class="op-page-shade"></view>
-      </view>
+    <!-- 单张大图：小镇+镇外+背剑少年，运镜全在图上 -->
+    <view class="op-stage {{phase}}">
+      <image class="op-bgimg" src="/assets/opening/bg-ink.jpg" mode="aspectFill"/>
     </view>
 
-    <!-- 「剑来」全程在场：叠在书页上方，随合页由糊变清 -->
-    <view class="op-logo-layer">
-      <image class="op-logo-img {{logoClass}}" src="/assets/opening/calligraphy.png" mode="aspectFit"/>
-      <image class="op-sc {{logoClass}}" src="/assets/opening/seal-sc.png" mode="aspectFit"/>
+    <view class="op-vig"></view>
+
+    <!-- 光影层：镇门呼吸 / 山道光线 / 体积光 / 流雾 -->
+    <view class="op-light">
+      <view class="op-gate-glow"></view>
+      <view class="op-path-ray"></view>
+      <view class="op-ray a"></view>
+      <view class="op-ray b"></view>
+      <view class="op-ray c"></view>
+      <view class="op-fog f1"></view>
+      <view class="op-fog f2"></view>
+      <view class="op-fog f3"></view>
     </view>
 
-    <view class="op-flash {{opFlash}}"></view>
+    <!-- 聚焦少年后：衣摆 / 剑身微光 / 足下雾（无全屏剑光） -->
+    <view class="op-youthfx {{phase}}">
+      <view class="yf-robe r1"></view>
+      <view class="yf-robe r2"></view>
+      <view class="yf-robe r3"></view>
+      <view class="yf-mist m1"></view>
+      <view class="yf-mist m2"></view>
+      <view class="yf-mist m3"></view>
+    </view>
 
-    <!-- 收束按钮（书法已由底层露出） -->
-    <view class="op-finbar" wx:if="{{opFin}}">
-      <view class="op-btn {{opEnter?'on':''}}" catchtap="opEnter">开始问剑</view>
+    <!-- 拉开时极淡暖光，不是斩击 -->
+    <view class="op-breathe {{phase}}"></view>
+
+    <view class="op-title {{phase}}">
+      <image class="op-logo-img" src="/assets/opening/calligraphy.png" mode="aspectFit"/>
+      <image class="op-sc" src="/assets/opening/seal-sc.png" mode="aspectFit"/>
+    </view>
+
+    <view class="op-finbar" wx:if="{{enterOn}}">
+      <view class="op-btn on" catchtap="opEnter">开始问剑</view>
     </view>
   </view>
 

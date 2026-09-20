@@ -3,438 +3,237 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="theme-color" content="#0c0a08"/>
-<title>剑来 · 开场</title>
+<title>剑来 · 起剑运镜</title>
 <style>
-:root{
-  --bg:#0c0a08;--paper:#e8e0d2;--ink:#1a1410;
-  --gold:#e8c66a;--seal:#c23a2a;
-}
+:root{--bg:#0c0a08;--gold:#e8c66a}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);
-  font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
-  user-select:none;-webkit-user-select:none}
-#app{position:relative;width:100%;height:100%;overflow:hidden}
-#stage{position:absolute;inset:0;perspective:1300px;perspective-origin:50% 46%}
-#inkBg{position:absolute;inset:0;background:
-  radial-gradient(ellipse 90% 70% at 50% 40%,#221810 0%,#0c0a08 70%),#0c0a08}
-#wash{position:absolute;inset:0;z-index:5;opacity:0;pointer-events:none;
-  background:radial-gradient(ellipse at center,rgba(194,58,42,.4),transparent 70%)}
-#vig{position:absolute;inset:0;z-index:40;pointer-events:none;
-  background:radial-gradient(ellipse at center,transparent 34%,rgba(0,0,0,.78) 100%)}
-#grain{position:absolute;inset:0;z-index:41;pointer-events:none;opacity:.07;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size:180px 180px;mix-blend-mode:overlay}
-#flash{position:absolute;inset:0;z-index:50;opacity:0;pointer-events:none;background:#fff}
-#swoosh{position:absolute;inset:0;z-index:45;opacity:0;pointer-events:none;
-  background:linear-gradient(105deg,transparent 28%,rgba(232,198,106,.3) 48%,transparent 64%);
-  transform:translateX(-45%)}
-#speed{position:absolute;inset:0;z-index:6;opacity:0;pointer-events:none;
-  background:repeating-linear-gradient(90deg,transparent 0 14px,rgba(26,20,16,.06) 14px 15px);
-  mask-image:radial-gradient(ellipse at 50% 50%,transparent 30%,#000 85%)}
-
-.page{
-  position:absolute;left:50%;top:50%;
-  width:min(92vw,420px);height:min(136vw,620px);
-  transform:translate(-50%,-50%);transform-style:preserve-3d;
-  opacity:0;pointer-events:none;overflow:hidden;
-  border:3.5px solid var(--ink);background:var(--paper);
-  box-shadow:0 22px 60px rgba(0,0,0,.6);
+  font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;user-select:none}
+#app{position:relative;width:100%;height:100%;overflow:hidden;background:#0c0a08}
+#stage{position:absolute;inset:0;transform-origin:50% 50%;
+  background:#0c0a08;overflow:hidden;
+  transform:scale(1.22) translate(0,-6%);filter:brightness(.86) saturate(.96)}
+#bgimg{position:absolute;left:-10%;top:-10%;width:120%;height:120%;object-fit:cover;display:block}
+#stage.camIn{transform:scale(1.22) translate(0,-6%);filter:brightness(.86) saturate(.96)}
+#stage.camOut{animation:filmOut 2.6s cubic-bezier(.45,.08,.25,1) both}
+@keyframes filmOut{
+  0%{transform:scale(1.22) translate(0,-6%);filter:brightness(.86) saturate(.96)}
+  100%{transform:scale(1.02) translate(0,3%);filter:brightness(1) saturate(1.04)}
 }
-.page .ht{position:absolute;inset:0;z-index:3;opacity:.1;pointer-events:none;
-  background-image:radial-gradient(circle,var(--ink) .7px,transparent .8px);background-size:3.5px 3.5px}
-.pg{position:absolute;inset:9px}
-.panel{
-  position:absolute;overflow:hidden;border:2.6px solid var(--ink);
-  background:#2a241c;opacity:0;transform:scale(1.25) rotate(-2.5deg);
+#stage.camHold{transform:scale(1.02) translate(0,3%);filter:brightness(1) saturate(1.04)}
+#stage.camPush{animation:filmPush 2s cubic-bezier(.45,.08,.25,1) both}
+@keyframes filmPush{
+  0%{transform:scale(1.02) translate(0,3%);filter:brightness(1) saturate(1.04)}
+  100%{transform:scale(1.18) translate(0,-8%);filter:brightness(.9) saturate(.98)}
 }
-.panel img{width:100%;height:100%;object-fit:cover;object-position:center 14%;
-  display:block;filter:contrast(1.12) saturate(.88);transform:scale(1.06)}
-.panel .sh{position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(180deg,transparent 35%,rgba(12,10,8,.48) 100%)}
-.panel .gl{position:absolute;inset:0;pointer-events:none;opacity:0;
-  background:linear-gradient(120deg,transparent 40%,rgba(232,224,210,.35) 50%,transparent 60%)}
-/* 书页中缝 */
-.page .gutter{
-  position:absolute;left:50%;top:0;bottom:0;width:4px;margin-left:-2px;z-index:5;pointer-events:none;
-  background:linear-gradient(90deg,rgba(0,0,0,.4),rgba(232,198,106,.2) 45%,rgba(232,198,106,.2) 55%,rgba(0,0,0,.4));
-  box-shadow:0 0 12px rgba(0,0,0,.4);
-}
-.panel.show{animation:pin .18s cubic-bezier(.15,.9,.25,1) forwards}
-.panel.show .gl{animation:glint .3s .04s ease-out forwards}
-@keyframes pin{
-  0%{opacity:0;transform:scale(1.28) rotate(-3deg)}
-  70%{opacity:1;transform:scale(1.03) rotate(.5deg)}
-  100%{opacity:1;transform:scale(1) rotate(0)}
-}
-@keyframes glint{0%{opacity:0;transform:translateX(-30%)}40%{opacity:1}100%{opacity:0;transform:translateX(40%)}}
-
-  /* 合上：绕左脊，右缘向装订线收拢（不是翻开） */
-  .page.enter{animation:pageEnterShut .7s cubic-bezier(.3,.05,.25,1) forwards}
-  @keyframes pageEnterShut{
-    0%{opacity:0;transform:perspective(2000px) translateX(28%) rotateY(18deg);filter:brightness(.72)}
-    35%{opacity:1;transform:perspective(2000px) translateX(4%) rotateY(4deg);filter:brightness(.95)}
-    100%{opacity:1;transform:perspective(2000px) translateX(0) rotateY(0) scaleX(1);filter:brightness(1)}
-  }
-  .page.exL{animation:pageShut .55s cubic-bezier(.45,.02,.7,.4) forwards}
-  .page.exR{animation:pageShut .55s cubic-bezier(.45,.02,.7,.4) forwards}
-  @keyframes pageShut{
-    0%{opacity:1;transform:perspective(2000px) translateX(0) rotateY(0) scaleX(1);filter:brightness(1)}
-    40%{opacity:1;transform:perspective(2000px) translateX(-18%) rotateY(28deg) scaleX(.72);filter:brightness(.7)}
-    100%{opacity:0;transform:perspective(2000px) translateX(-55%) rotateY(72deg) scaleX(.06);filter:brightness(.2)}
-  }
-  .page.zoom{animation:bookZoom .5s ease-in-out forwards}
-  @keyframes bookZoom{
-    0%{opacity:1;transform:scale(1)}
-    100%{opacity:1;transform:scale(1.06);filter:brightness(.92)}
-  }
-  .page.peel{animation:pageShut .5s ease-in forwards}
-  .panel.show{animation:pin .36s cubic-bezier(.22,.61,.36,1) forwards}
-  .panel.show .gl{animation:glint .5s ease-out forwards}
-  @keyframes pin{
-    0%{opacity:0;transform:scale(1.04)}
-    100%{opacity:1;transform:scale(1)}
-  }
-  @keyframes glint{0%{opacity:0}40%{opacity:.3}100%{opacity:0}}
-
-#burst{position:absolute;inset:0;z-index:20;display:none;align-items:center;justify-content:center}
-#burst.on{display:flex}
-#burst .ring{
-  position:absolute;width:min(68vw,290px);height:min(68vw,290px);border-radius:50%;
-  border:1px solid rgba(232,198,106,.28);opacity:0;transform:scale(.35);
-  animation:ring .4s ease-out forwards}
-@keyframes ring{0%{opacity:.75;transform:scale(.3)}100%{opacity:0;transform:scale(1.7)}}
-#burst .fr{
-  position:relative;width:min(74vw,310px);height:min(112vw,465px);
-  border:4px solid var(--ink);outline:2px solid var(--gold);outline-offset:3px;
-  overflow:hidden;background:#14110f;
-  box-shadow:0 0 0 7px rgba(26,20,16,.55),0 0 36px rgba(232,198,106,.16),0 28px 60px rgba(0,0,0,.75);
-  opacity:0;transform:scale(1.4) rotate(-3.5deg)}
-#burst .fr.hit{animation:hit .35s cubic-bezier(.22,.61,.36,1) forwards}
-@keyframes hit{
-  0%{opacity:0;transform:scale(1.08)}
-  100%{opacity:1;transform:scale(1)}
-}
-#burst .art{width:100%;height:100%;object-fit:cover;object-position:center 12%;
-  display:block;filter:contrast(1.16) saturate(.85)}
-#burst .sl{
-  position:absolute;inset:0;opacity:0;
-  background:
-    linear-gradient(118deg,transparent 38%,rgba(232,198,106,.48) 48%,rgba(255,255,255,.22) 52%,transparent 60%),
-    linear-gradient(180deg,transparent 42%,rgba(12,10,8,.62) 100%)}
-#burst .fr.hit .sl{animation:slin .2s ease-out forwards}
-@keyframes slin{to{opacity:1}}
-#burst .stamp{
-  position:absolute;right:8px;top:8px;width:42px;height:42px;
-  opacity:0;transform:scale(1.6) rotate(-20deg)}
-#burst .fr.hit .stamp{animation:stin .16s .04s cubic-bezier(.2,1.5,.35,1) forwards}
-@keyframes stin{
-  0%{opacity:0;transform:scale(1.7) rotate(-24deg)}
-  65%{opacity:1;transform:scale(.92) rotate(-5deg)}
-  100%{opacity:1;transform:scale(1) rotate(-8deg)}
-}
-
-#fin{position:absolute;inset:0;z-index:30;display:none;align-items:center;justify-content:center;flex-direction:column;
-  background:radial-gradient(ellipse 70% 55% at 50% 48%,rgba(34,24,16,.55) 0%,rgba(12,10,8,.92) 70%),rgba(12,10,8,.35)}
-#fin.on{display:flex}
-#fin .wordmark{
-  position:relative;z-index:2;
-  width:min(56vw,240px);height:auto;max-height:48vh;
-  object-fit:contain;
-  transform:translateY(-8vh);
-  filter:drop-shadow(0 0 28px rgba(232,198,106,.4)) drop-shadow(0 8px 16px rgba(0,0,0,.5));
-  opacity:0;
-  animation:wordIn .45s cubic-bezier(.15,.9,.25,1) forwards;
-}
-@keyframes wordIn{
-  0%{opacity:0;transform:translateY(-8vh) scale(1.18)}
-  70%{opacity:1;transform:translateY(-8vh) scale(1.02)}
-  100%{opacity:1;transform:translateY(-8vh) scale(1)}
-}
-/* 左下偏下 · 水长东 */
-#fin .sc{
-  position:absolute;z-index:3;left:14%;bottom:26%;
-  width:min(14vw,64px);height:min(14vw,64px);
-  opacity:0;transform:scale(2) rotate(-22deg);
-  animation:sin .28s .2s cubic-bezier(.2,1.5,.35,1) forwards;
-  filter:drop-shadow(0 4px 10px rgba(0,0,0,.45));
-}
-@keyframes sin{
-  0%{opacity:0;transform:scale(2) rotate(-22deg)}
-  60%{opacity:1;transform:scale(.94) rotate(-6deg)}
-  100%{opacity:1;transform:scale(1) rotate(-8deg)}
-}
-#fin .splash{position:absolute;inset:0;opacity:0;pointer-events:none;
-  background:
-    radial-gradient(circle at 28% 28%,rgba(194,58,42,.22) 0%,transparent 26%),
-    radial-gradient(circle at 72% 64%,rgba(232,198,106,.12) 0%,transparent 28%);
-  animation:spin2 .35s ease-out forwards}
-@keyframes spin2{0%{opacity:0;transform:scale(.7)}100%{opacity:1;transform:scale(1)}}
-
-/* finale button only */
-#enter{
-  position:absolute;z-index:3;left:50%;
-  bottom:calc(12% + env(safe-area-inset-bottom,0px));
-  transform:translateX(-50%) translateY(12px);
-  min-width:200px;height:52px;line-height:50px;
-  border:1.5px solid var(--gold);border-radius:999px;
-  background:linear-gradient(180deg,rgba(232,198,106,.22),rgba(232,198,106,.06));
+#stage.youthFx{transform:scale(1.2) translate(0,-8%);filter:brightness(.92) saturate(1);transition:transform .9s cubic-bezier(.4,.1,.3,1),filter .9s ease}
+#stage.title,#stage.done{transform:scale(1.28) translate(0,-9%);filter:brightness(.48) saturate(.85);transition:transform 1s cubic-bezier(.4,.1,.3,1),filter 1s ease}
+.yf-backsword{position:absolute;left:50%;top:72%;width:4px;height:72px;margin-left:-18px;
+  background:linear-gradient(195deg,rgba(243,224,160,.9) 0%,rgba(232,198,106,.7) 40%,rgba(232,198,106,.2) 75%,transparent);
+  border-radius:3px;transform:rotate(-28deg);transform-origin:top center;opacity:0;z-index:9;
+  box-shadow:0 0 10px rgba(232,198,106,.4)}
+.yf-backsword::after{content:"";position:absolute;left:-7px;top:-4px;width:18px;height:8px;
+  background:rgba(232,198,106,.8);border-radius:2px;transform:rotate(8deg)}
+#youthfx.camPush .yf-backsword{opacity:.3}
+#youthfx.youthFx .yf-backsword{opacity:.85;animation:backSword 2.4s ease-in-out infinite}
+@keyframes backSword{0%,100%{opacity:.5;filter:brightness(.95)}45%{opacity:1;filter:brightness(1.2);box-shadow:0 0 14px rgba(232,198,106,.55)}}
+.op-light{position:absolute;inset:0;z-index:6;pointer-events:none;overflow:hidden}
+.op-gate-glow{position:absolute;left:52%;top:68%;width:42%;height:22%;margin-left:-14%;
+  background:radial-gradient(ellipse at center,rgba(232,198,106,.38) 0%,rgba(232,198,106,.12) 40%,transparent 70%);
+  filter:blur(18px);opacity:.55;animation:gateBreath 3.2s ease-in-out infinite}
+@keyframes gateBreath{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:.85;transform:scale(1.08)}}
+.op-path-ray{position:absolute;left:40%;top:70%;width:36%;height:3%;
+  background:linear-gradient(90deg,rgba(232,198,106,.35),rgba(243,224,160,.15) 60%,transparent);
+  filter:blur(6px);transform:rotate(28deg);transform-origin:left center;opacity:0;
+  animation:raySweep 4.5s ease-in-out infinite}
+@keyframes raySweep{0%,100%{opacity:0;transform:rotate(28deg) scaleX(.6)}35%{opacity:.7;transform:rotate(28deg) scaleX(1.1)}55%{opacity:.35;transform:rotate(28deg) scaleX(.9)}70%{opacity:0}}
+.op-ray{position:absolute;top:-10%;width:8%;height:70%;
+  background:linear-gradient(180deg,rgba(243,224,160,.08),rgba(232,198,106,.04) 40%,transparent);
+  filter:blur(12px);transform:rotate(12deg);opacity:0}
+.op-ray.a{left:22%;animation:rayDrift 5.5s ease-in-out infinite}
+.op-ray.b{left:48%;animation:rayDrift 6.5s 1.2s ease-in-out infinite;width:6%}
+.op-ray.c{left:68%;animation:rayDrift 7s 2.4s ease-in-out infinite;width:5%}
+@keyframes rayDrift{0%,100%{opacity:0;transform:rotate(12deg) translateY(0)}40%{opacity:.55;transform:rotate(10deg) translateY(20px)}60%{opacity:.3;transform:rotate(14deg) translateY(8px)}}
+.op-fog{position:absolute;left:-20%;right:-20%;height:18%;
+  background:linear-gradient(90deg,transparent,rgba(200,190,170,.08) 30%,rgba(220,210,190,.1) 50%,rgba(200,190,170,.08) 70%,transparent);
+  filter:blur(16px);opacity:.5}
+.op-fog.f1{top:42%;animation:fogMove 12s linear infinite}
+.op-fog.f2{top:58%;animation:fogMove 16s -4s linear infinite;opacity:.35;height:14%}
+.op-fog.f3{top:72%;animation:fogMove 10s -2s linear infinite;opacity:.4;height:12%}
+@keyframes fogMove{0%{transform:translateX(-8%)}50%{transform:translateX(8%)}100%{transform:translateX(-8%)}}
+.yf-rim{position:absolute;left:50%;top:70%;width:70px;height:110px;margin-left:-30px;
+  border-radius:40% 40% 30% 30%;
+  background:radial-gradient(ellipse at 30% 40%,rgba(232,198,106,.22),transparent 65%);
+  filter:blur(8px);opacity:0}
+#youthfx.youthFx .yf-rim{animation:rimPulse 2.8s ease-in-out infinite}
+@keyframes rimPulse{0%,100%{opacity:.25}50%{opacity:.65}}
+#breathe{position:absolute;inset:0;z-index:7;pointer-events:none;opacity:0;
+  background:radial-gradient(ellipse 55% 40% at 50% 62%,rgba(232,198,106,.14),transparent 70%)}
+#breathe.camOut{animation:breatheIn 2s ease-out both}
+#breathe.camPush,#breathe.youthFx{opacity:.25}
+#breathe.title,#breathe.done{opacity:0;transition:opacity .8s ease}
+@keyframes breatheIn{0%{opacity:0}40%{opacity:.85}100%{opacity:.4}}
+#youthfx{position:absolute;inset:0;z-index:8;pointer-events:none;opacity:0}
+#youthfx.camPush{opacity:.4}
+#youthfx.youthFx{opacity:1}
+#youthfx.title,#youthfx.done{opacity:.5;transition:opacity .8s ease}
+.yf-robe{position:absolute;left:50%;top:80%;width:40px;height:30px;margin-left:-8px;
+  background:linear-gradient(180deg,rgba(18,14,10,.5),rgba(18,14,10,0));border-radius:0 0 42% 42%;opacity:0;filter:blur(2px)}
+.yf-robe.r2{margin-left:6px;width:32px;height:26px;top:81%}
+.yf-robe.r3{margin-left:-22px;width:30px;height:24px;top:81.5%}
+#youthfx.youthFx .yf-robe.r1{animation:robe1 1.7s ease-in-out infinite}
+#youthfx.youthFx .yf-robe.r2{animation:robe2 2s .12s ease-in-out infinite}
+#youthfx.youthFx .yf-robe.r3{animation:robe3 2.2s .28s ease-in-out infinite}
+@keyframes robe1{0%,100%{opacity:.12;transform:translate(0,0) skewX(0) scaleX(1)}50%{opacity:.42;transform:translate(-10px,5px) skewX(-14deg) scaleX(1.18)}}
+@keyframes robe2{0%,100%{opacity:.1;transform:translate(0,0) skewX(0)}50%{opacity:.36;transform:translate(8px,4px) skewX(12deg) scaleX(1.12)}}
+@keyframes robe3{0%,100%{opacity:.08;transform:translate(0,0) rotate(0)}50%{opacity:.3;transform:translate(-6px,6px) rotate(-7deg)}}
+.yf-sword{position:absolute;left:50%;top:72%;width:5px;height:46px;margin-left:8px;
+  background:linear-gradient(200deg,rgba(232,198,106,.9),rgba(232,198,106,.12) 70%,transparent);
+  transform:rotate(24deg);transform-origin:top center;border-radius:3px;opacity:0;box-shadow:0 0 10px rgba(232,198,106,.4)}
+#youthfx.youthFx .yf-sword{animation:swordGlint 2.2s ease-in-out infinite}
+#youthfx.camPush .yf-sword{opacity:.2}
+@keyframes swordGlint{0%,100%{opacity:.2;filter:brightness(.9)}45%{opacity:.85;filter:brightness(1.25);box-shadow:0 0 18px rgba(232,198,106,.55)}}
+.yf-mist{position:absolute;left:50%;top:84%;width:56px;height:18px;margin-left:-28px;
+  background:radial-gradient(ellipse at center,rgba(220,210,190,.25),transparent 70%);filter:blur(6px);opacity:0;border-radius:50%}
+.yf-mist.m2{width:40px;margin-left:-6px;top:85%}
+.yf-mist.m3{width:46px;margin-left:-40px;top:84.5%}
+#youthfx.youthFx .yf-mist.m1{animation:mist1 2.5s ease-in-out infinite}
+#youthfx.youthFx .yf-mist.m2{animation:mist2 2.9s .35s ease-in-out infinite}
+#youthfx.youthFx .yf-mist.m3{animation:mist3 2.7s .7s ease-in-out infinite}
+@keyframes mist1{0%,100%{opacity:0;transform:translate(0,0) scale(1)}40%{opacity:.5;transform:translate(-8px,-12px) scale(1.2)}}
+@keyframes mist2{0%,100%{opacity:0;transform:translate(0,0) scale(1)}40%{opacity:.38;transform:translate(10px,-10px) scale(1.15)}}
+@keyframes mist3{0%,100%{opacity:0;transform:translate(0,0)}40%{opacity:.32;transform:translate(-4px,-14px)}}
+#vig{position:absolute;inset:0;z-index:10;pointer-events:none;
+  background:radial-gradient(ellipse 70% 55% at 50% 50%,transparent 28%,rgba(12,10,8,.35) 70%,rgba(12,10,8,.75) 100%),
+  linear-gradient(180deg,rgba(12,10,8,.25),transparent 22%,transparent 72%,rgba(12,10,8,.7))}
+#vig{position:absolute;inset:0;z-index:10;pointer-events:none;
+  background:radial-gradient(ellipse 70% 55% at 50% 50%,transparent 28%,rgba(12,10,8,.35) 70%,rgba(12,10,8,.75) 100%),
+  linear-gradient(180deg,rgba(12,10,8,.25),transparent 22%,transparent 72%,rgba(12,10,8,.7))}
+#sky{position:absolute;inset:0;background:radial-gradient(ellipse 90% 60% at 50% 30%,#1c1612 0%,#0c0a08 70%),#0c0a08}
+.ridge{position:absolute;left:-5%;right:-5%;background:#0a0806}
+.ridge.far{bottom:38%;height:28%;opacity:.55;background:linear-gradient(180deg,#1a1612,#0a0806);
+  clip-path:polygon(0% 100%,0% 70%,10% 55%,22% 68%,35% 40%,48% 62%,60% 35%,75% 58%,88% 45%,100% 65%,100% 100%)}
+.ridge.mid{bottom:28%;height:26%;opacity:.8;background:linear-gradient(180deg,#14100c,#070605);
+  clip-path:polygon(0% 100%,0% 60%,12% 48%,25% 62%,40% 30%,55% 55%,70% 38%,85% 58%,100% 42%,100% 100%)}
+.ridge.near{bottom:0;height:32%;background:#050403;
+  clip-path:polygon(0% 100%,0% 45%,15% 35%,30% 50%,45% 28%,62% 48%,80% 32%,100% 50%,100% 100%)}
+#gate{position:absolute;left:16%;bottom:30%;width:14%;height:16%;background:#050403;
+  clip-path:polygon(15% 100%,15% 48%,28% 48%,28% 28%,42% 12%,50% 4%,58% 12%,72% 28%,72% 48%,85% 48%,85% 100%);
+  box-shadow:0 0 30px rgba(232,198,106,.08)}
+#path{position:absolute;left:42%;bottom:8%;width:18%;height:28%;
+  background:linear-gradient(180deg,transparent,rgba(232,198,106,.08) 40%,rgba(232,198,106,.04));
+  clip-path:polygon(40% 0%,60% 0%,100% 100%,0% 100%)}
+#glow{position:absolute;left:20%;bottom:28%;width:22%;height:12%;
+  background:radial-gradient(ellipse at center,rgba(232,198,106,.28),transparent 70%);filter:blur(16px)}
+.mist{position:absolute;left:-10%;right:-10%;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(200,190,170,.06),transparent);filter:blur(8px)}
+.mist.m1{top:28%;height:12%;opacity:.7}
+.mist.m2{top:48%;height:10%;opacity:.5}
+.mist.m3{top:62%;height:14%;opacity:.35}
+#youth{position:absolute;left:52%;bottom:18%;width:28px;height:56px;margin-left:-14px;z-index:5}
+#youth .y-head{position:absolute;left:50%;top:0;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:#050403}
+#youth .y-body{position:absolute;left:50%;top:11px;width:14px;height:22px;margin-left:-7px;background:#050403;
+  border-radius:5px 5px 2px 2px;clip-path:polygon(20% 0%,80% 0%,92% 100%,8% 100%)}
+#youth .y-legs{position:absolute;left:50%;top:32px;width:12px;height:20px;margin-left:-6px;background:#050403;
+  clip-path:polygon(0% 0%,45% 0%,42% 100%,8% 100%,8% 0%,55% 0%,100% 0%,92% 100%,58% 100%,55% 0%)}
+#youth .y-sword{position:absolute;right:-2px;top:8px;width:3px;height:28px;
+  background:linear-gradient(180deg,#e8c66a,rgba(232,198,106,.35) 70%,transparent);
+  transform:rotate(22deg);transform-origin:top center;box-shadow:0 0 8px rgba(232,198,106,.35);border-radius:2px}
+#youth .y-sash{position:absolute;left:50%;top:14px;width:16px;height:3px;margin-left:-8px;background:rgba(232,198,106,.35);border-radius:2px}
+#vig{position:absolute;inset:0;z-index:10;pointer-events:none;
+  background:radial-gradient(ellipse 65% 50% at 50% 55%,transparent 25%,rgba(12,10,8,.5) 70%,rgba(12,10,8,.9) 100%),
+  linear-gradient(180deg,rgba(12,10,8,.4),transparent 20%,transparent 75%,rgba(12,10,8,.8))}
+#slashWrap{position:absolute;inset:0;z-index:15;pointer-events:none;opacity:0}
+#slash{position:absolute;left:10%;right:10%;top:46%;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(232,198,106,.2) 22%,rgba(243,224,160,.95) 48%,#fff 52%,rgba(232,198,106,.95) 56%,rgba(232,198,106,.2) 78%,transparent);
+  transform:rotate(-16deg) scaleX(0);box-shadow:0 0 10px rgba(243,224,160,.85),0 0 30px rgba(232,198,106,.4)}
+#slashGlow{position:absolute;left:12%;right:12%;top:40%;height:14%;
+  background:radial-gradient(ellipse at center,rgba(232,198,106,.3),transparent 70%);
+  transform:rotate(-16deg) scaleX(0);filter:blur(14px);opacity:0}
+#slashWrap.slash{opacity:1}
+#slashWrap.slash #slash{animation:slashDraw .5s cubic-bezier(.2,.85,.25,1) both}
+#slashWrap.slash #slashGlow{animation:slashGlow .5s ease-out both}
+@keyframes slashDraw{0%{transform:rotate(-16deg) scaleX(0);opacity:0}20%{opacity:1}55%{transform:rotate(-16deg) scaleX(1);opacity:1}100%{transform:rotate(-16deg) scaleX(1.08);opacity:0}}
+@keyframes slashGlow{0%{transform:rotate(-16deg) scaleX(0);opacity:0}40%{opacity:.85;transform:rotate(-16deg) scaleX(1)}100%{opacity:0;transform:rotate(-16deg) scaleX(1.12)}}
+#title{position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0}
+#logo{width:min(50vw,220px);height:auto;max-height:48vh;transform:translateY(-6vh);
+  filter:blur(20px);opacity:.25;transition:filter .7s cubic-bezier(.2,.7,.3,1),opacity .7s}
+#seal{position:absolute;left:13%;bottom:30%;width:min(14vw,64px);height:auto;opacity:0;transform:scale(1.6) rotate(-18deg);filter:blur(5px)}
+#title.title,#title.done{opacity:1;animation:titleFade .65s ease-out both}
+#title.title #logo,#title.done #logo{filter:blur(0) drop-shadow(0 0 40px rgba(232,198,106,.4)) drop-shadow(0 8px 20px rgba(0,0,0,.55));opacity:1}
+#title.title #seal,#title.done #seal{opacity:1;transform:scale(1) rotate(-8deg);filter:blur(0);animation:sealIn .3s .2s cubic-bezier(.2,1.5,.35,1) both}
+@keyframes titleFade{from{opacity:0}to{opacity:1}}
+@keyframes sealIn{0%{opacity:0;transform:scale(1.8) rotate(-20deg);filter:blur(5px)}65%{opacity:1;transform:scale(.95) rotate(-5deg);filter:blur(0)}100%{opacity:1;transform:scale(1) rotate(-8deg);filter:blur(0)}}
+#enter{position:absolute;left:50%;z-index:40;bottom:calc(12% + env(safe-area-inset-bottom,0px));
+  transform:translateX(-50%) translateY(16px);min-width:200px;height:52px;line-height:50px;
+  border:1.5px solid rgba(232,198,106,.85);border-radius:999px;
+  background:linear-gradient(180deg,rgba(232,198,106,.2),rgba(12,10,8,.35));
   color:var(--gold);font-size:16px;letter-spacing:.7em;text-indent:.7em;
-  cursor:pointer;pointer-events:none;opacity:0;
-  transition:opacity .25s,transform .25s}
-#enter.on{
-  opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0);
-  animation:btnIn .3s ease-out both,ep 1.6s ease-in-out infinite}
-@keyframes btnIn{0%{opacity:0;transform:translateX(-50%) translateY(16px)}100%{opacity:1;transform:translateX(-50%) translateY(0)}}
-@keyframes ep{0%,100%{box-shadow:0 0 0 0 rgba(232,198,106,.3)}50%{box-shadow:0 0 0 12px rgba(232,198,106,0)}}
-#enter:active{background:rgba(232,198,106,.4)}
-#chrome{position:absolute;inset:0;z-index:60;pointer-events:none}
-#app.done #stage{filter:brightness(.48) saturate(.75)}
-@media (min-width:800px){
-  .page{height:580px}
-  #burst .fr{width:290px;height:435px}
-  #fin .wordmark{width:220px}
-  #fin .sc{width:64px;height:64px}
-}
+  opacity:0;pointer-events:none;cursor:pointer;transition:opacity .3s,transform .3s}
+#enter.on{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0);
+  animation:btnIn .45s cubic-bezier(.2,.8,.3,1) both,ep 1.8s ease-in-out infinite}
+@keyframes btnIn{0%{opacity:0;transform:translateX(-50%) translateY(24px)}100%{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes ep{0%,100%{box-shadow:0 0 0 0 rgba(232,198,106,.28)}50%{box-shadow:0 0 0 14px rgba(232,198,106,0)}}
 </style>
 </head>
 <body>
 <div id="app">
   <div id="stage">
-    <div id="inkBg"></div>
-    <div id="spine"></div>
-    <div id="wash"></div>
-    <div id="speed"></div>
-
-    <!-- pages injected by JS for denser mosaic + more cast -->
-    <div class="page" id="page1"></div>
-    <div class="page" id="page2"></div>
-    <div class="page" id="page3"></div>
-    <div class="page" id="page4"></div>
-    <div class="page" id="page5"></div>
-    <div class="page" id="page6"></div>
-
-    <div id="burst">
-      <div class="ring"></div>
-      <div class="fr" id="bfr">
-        <img class="art" id="bimg" src="" alt=""/>
-        <div class="sl"></div>
-        <img class="stamp" src="design/brand/seal-zhu-ink.png" alt=""/>
-      </div>
-    </div>
-
-    <div id="fin">
-      <div class="splash"></div>
-      <img class="wordmark" src="design/brand/wordmark-jianlai.png" alt="剑来"/>
-      <img class="sc" src="design/brand/seal-zhu-shuichangdong.png" alt="水长东"/>
-      <button id="enter" type="button">开始问剑</button>
-    </div>
-
-    <div id="swoosh"></div>
-    <div id="vig"></div>
-    <div id="grain"></div>
-    <div id="flash"></div>
+    <img id="bgimg" src="opening-bg.jpg" alt=""/>
   </div>
-  <div id="chrome"></div>
+  <div id="vig"></div>
+  <div class="op-light">
+    <div class="op-gate-glow"></div>
+    <div class="op-path-ray"></div>
+    <div class="op-ray a"></div>
+    <div class="op-ray b"></div>
+    <div class="op-ray c"></div>
+    <div class="op-fog f1"></div>
+    <div class="op-fog f2"></div>
+    <div class="op-fog f3"></div>
+  </div>
+  <div id="youthfx">
+    <div class="yf-robe r1"></div>
+    <div class="yf-robe r2"></div>
+    <div class="yf-robe r3"></div>
+    <div class="yf-mist m1"></div>
+    <div class="yf-mist m2"></div>
+    <div class="yf-mist m3"></div>
+  </div>
+  <div id="breathe"></div>
+  <div id="title">
+    <img id="logo" src="design/brand/wordmark-jianlai.png" alt="剑来"/>
+    <img id="seal" src="design/brand/seal-zhu-shuichangdong.png" alt="水长东"/>
+  </div>
+  <button id="enter" type="button">开始问剑</button>
 </div>
 <script>
 (function(){
-  const $=id=>document.getElementById(id);
-  const app=$('app'),flash=$('flash'),swoosh=$('swoosh'),wash=$('wash'),speed=$('speed');
-  const burst=$('burst'),bfr=$('bfr'),bimg=$('bimg'),fin=$('fin');
-  const enter=$('enter');
-  const BASE='prototype/assets/portraits/';
-
-  // 多立绘：英文 key + 中文名文件
-  const ART=[
-    'chenpingan.jpg','ningyao.jpg','qijingchun.jpg','aliang.jpg','chenqingdu.jpg','daozu.jpg',
-    'lisan.jpg','miyu.jpg','baiye.jpg','caoci.jpg','baize.jpg','zhoumi.jpg',
-    '崔瀺.jpg','左右.jpg','老秀才.jpg','至圣先师.jpg','裴钱.jpg','刘羡阳.jpg',
-    '魏檗.jpg','马苦玄.jpg','阮秀.jpg','顾璨.jpg','刘灞桥.jpg','崔东山.jpg'
-  ].map(n=>BASE+n);
-
-  const LAYOUTS={
-    // p1 六格
-    p1:[
-      [0,0,62,38],[64,0,36,38],
-      [0,40,30,28],[32,40,30,28],[64,40,36,28],
-      [0,70,100,28]
-    ],
-    // p2 五格
-    p2:[
-      [0,0,42,55],[44,0,56,32],[44,34,27,21],[73,34,27,21],[0,57,100,41]
-    ],
-    // p3 四格
-    p3:[
-      [0,0,48,48],[50,0,50,48],[0,50,48,48],[50,50,50,48]
-    ],
-    // p4 三连
-    p4:[
-      [0,0,100,40],[0,42,48,56],[50,42,50,56]
-    ],
-    // p5 九宫
-    p5:[
-      [0,0,32,32],[34,0,32,32],[68,0,32,32],
-      [0,34,32,32],[34,34,32,32],[68,34,32,32],
-      [0,68,32,32],[34,68,32,32],[68,68,32,32]
-    ],
-    // p6 全幅
-    p6:[[0,0,100,100]]
-  };
-
-  function build(pageId, layoutKey, artOffset){
-    const page=$(pageId);
-    const box=document.createElement('div');
-    box.className='pg';
-    LAYOUTS[layoutKey].forEach((r,i)=>{
-      const p=document.createElement('div');
-      p.className='panel';
-      p.dataset.d=String(i*28);
-      p.style.cssText='left:'+r[0]+'%;top:'+r[1]+'%;width:'+r[2]+'%;height:'+r[3]+'%';
-      const img=document.createElement('img');
-      img.src=ART[(artOffset+i*3)%ART.length];
-      img.alt='';
-      const sh=document.createElement('div'); sh.className='sh';
-      const gl=document.createElement('div'); gl.className='gl';
-      p.appendChild(img); p.appendChild(sh); p.appendChild(gl);
-      box.appendChild(p);
-    });
-    // 中缝（双联/三联才有）
-    page.innerHTML='<div class="ht"></div>';
-    page.appendChild(box);
-    if(layoutKey==='p1'||layoutKey==='p2'||layoutKey==='p3'||layoutKey==='p4'){
-      const g=document.createElement('div');
-      g.className='gutter';
-      page.appendChild(g);
-    }
+  const stage=document.getElementById('stage');
+  const title=document.getElementById('title');
+  const youthfx=document.getElementById('youthfx');
+  const breathe=document.getElementById('breathe');
+  const enter=document.getElementById('enter');
+  function set(ph){
+    stage.className=ph;
+    youthfx.className=ph;
+    breathe.className=ph;
+    title.className=(ph==='title'||ph==='done')?ph:'';
+    enter.className=(ph==='done')?'on':'';
   }
-
-  // 减宫格：p1/p2/p3 双联，p4 三格，p5/p6 全幅
-  LAYOUTS.p1=[[0,0,49.5,100],[50.5,0,49.5,100]];
-  LAYOUTS.p2=[[0,0,49.5,100],[50.5,0,49.5,100]];
-  LAYOUTS.p3=[[0,0,49.5,100],[50.5,0,49.5,100]];
-  LAYOUTS.p4=[[0,0,100,48],[0,50,49.5,50],[50.5,50,49.5,50]];
-  LAYOUTS.p5=[[0,0,100,100]];
-  LAYOUTS.p6=[[0,0,100,100]];
-
-  build('page1','p1',0);
-  build('page2','p2',4);
-  build('page3','p3',8);
-  build('page4','p4',2);
-  build('page5','p5',0);
-  build('page6','p6',1);
-
-  let timers=[],playing=false,finished=false;
-  function clear(){timers.forEach(clearTimeout);timers=[]}
-  function later(fn,ms){timers.push(setTimeout(fn,ms))}
-  function flashTo(ms,red){
-    /* 柔和：几乎不用白闪 */
-    flash.style.background=red?'rgba(194,58,42,.35)':'rgba(232,198,106,.25)';
-    flash.style.transition='none';
-    flash.style.opacity=red?'0.12':'0.08';
-    void flash.offsetWidth;
-    flash.style.transition='opacity '+(ms||280)+'ms ease-out';
-    flash.style.opacity='0';
-  }
-  function swooshGo(){
-    swoosh.style.transition='none';swoosh.style.opacity='0';swoosh.style.transform='translateX(-30%)';
-    void swoosh.offsetWidth;
-    swoosh.style.transition='opacity .4s ease-out,transform .45s ease-in-out';
-    swoosh.style.opacity='0.35';swoosh.style.transform='translateX(20%)';
-    later(()=>swoosh.style.opacity='0',300);
-  }
-  function washGo(){
-    wash.style.transition='none';wash.style.opacity='0';void wash.offsetWidth;
-    wash.style.transition='opacity .3s ease-out';wash.style.opacity='1';
-  }
-  function show(k){
-    const p=$(k);
-    p.classList.remove('exL','exR','zoom','peel');
-    void p.offsetWidth;
-    p.classList.add('enter');
-    p.querySelectorAll('.panel').forEach(el=>{
-      later(()=>el.classList.add('show'),20+parseInt(el.dataset.d||'0',10));
-    });
-    speed.style.opacity='.25';
-  }
-  function hide(k,m){
-    const p=$(k);
-    p.classList.remove('enter','zoom');
-    p.classList.add(m);
-  }
-  function zoom(k){
-    const p=$(k);
-    p.classList.remove('enter');
-    p.classList.add('zoom');
-  }
-  function showBurst(src){
-    bimg.src=src;
-    burst.classList.add('on');
-    bfr.classList.remove('hit');
-    void bfr.offsetWidth;
-    bfr.classList.add('hit');
-    flashTo(280);
-  }
-  function hideBurst(){burst.classList.remove('on');bfr.classList.remove('hit')}
-  function finale(){
-    hideBurst();
-    ['page1','page2','page3','page4','page5','page6'].forEach(id=>{
-      $(id).classList.remove('enter','zoom','exL','exR','peel');
-    });
-    speed.style.opacity='0';
-    fin.classList.add('on');
-    flashTo(140,true);
-    washGo();
-    later(()=>{
-      enter.classList.add('on');
-      app.classList.add('done');finished=true;playing=false;
-    },450);
-  }
-
-  // 漫威翻书：双联页 + 全幅跨页，减宫格
   function play(){
-    clear();
-    app.classList.remove('done');
-    ['page1','page2','page3','page4','page5','page6'].forEach(id=>{
-      const p=$(id);p.className='page';
-      p.querySelectorAll('.panel').forEach(el=>el.classList.remove('show'));
-    });
-    burst.classList.remove('on');fin.classList.remove('on');
-    enter.classList.remove('on');
-    flash.style.opacity='0';wash.style.opacity='0';speed.style.opacity='0';
-    playing=true;finished=false;
-
-    // P1 双联
-    later(()=>show('page1'),80);
-    later(()=>{swooshGo();zoom('page1')},600);
-    // 翻页 → P2
-    later(()=>{hide('page1','exL');show('page2')},1050);
-    // 翻页 → P3 双联
-    later(()=>{hide('page2','exR');show('page3')},1700);
-    // 翻页 → P4 三联（一页多格但少）
-    later(()=>{hide('page3','exL');show('page4')},2350);
-    // 全幅特写翻书 ×4
-    for(let i=0;i<4;i++){
-      later(()=>{
-        hide('page'+((i%2)+5===6?6:5),'exL');
-        // alternate page5/page6 full
-        const k = (i%2===0)?'page5':'page6';
-        show(k);
-      },3000+i*420);
-    }
-    later(()=>{swooshGo();zoom('page5')},4700);
-    later(()=>{hide('page5','exL');show('page6')},5100);
-    later(()=>{swooshGo();zoom('page6')},5500);
-    later(finale,5900);
+    set('camIn');
+    setTimeout(()=>set('camOut'),600);
+    setTimeout(()=>set('camHold'),3200);
+    setTimeout(()=>set('camPush'),4200);
+    setTimeout(()=>set('youthFx'),6200);
+    setTimeout(()=>set('title'),7400);
+    setTimeout(()=>set('done'),8200);
   }
-
-  enter.onclick=()=>{if(!finished)return; /* 进主页：开始问剑 */};
-  if(document.readyState==='complete')play();
+  enter.onclick=function(){ if(this.className.indexOf('on')<0) return; };
+  if(document.readyState==='complete') play();
   else window.addEventListener('load',play);
-  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    clear();finale();
-  }
 })();
 </script>
 </body>
