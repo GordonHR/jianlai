@@ -5777,9 +5777,9 @@ function showCharBrief(key){
   try{
     const boxEl = m.querySelector ? m.querySelector('.brief-modal') : null;
     if(boxEl && boxEl.classList){
-      requestAnimationFrame(function(){
-        try{ boxEl.classList.add('ink-in'); }catch(e){}
-      });
+      const arm = function(){ try{ boxEl.classList.add('ink-in'); }catch(e){} };
+      if(typeof requestAnimationFrame === 'function') requestAnimationFrame(arm);
+      else setTimeout(arm, 0);
     }
   }catch(e){}
 }

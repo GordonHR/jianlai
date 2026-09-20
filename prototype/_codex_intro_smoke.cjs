@@ -56,7 +56,7 @@ const ctx = {
   process, Buffer,
 };
 vm.createContext(ctx);
-vm.runInContext(stub + '\n' + src + '\n;this.__game={openCodex,playCodexIntro,endCodexIntro,leaveCodex,replayCodexIntro,codexIntroMode,pickCodexCast,splitCodexCastRows,allCodexKeys,landCodexGrid,get state(){return state;},CHARS,CODEX_INTRO_KEY,CODEX_CAST,CODEX_MARQUEE_CELLS};', ctx, { filename: 'bundle.js' });
+vm.runInContext(stub + '\n' + src + '\n;this.__game={openCodex,playCodexIntro,endCodexIntro,leaveCodex,replayCodexIntro,codexIntroMode,pickCodexCast,splitCodexCastRows,allCodexKeys,landCodexGrid,showCharBrief,setFilter,playCodexDust,get state(){return state;},CHARS,CODEX_INTRO_KEY,CODEX_CAST,CODEX_MARQUEE_CELLS};', ctx, { filename: 'bundle.js' });
 
 const G = ctx.__game;
 let fail = 0;
@@ -123,6 +123,32 @@ ctx.window.matchMedia = function(){ return { matches:false }; };
 // empty CHARS fallback path
 const cast2 = G.pickCodexCast(3);
 ok(cast2.length > 0, 'pickCodexCast still works after rotation');
+
+/* 笔锋入卷 + 金尘过场 */
+G.openCodex();
+ok(G.state.phase === 'codex', 'reopen codex for fx checks');
+const heroKey = (G.CHARS.chenpingan ? 'chenpingan' : G.allCodexKeys()[0]);
+try{
+  G.showCharBrief(heroKey);
+  const modal = ctx.document.getElementById('modal');
+  const mh = String(modal.innerHTML || '');
+  ok(mh.indexOf('brief-portrait') >= 0, 'brief portrait rendered');
+  ok(mh.indexOf('brief-ink') >= 0, 'brief ink layer present');
+  ok(mh.indexOf('bi-seal') >= 0, 'brief seal present');
+}catch(e){ ok(false, 'showCharBrief threw: ' + e.message); }
+
+try{
+  G.state.filter = '全部';
+  G.setFilter('中土文庙');
+  ok(G.state.filter === '中土文庙', 'setFilter updates filter');
+  const dust = ctx.document.getElementById('codexDust');
+  ok(!!dust, 'codexDust host exists');
+  ok(String(dust.innerHTML||'').indexOf('cd-veil') >= 0, 'dust veil injected');
+  ok(String(dust.innerHTML||'').indexOf('cd-spark') >= 0, 'dust sparks injected');
+}catch(e){ ok(false, 'setFilter/dust threw: ' + e.message); }
+
+try{ G.playCodexDust('散修'); ok(true, 'playCodexDust direct call ok'); }
+catch(e){ ok(false, 'playCodexDust threw: ' + e.message); }
 
 G.endCodexIntro(true);
 console.log(fail ? ('FAIL ' + fail) : 'ALL PASS');
