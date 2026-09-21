@@ -1,5 +1,6 @@
 /* 开场：单张大图
-   近背剑少年 → 拉开全景 → 一眼剑气长城 → 推回少年 → 衣摆等 → 落款 */
+   ① 更近锁人 → ② 匀速拉远（整幅 scale↓）→ ③ 极限停住，不再放大 → 题字
+   filmOut 3.5s linear，与 title.wxss 对齐；无推回放大 */
 Page({
   data: {
     opShow: true,
@@ -14,13 +15,12 @@ Page({
   play() {
     this._clear();
     this.setData({ opShow: true, phase: 'camIn', enterOn: false });
-    // 中景少年 → 缓拉全景（长城自然在画面里）→ 停一拍 → 缓推回 → 动效 → 落款
-    this._later(() => this.setData({ phase: 'camOut' }), 600);
-    this._later(() => this.setData({ phase: 'camHold' }), 3200);
-    this._later(() => this.setData({ phase: 'camPush' }), 4200);
-    this._later(() => this.setData({ phase: 'youthFx' }), 6200);
-    this._later(() => this.setData({ phase: 'title' }), 7400);
-    this._later(() => this.setData({ enterOn: true, phase: 'done' }), 8200);
+    // 更近锁人稍停 → 匀速拉远 3.5s → 极限 hold（不再推近）→ 微效 → 题字/按钮
+    this._later(() => this.setData({ phase: 'camOut' }), 700);
+    this._later(() => this.setData({ phase: 'camHold' }), 4200);
+    this._later(() => this.setData({ phase: 'youthFx' }), 4600);
+    this._later(() => this.setData({ phase: 'title' }), 5200);
+    this._later(() => this.setData({ enterOn: true, phase: 'done' }), 6000);
   },
 
   opEnter() {

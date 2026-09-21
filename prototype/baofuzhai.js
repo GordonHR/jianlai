@@ -288,9 +288,11 @@ function bfMarkSlots(){
 
 /* 由 game.js 的 updateRecord(win, mode) 挂钩：一局终了结账，先抵赊欠，余下入袋 */
 function bfAddCoin(n){
-  if(!n) return;
+  if(!n) return null;
+  const gain = n;
+  let pay = 0;
   if(BF.debt > 0){
-    const pay = Math.min(BF.debt, n);
+    pay = Math.min(BF.debt, n);
     BF.debt -= pay; n -= pay;
     BF_SAY = '结账。先抵赊欠 ' + pay + ' 雪花钱' + (n>0 ? '，余下 ' + n + ' 入袋。' : '。');
   }else{
@@ -298,6 +300,8 @@ function bfAddCoin(n){
   }
   BF.coin = Math.max(0, (BF.coin||0) + n);
   bfSave();
+  /* 返回结账明细，供结算界面呈现（原先只悄悄入账，玩家不知赚了多少） */
+  return { gain:gain, pay:pay, net:gain-pay, coin:BF.coin, debt:BF.debt };
 }
 
 /* ===================== 装配（入局生效） ===================== */
@@ -411,6 +415,14 @@ function bfApplyLoadout(players, mode){
   .bf-foot .fbtn{ cursor:pointer; font-size:12px; padding:6px 16px; color:#cdb98a;
     border:1px solid rgba(232,198,106,.3); border-radius:8px; }
   .bf-foot .fbtn:hover{ color:var(--gold); border-color:rgba(232,198,106,.55); }
+
+  /* 结算页 · 包袱斋结账行（本局雪花钱得数） */
+  .rs-coin{ display:flex; align-items:baseline; justify-content:center; gap:14px; flex-wrap:wrap;
+    margin:12px auto 4px; font-size:13px; color:#b9ad8f; }
+  .rs-coin .rc-k{ font-family:var(--kai); letter-spacing:3px; color:#9a917f; }
+  .rs-coin .rc-v{ font-family:var(--kai); font-size:20px; color:var(--gold); letter-spacing:1px; }
+  .rs-coin .rc-pay{ font-size:12px; color:#c98b6b; }
+  .rs-coin .rc-net{ font-size:12px; color:#7d7666; }
   `;
   const st = document.createElement('style');
   st.id = 'baofu-style';
@@ -469,10 +481,9 @@ function bfSell(id){
   const g = bfGear(id);
   if(!g || !bfHas(id)) return;
   const back = Math.floor(g.price * BF_SELL_RATE);
-  const gi = BF.gear.indexOf(id);
-  if(gi >= 0) BF.gear.splice(gi, 1);
-  const oi = BF.owned.indexOf(id);
-  if(oi >= 0) BF.owned.splice(oi, 1);
+  /* 防御旧档重复项：同 id 一次全摘，避免「卖一件还剩一件」反复变现 */
+  for(let k=BF.gear.length-1;k>=0;k--){ if(BF.gear[k]===id) BF.gear.splice(k,1); }
+  for(let k=BF.owned.length-1;k>=0;k--){ if(BF.owned[k]===id) BF.owned.splice(k,1); }
   BF.coin += back;
   BF_SAY = '退一半，这是规矩。' + back + ' 雪花钱入袋，木牌摘下。';
   bfSave();
@@ -498,7 +509,9 @@ function bfRepay(){
 /* ===================== 拣漏（散修摊位） ===================== */
 function bfRollStall(force){
   if(!force && BF.stall && BF.stall.length) return;
-  const pool = BF_GEAR.slice();
+  /* 真品池排除已拥有之物：好东西收走了就是收走了，摊上不再挂（合原著"宝物有主"）。
+     同时堵住「重复购入同一物件 → owned 出现重复 id → 反复退货刷钱」的漏洞。 */
+  const pool = BF_GEAR.filter(g => BF.owned.indexOf(g.id) < 0);
   const out = [];
   for(let i=0; i<BF_STALL_N && pool.length; i++){
     const idx = Math.floor(Math.random()*pool.length);
@@ -545,6 +558,12 @@ function bfEye(i){
 function bfBuyStall(i){
   const it = BF.stall[i];
   if(!it || it.done) return;
+  /* 防御旧档残留的真品摊位：已拥有就不再重复入账 */
+  if(it.real && it.gid && bfHas(it.gid)){
+    BF_SAY = '这东西你已有一件，何必再买？这件留着，下回再看。';
+    if(typeof SFX!=='undefined' && SFX && SFX.click) SFX.click();
+    render(); return;
+  }
   if((BF.coin||0) < it.ask){
     BF_SAY = '散修不做赊买卖。' + it.ask + ' 雪花钱，一文都不能少。';
     if(typeof SFX!=='undefined' && SFX && SFX.click) SFX.click();

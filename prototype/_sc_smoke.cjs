@@ -181,7 +181,8 @@ T('12 不剧透纪律 · 选项须有后果但不得外挂提示字段', functio
 });
 
 T('13 戏里戏外 · 详情=人物志式图铺顶+信息卡上滑（整页滚动）', function(){
-  state = { phase:'codex', mode:'codex', sel:[], filter:'全部', q:'', log:[], codexTab:'tales', selTale:'yanghuan' };
+  var _tq = (typeof TALES!=='undefined') ? (TALES.find(function(x){return x.quote;}) || TALES[0]) : null;
+  state = { phase:'codex', mode:'codex', sel:[], filter:'全部', q:'', log:[], codexTab:'tales', selTale:_tq?_tq.id:'qijingchun' };
   render();
   var h = app.innerHTML;
   if(h.indexOf('class="tale-full"') < 0) throw new Error('缺全屏外壳 tale-full');
@@ -217,7 +218,7 @@ T('15 戏里戏外 · 收卷返回列表', function(){
   var h = app.innerHTML;
   if(h.indexOf('class="tale-full"') >= 0) throw new Error('收卷后详情未关闭');
   if(h.indexOf('cx-tale') < 0) throw new Error('收卷后未见列表卡片');
-  if(h.indexOf('原著中的小故事') < 0) throw new Error('收卷后未见列表提示');
+  if(h.indexOf('原著名场面与小故事') < 0 && h.indexOf('原著中的小故事') < 0) throw new Error('收卷后未见列表提示');
 });
 
 T('16 旬中转页 · 账本六行且逐行带图标', function(){

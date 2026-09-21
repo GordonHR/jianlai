@@ -11,6 +11,7 @@
  */
 const vecpath = require('./vecpath.js');
 const GEO = require('./mapgeo.js');
+const LZ = require('./lizhu.js');
 
 const VW = 1600, VH = 1100;
 const FONT = 'serif';
@@ -522,6 +523,156 @@ function drawZhou(ctx, cam, st, key) {
   return { fit: fit };
 }
 
+/* ---------- 骊珠洞天 · 村社级矢量舆图 ---------- */
+/* 符号：本地约 ±20 单位，在 fit 坐标系内 translate(p.x,p.y) 后绘制；线宽用 1/k 保持屏幕恒定 */
+function drawKiln(ctx, x, y, s, k) {
+  ctx.save();
+  ctx.translate(x, y); ctx.scale(s, s);
+  ctx.beginPath();
+  ctx.moveTo(-16, 14); ctx.lineTo(-16, -6); ctx.quadraticCurveTo(0, -22, 16, -6); ctx.lineTo(16, 14); ctx.closePath();
+  ctx.fillStyle = '#b07a45'; ctx.fill();
+  ctx.lineWidth = 1.2 / k; ctx.strokeStyle = '#5a3f22'; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-7, 14); ctx.quadraticCurveTo(0, -2, 7, 14); ctx.closePath();
+  ctx.fillStyle = '#2a1808'; ctx.fill();
+  ctx.beginPath(); ctx.moveTo(10, -10); ctx.quadraticCurveTo(4, -16, 10, -22);
+  ctx.strokeStyle = '#9a9a90'; ctx.lineWidth = 1 / k; ctx.stroke();
+  ctx.restore();
+}
+function drawGate(ctx, x, y, s, k) {
+  ctx.save();
+  ctx.translate(x, y); ctx.scale(s, s);
+  ctx.fillStyle = '#8a6a3a';
+  ctx.fillRect(-14, -10, 6, 24);
+  ctx.fillRect(8, -10, 6, 24);
+  ctx.beginPath(); ctx.moveTo(-18, -10); ctx.quadraticCurveTo(0, -22, 18, -10);
+  ctx.lineTo(14, -10); ctx.quadraticCurveTo(0, -16, -14, -10); ctx.closePath();
+  ctx.fillStyle = '#a8703f'; ctx.fill();
+  ctx.lineWidth = 1.2 / k; ctx.strokeStyle = '#3a2f1e'; ctx.stroke();
+  ctx.restore();
+}
+function drawBridge(ctx, x, y, s, k) {
+  ctx.save();
+  ctx.translate(x, y); ctx.scale(s, s);
+  ctx.strokeStyle = '#7a5a32'; ctx.lineCap = 'round';
+  ctx.lineWidth = 3.4 / k;
+  ctx.beginPath(); ctx.moveTo(-18, 8); ctx.quadraticCurveTo(0, -14, 18, 8); ctx.stroke();
+  ctx.lineWidth = 2.2 / k;
+  ctx.beginPath(); ctx.moveTo(-18, -2); ctx.quadraticCurveTo(0, -20, 18, -2); ctx.stroke();
+  ctx.beginPath(); ctx.ellipse(0, 14, 12, 4, 0, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(63,106,106,0.5)'; ctx.fill();
+  ctx.lineWidth = 1 / k; ctx.strokeStyle = '#2f5a5a'; ctx.stroke();
+  ctx.restore();
+}
+function drawWell(ctx, x, y, s, k) {
+  ctx.save();
+  ctx.translate(x, y); ctx.scale(s, s);
+  ctx.beginPath(); ctx.ellipse(0, 0, 13, 9, 0, 0, Math.PI * 2);
+  ctx.fillStyle = '#cfc3a4'; ctx.fill();
+  ctx.lineWidth = 1.2 / k; ctx.strokeStyle = '#3a2f1e'; ctx.stroke();
+  ctx.beginPath(); ctx.ellipse(0, 0, 7, 5, 0, 0, Math.PI * 2);
+  ctx.fillStyle = '#3a2f1e'; ctx.fill();
+  ctx.beginPath(); ctx.moveTo(0, -7); ctx.lineTo(0, 0);
+  ctx.strokeStyle = '#2f2f2f'; ctx.lineWidth = 1.6 / k; ctx.stroke();
+  ctx.restore();
+}
+function drawLizhu(ctx, cam, st) {
+  const G = LZ.LIZHU_GEO;
+  const pal = st.pal;
+  resetBase(ctx, st.base);
+  ctx.clearRect(0, 0, cam.cw, cam.ch);
+
+  const fit = fitLayer(G);
+  const P = projector(cam, fit);
+  const k = cam.s * fit.s;
+
+  drawOceanScreen(ctx, cam, pal);
+
+  /* ===== 几何层（随缩放） ===== */
+  ctx.save();
+  applyCam(ctx, cam);
+  ctx.globalAlpha = 1;
+  drawWaves(ctx, cam, pal.wave);
+
+  ctx.save();
+  ctx.translate(fit.ox, fit.oy);
+  ctx.scale(fit.s, fit.s);
+
+  paint(ctx, G.land, { fill: pal.land, stroke: pal['land-stroke'], lw: 2.4 / k });
+
+  (G.blocks || []).forEach(function (b) {
+    ctx.save();
+    ctx.globalAlpha = 0.10;
+    ctx.fillStyle = pal['land-stroke'] || '#6b5f49';
+    ctx.fillRect(b.x, b.y, b.w, b.h);
+    ctx.restore();
+  });
+
+  (G.rivers || []).forEach(function (r) { paint(ctx, r.d, { stroke: pal.river, lw: 4 / k }); });
+  if (st.layers.roads) {
+    (G.roads || []).forEach(function (r) { paint(ctx, r.d, { stroke: '#caa86a', lw: 3.4 / k }); });
+  }
+  (G.mtn || []).forEach(function (m) {
+    ctx.save();
+    ctx.translate(m.x, m.y); ctx.scale(m.s, m.s);
+    paint(ctx, GEO.SYM.mtn.d, { fill: pal['mtn-f'], stroke: pal['mtn-s'], lw: 1 / k });
+    ctx.restore();
+  });
+  (G.kilns || []).forEach(function (p) { drawKiln(ctx, p.x, p.y, 1, k); });
+  (G.gates || []).forEach(function (p) { drawGate(ctx, p.x, p.y, 1, k); });
+  (G.bridges || []).forEach(function (p) { drawBridge(ctx, p.x, p.y, 1, k); });
+  (G.wells || []).forEach(function (p) { drawWell(ctx, p.x, p.y, 1, k); });
+
+  ctx.restore();
+  ctx.restore();
+
+  /* ===== 标注层（恒定屏幕尺寸） ===== */
+  ctx.save();
+  if (st.layers.names) {
+    (G.rivers || []).forEach(function (r) {
+      if (!r.name) return;
+      const mm = r.d && r.d.match(/M\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)/);
+      if (!mm) return;
+      const p = P(parseFloat(mm[1]), parseFloat(mm[2]) + 10);
+      ctx.save(); ctx.globalAlpha = 0.85; setText(ctx, 12, '', 'left');
+      ctx.fillStyle = pal.river; ctx.fillText(r.name, p[0], p[1]); ctx.restore();
+    });
+    (G.places || []).forEach(function (pl) {
+      const ps = P(pl.x, pl.y);
+      ctx.save();
+      ctx.beginPath(); ctx.arc(ps[0], ps[1], 4.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#caa86a'; ctx.fill();
+      ctx.lineWidth = 1.1; ctx.strokeStyle = '#5a4a2a'; ctx.stroke();
+      ctx.restore();
+      ctx.save();
+      ctx.lineWidth = 3.2; ctx.lineJoin = 'round';
+      ctx.strokeStyle = pal.paper || '#e9dcbe';
+      setText(ctx, 13, 'bold', 'center');
+      ctx.strokeText(pl.name, ps[0], ps[1] - 12);
+      ctx.fillStyle = pal.ink || '#2f2a20';
+      ctx.fillText(pl.name, ps[0], ps[1] - 12);
+      ctx.restore();
+    });
+  }
+  ctx.restore();
+
+  return { fit: fit };
+}
+
+function hitLizhu(cam, sx, sy, radius) {
+  const G = LZ.LIZHU_GEO;
+  const fit = fitLayer(G);
+  const P = projector(cam, fit);
+  const r = radius || 30;
+  let best = null, bestD = r * r;
+  (G.places || []).forEach(function (pl) {
+    const p = P(pl.x, pl.y);
+    const dx = p[0] - sx, dy = p[1] - sy;
+    const dd = dx * dx + dy * dy;
+    if (dd <= bestD) { bestD = dd; best = pl.key; }
+  });
+  return best;
+}
+
 /* ---------- 命中检测 ---------- */
 function hitWorld(cam, sx, sy) {
   const vx = (sx - cam.tx) / cam.s, vy = (sy - cam.ty) / cam.s;
@@ -572,6 +723,8 @@ module.exports = {
   paint: paint,
   drawWorld: drawWorld,
   drawZhou: drawZhou,
+  drawLizhu: drawLizhu,
   hitWorld: hitWorld,
-  hitZhou: hitZhou
+  hitZhou: hitZhou,
+  hitLizhu: hitLizhu
 };

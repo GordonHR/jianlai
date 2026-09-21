@@ -110,7 +110,7 @@
           <view class="bf-btns">
             <button class="btn primary sm" wx:if="{{!item.got && item.afford}}" data-id="{{item.id}}" bindtap="read">买 下 读</button>
             <button class="btn sm" wx:if="{{!item.got && !item.afford}}" disabled>钱不足</button>
-            <button class="btn sm {{item.on?'':''}}" wx:if="{{item.got}}" data-id="{{item.id}}" bindtap="toggleMark">{{item.act}}</button>
+            <button class="btn sm" wx:if="{{item.got}}" data-id="{{item.id}}" bindtap="toggleMark">{{item.act}}</button>
           </view>
         </view>
       </view>

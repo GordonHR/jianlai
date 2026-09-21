@@ -1,5 +1,7 @@
 page { background:#14110f; color:#e8e0d2; }
 
+/* 注：height:100vh 是小程序的满屏规范写法（webview 视口=导航栏以下），此处保留；
+   底部控件各自处理 env(safe-area-inset-bottom)，不用魔法数推算。 */
 .game {
   display:flex; flex-direction:column; height:100vh; box-sizing:border-box;
   background:#14110f;
@@ -49,17 +51,18 @@ page { background:#14110f; color:#e8e0d2; }
 .bg-ring2::before { content:""; position:absolute; inset:28rpx; border-radius:50%; border:1rpx dashed rgba(201,162,75,.08); }
 .bg-char  { position:absolute; left:50%; top:44%; transform:translate(-50%,-50%); font-family:"KaiTi","STKaiti",serif; font-size:430rpx; line-height:1; color:rgba(201,162,75,.05); }
 
-/* 四角座位卡（对齐三国杀大卡：约屏宽 1/4） */
-.seat { position:relative; box-sizing:border-box; width:200rpx; height:280rpx; background:#1d1712; border:2rpx solid #3a2f23; border-radius:18rpx; padding:10rpx; display:flex; flex-direction:column; }
+/* 四角座位卡（对齐三国杀大卡：约屏宽 1/4）
+   诊断 §2.1：宽度 200rpx 本就随屏宽自适应；高度改 min(280rpx,18vh) 随屏高收缩——
+   矮屏（SE 一类 320×568）不再挤压中央战场，常规机型恒为 280rpx（零视觉变化）。 */
+.seat { position:relative; box-sizing:border-box; width:200rpx; height:280rpx; height:min(280rpx,18vh); background:#1d1712; border:2rpx solid #3a2f23; border-radius:18rpx; padding:10rpx; display:flex; flex-direction:column; }
 .seat.dead { opacity:.45; filter:grayscale(1); }
-/* 目标可选：实色金边 + 金底圆点（无金色光晕，避 iPhone 紫偏） */
-.seat.clickable { border-color:#e8c66a; box-shadow:inset 0 0 0 2rpx #e8c66a, 0 4rpx 12rpx rgba(0,0,0,.55); animation:seatPulse 1.2s ease-in-out infinite; }
+/* 目标可选：实色金边 + 呼吸光标
+   诊断 §4.2：呼吸改走 ::after 的 opacity（合成层动画），不再 animate 三重 box-shadow。 */
+.seat.clickable { border-color:#e8c66a; box-shadow:inset 0 0 0 2rpx #e8c66a, 0 4rpx 12rpx rgba(0,0,0,.55); }
+.seat.clickable::after { content:""; position:absolute; inset:-2rpx; border:3rpx solid #ffd966; border-radius:18rpx; pointer-events:none; opacity:0; animation:seatPulse 1.4s ease-in-out infinite; }
 /* 当前行动：实色金边 + 深阴影 + 顶部行动横幅（座位卡底部"出牌思考中"横条） */
 .seat.current { border-color:#c9a24b; box-shadow:inset 0 0 0 2rpx #c9a24b, 0 4rpx 16rpx rgba(0,0,0,.65); }
-@keyframes seatPulse {
-  0%,100% { box-shadow:inset 0 0 0 2rpx #e8c66a, 0 4rpx 12rpx rgba(0,0,0,.55); }
-  50%     { box-shadow:inset 0 0 0 3rpx #ffd966, 0 4rpx 14rpx rgba(0,0,0,.6); }
-}
+@keyframes seatPulse { 0%,100% { opacity:0; } 50% { opacity:1; } }
 .seat-portrait { position:relative; flex:1; width:100%; min-height:0; border-radius:10rpx; overflow:hidden; background:#2a2118; }
 .seat-img { width:100%; height:100%; }
 .seat-initial { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:30rpx; font-weight:bold; color:rgba(232,198,106,.35); letter-spacing:6rpx; }
@@ -93,8 +96,9 @@ page { background:#14110f; color:#e8e0d2; }
 /* 三国杀手牌在左、自家在右的镜像布局（用 row-reverse 不动 HTML 结构） */
 .seat-bottom { position:absolute; left:16rpx; right:16rpx; bottom:16rpx; z-index:10; display:flex; gap:14rpx; align-items:flex-end; flex-direction:row-reverse; }
 
-/* 中间舞台：出牌动态演出区（平时空，出牌/技能时打出牌飞入放大再淡出，不常驻） */
-.stage { position:absolute; top:300rpx; left:220rpx; right:220rpx; bottom:360rpx; z-index:5; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+/* 中间舞台：出牌动态演出区。上下边界改随座位高度收缩（同 min(280rpx,18vh)），
+   常规机型与旧值 300/360rpx 完全等价，矮屏才收紧 → 不重叠。 */
+.stage { position:absolute; top:300rpx; top:calc(min(280rpx,18vh) + 20rpx); left:220rpx; right:220rpx; bottom:360rpx; bottom:calc(min(280rpx,18vh) + 80rpx); z-index:5; display:flex; flex-direction:column; align-items:center; justify-content:center; }
 .stage-play { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; z-index:6; }
 .sp-name {
   font-size:56rpx; font-weight:900; letter-spacing:8rpx; color:#5c2525;
@@ -125,14 +129,8 @@ page { background:#14110f; color:#e8e0d2; }
 .stage-log .lg-big { color:#e8c66a; font-weight:bold; }
 .stage-log .lg-hit { color:#ff8a6b; }
 .stage-log .lg-heal { color:#79e6a0; }
-/* 当前行动高亮：实色金边 + 深阴影（金色光晕易 iPhone 紫偏，改用深度阴影） */
-.seat.current { border-color:#c9a24b; box-shadow:inset 0 0 0 2rpx #c9a24b, 0 4rpx 16rpx rgba(0,0,0,.65); }
-/* 目标可选：实色金边 + 金底圆点（无金色光晕，避 iPhone 紫偏） */
-.seat.clickable { border-color:#e8c66a; box-shadow:inset 0 0 0 2rpx #e8c66a, 0 4rpx 12rpx rgba(0,0,0,.55); animation:seatPulse 1.2s ease-in-out infinite; }
-@keyframes seatPulse {
-  0%,100% { box-shadow:inset 0 0 0 2rpx #e8c66a, 0 4rpx 12rpx rgba(0,0,0,.55); }
-  50%     { box-shadow:inset 0 0 0 3rpx #ffd966, 0 4rpx 14rpx rgba(0,0,0,.6); }
-}
+/* （原此处重复定义了 .seat.current / .seat.clickable / @keyframes seatPulse，
+   与文件前段同值、且后者覆盖前者，属死代码 → 已移除，统一由前段单一定义生效） */
 /* 战报收起：默认仅留最新一条 */
 .stage-log.fold { max-height:48rpx; overflow:hidden; }
 .log-toggle { font-size:18rpx; color:#8a7e6c; margin-top:8rpx; text-align:center; letter-spacing:2rpx; }
@@ -248,6 +246,12 @@ page { background:#14110f; color:#e8e0d2; }
 .rs-title.win { color:#e8c66a; }
 .rs-title.lose { color:#ff8a6b; }
 .rs-sub { text-align:center; font-size:24rpx; color:#b8ac98; margin:10rpx 0 24rpx; }
+/* 包袱斋结账行（本局雪花钱得数） */
+.rs-coin { display:flex; align-items:baseline; justify-content:center; gap:16rpx; flex-wrap:wrap; margin:0 0 24rpx; font-size:24rpx; color:#b8ac98; }
+.rs-coin .rc-k { font-size:22rpx; letter-spacing:4rpx; color:#8f8674; }
+.rs-coin .rc-v { font-size:38rpx; color:#e8c66a; letter-spacing:2rpx; }
+.rs-coin .rc-pay { font-size:22rpx; color:#c98b6b; }
+.rs-coin .rc-net { font-size:22rpx; color:#7d7666; }
 .rs-portrait { display:flex; justify-content:center; margin-bottom:20rpx; }
 .rsp { width:160rpx; height:240rpx; border-radius:12rpx; border:2rpx solid #c9a24b; }
 

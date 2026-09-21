@@ -18,7 +18,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname);
-const SRC_HTML = path.join(ROOT, '浩然天下地图.html');
+const SRC_HTML = path.join(ROOT, '..', 'pc-map', '浩然天下地图.html');
 const OUT = path.join(ROOT, 'weapp/packageMap/utils/mapgeo.js');
 
 const html = fs.readFileSync(SRC_HTML, 'utf8');

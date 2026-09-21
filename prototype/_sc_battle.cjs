@@ -68,7 +68,7 @@ function clearInterval(){}
 /* 驱动：跑 N 局，采样回合数 / 胜方阵营 / 异常 */
 const drv = `
 var __N = ${N};
-var __RESULT = { games:0, timeout:0, error:0, started:0, loops:0, rounds:[], wins:{}, factionWins:{}, errors:[],
+var __RESULT = { games:0, timeout:0, stuck:0, error:0, started:0, loops:0, rounds:[], wins:{}, factionWins:{}, errors:[],
                  longGames: [], seatRound: {}, seatLong: {} };   // 长局诊断用
 
 function __sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
@@ -81,9 +81,18 @@ async function __runOne(idx){
     isAI = function(){ return true; };          // 全场自走
     speedMul = 0;                               // 关闭演出步进延迟（sleep(ms*speedMul)）
     startGame(keys, 'ai');
-    var t0 = Date.now();
-    while(!state.over && (Date.now()-t0) < 45000){ __RESULT.loops++; await __sleep(5); }
-    if(!state.over){ __RESULT.timeout++; return; }
+    var t0 = Date.now(), lastRound = -1, lastProgress = Date.now();
+    while(!state.over && (Date.now()-t0) < 45000){
+      __RESULT.loops++;
+      await __sleep(5);
+      if(state.round !== lastRound){ lastRound = state.round; lastProgress = Date.now(); }
+      if(Date.now() - lastProgress > 8000) break;      // 回合数 8s 无推进 → 逻辑停滞
+    }
+    if(!state.over){
+      if(Date.now() - lastProgress > 8000) __RESULT.stuck++;   // 真僵局/死锁
+      else __RESULT.timeout++;                                 // 纯墙钟超时（机器负载）
+      return;
+    }
     __RESULT.games++;
     __RESULT.rounds.push(state.round);
     /* 长局诊断：记录参与者，并按角色累计「出场局数 / 长局数」，用于定位僵局组合 */
@@ -109,7 +118,7 @@ async function __runOne(idx){
 (async function(){
   console.log('[drv] begin N=' + __N + ' keys=' + __CHARS_KEYS.length);
   for(var i=0;i<__N;i++){ await __runOne(i); }
-  console.log('[drv] done started=' + __RESULT.started + ' games=' + __RESULT.games + ' timeout=' + __RESULT.timeout + ' err=' + __RESULT.error + ' loops=' + __RESULT.loops);
+  console.log('[drv] done started=' + __RESULT.started + ' games=' + __RESULT.games + ' timeout=' + __RESULT.timeout + ' stuck=' + (__RESULT.stuck|0) + ' err=' + __RESULT.error + ' loops=' + __RESULT.loops);
   __done(__RESULT);
 })();
 `;
@@ -156,7 +165,8 @@ async function __runOne(idx){
 
     console.log('=== BATTLE SIM (mode=ai, 4 players, N=' + N + ') ===');
     console.log('finished      : ' + n);
-    console.log('timeout(>12s) : ' + R.timeout);
+    console.log('timeout(>45s) : ' + R.timeout + '   <- wall-clock only (slow machine / load), tolerated');
+    console.log('stuck(8s stall) : ' + (R.stuck|0) + '   <- real deadlock / stalemate');
     console.log('error         : ' + R.error);
     if (R.errors.length) console.log('error samples : ' + R.errors.join(' | '));
     console.log('rounds avg    : ' + avg);
@@ -189,7 +199,14 @@ async function __runOne(idx){
       if (!rows.length) console.log('    (no char with long games at n>=3)');
     }
 
-    const ok = (R.timeout === 0) && (R.error === 0) && n >= Math.floor(N * 0.8);
+    /* 判据分离（2026-09-20 复盘）：
+       - stuck   = 回合数 8s 无推进 → 真死锁/僵局，必 FAIL
+       - timeout = 撞 45s 墙钟上限 → 多为机器负载抖动（并发跑门禁时曾误报 FAIL），
+                   少量容忍；仅当超过 20% 才认为整轮不可信。
+       注意：跑本门禁请独占，勿与其它 node 任务并行。 */
+    const ok = (R.stuck === 0) && (R.error === 0) && n >= Math.floor(N * 0.8)
+             && R.timeout <= Math.floor(N * 0.2);
+    if (ok && R.timeout > 0) console.log('NOTE: ' + R.timeout + ' wall-clock timeout tolerated (no logic stall detected)');
     console.log(ok ? 'BATTLE_SIM_OK' : 'BATTLE_SIM_ATTENTION');
     process.exit(ok ? 0 : 2);
   }

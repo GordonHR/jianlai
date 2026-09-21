@@ -13,7 +13,7 @@
 
   <view class="fl-grid">
     <view wx:for="{{list}}" wx:key="id" class="fl-card" bindtap="open" data-i="{{index}}">
-      <image class="fl-thumb" src="{{item.img}}" mode="aspectFill"/>
+      <image class="fl-thumb" src="{{item.img}}" mode="aspectFill" lazy-load/>
       <view class="fl-name">{{item.name}}</view>
       <view class="fl-type">{{item.type}}</view>
     </view>

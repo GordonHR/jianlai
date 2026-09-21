@@ -49,7 +49,7 @@
         <view class="sect-sub">山主 · 陈平安 · {{v.masterRealmName}}境 · 第 {{v.year}} 年</view>
         <view class="sect-act">第 {{v.book.act}} 幕 · {{v.book.actName}} ｜ 第 {{v.book.bookIdxInAct}}/{{v.book.bookCountInAct}} 册《{{v.book.book}}》</view>
       </view>
-      <view class="sect-timer">第 <text class="b">{{v.xunInYear}}</text> 旬 · <text class="sect-season">{{v.season}}</text> · 距飞升之争 <text class="b">{{v.ascendLeft}}</text> 旬
+      <view class="sect-timer">第 <text class="b">{{v.xunInYear}}</text> 旬 · <text class="sect-season">{{v.season}}</text> · 距建宗大典尚有 <text class="b">{{v.ascendLeft}}</text> 旬
         <text class="sub2">山主修为 {{v.masterCult}} {{v.nextNeed==null ? '（已至绝顶）' : '· 下境需 '+v.nextNeed}}</text>
       </view>
     </view>
@@ -206,7 +206,7 @@
         <view class="h3">门 下 弟 子（{{v.discSlots.used}}/{{v.discSlots.max}}）</view>
         <view wx:if="{{v.disciples.length}}">
           <view class="sect-card-row sect-disc" wx:for="{{v.disciples}}" wx:key="name">
-            <image wx:if="{{item.hasArt}}" class="sect-portrait" src="/packageArt/assets/portraits/{{item.art}}.jpg" mode="aspectFill"/>
+            <image wx:if="{{item.hasArt}}" class="sect-portrait" src="/packageArt/assets/portraits/{{item.art}}.jpg" mode="aspectFill" lazy-load/>
             <view wx:else class="sect-portrait no-art">剑来</view>
             <view class="dinfo"><view class="sect-card-name">{{item.name}} <text class="sect-lv">{{item.realmName}}境 · {{item.dao}}道</text></view>
             <view class="sect-card-sub">修为 {{item.xiwei}} · 忠心 <text class="{{item.loyalCls}}">{{item.loyal}}</text></view></view>
@@ -242,7 +242,7 @@
         <view class="fig-bar"><view class="i" style="width:{{v.figures.pct}}%"></view></view>
         <view class="fig-grid">
           <view class="fig-card" wx:for="{{v.figures.list}}" wx:key="k">
-            <image wx:if="{{item.hasArt}}" class="fig-portrait" src="/packageArt/assets/portraits/{{item.art}}.jpg" mode="aspectFill"/>
+            <image wx:if="{{item.hasArt}}" class="fig-portrait" src="/packageArt/assets/portraits/{{item.art}}.jpg" mode="aspectFill" lazy-load/>
             <view wx:else class="fig-portrait no-art">{{item.k}}</view>
             <view class="fig-n">{{item.k}}</view>
             <view class="fig-t">{{item.t}}</view>

@@ -70,23 +70,26 @@
     <view class="mp-chip" wx:for="{{v.places}}" wx:key="k" data-k="{{item.k}}" bindtap="pickPlace">{{item.n}}</view>
   </scroll-view>
 
-  <!-- 骊珠洞天 · 地名考据 -->
-  <view class="mp-sheet lizhu" wx:if="{{v.level==='lizhu'}}">
+  <!-- 骊珠洞天 · 矢量舆图（canvas 全屏，点 POI 看详情）；底部入口展开文字考据 -->
+  <view class="mp-lzbtn" wx:if="{{v.level==='lizhu' && !v.place && !showLizhuList}}" bindtap="toggleLizhuList">地名考据 · {{v.lizhu.count}} 处</view>
+
+  <!-- 骊珠洞天 · 地名考据（文字详目，可展开抽屉） -->
+  <view class="mp-sheet lizhu" wx:if="{{v.level==='lizhu' && showLizhuList}}">
     <view class="mp-sheet-hd">
       <text class="mp-sheet-tag">骊珠洞天</text>
       <text class="mp-sheet-n">地名考据 · {{v.lizhu.count}} 处</text>
-      <view class="mp-sheet-x" bindtap="goBack">✕</view>
+      <view class="mp-sheet-x" bindtap="toggleLizhuList">✕</view>
     </view>
     <scroll-view scroll-y class="mp-sheet-bd">
       <block wx:for="{{v.lizhu.groups}}" wx:key="tag" wx:for-item="g">
         <view class="mp-lz-tag">{{g.tag}}</view>
         <view wx:for="{{g.items}}" wx:key="key" wx:for-item="it" class="mp-lz-item"
-          data-k="{{it.key}}" bindtap="toggleLizhuItem">
+          data-k="{{it.key}}" bindtap="pickLizhuPlace">
           <view class="mp-lz-n">{{it.name}}</view>
           <view class="mp-lz-d" wx:if="{{expanded[it.key]}}">{{it.desc}}</view>
         </view>
       </block>
-      <view class="mp-foot">村社级矢量舆图（房屋 / 龙窑 / 城门 / 桥梁）后续版本接入，此处先存文字详目。</view>
+      <view class="mp-foot">点击舆图上的地名可直接查看；下方为完整文字考据，点按跳转至该地详情。</view>
     </scroll-view>
   </view>
 

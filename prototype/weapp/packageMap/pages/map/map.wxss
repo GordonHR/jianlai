@@ -71,14 +71,20 @@ page { height:100%; background:#0f0d0b; }
 .mp-sheet { position:fixed; left:0; right:0; bottom:0; z-index:21; background:#1a1512;
   border-top:1rpx solid #3a2f23; border-radius:16rpx 16rpx 0 0;
   padding:24rpx 26rpx 30rpx; padding-bottom:calc(env(safe-area-inset-bottom) + 30rpx); }
-.mp-sheet.lizhu { top:0; bottom:0; border-radius:0; padding-top:34rpx; }
+.mp-sheet.lizhu { top:auto; bottom:0; border-radius:16rpx 16rpx 0 0; padding-top:24rpx; }
 .mp-sheet-hd { display:flex; align-items:center; gap:12rpx; padding-bottom:16rpx;
   border-bottom:1rpx solid #2a231c; }
 .mp-sheet-tag { font-size:20rpx; color:#14110f; background:#c9a24b; padding:4rpx 12rpx; border-radius:6rpx; }
 .mp-sheet-n { flex:1; font-size:28rpx; color:#e8e0d2; letter-spacing:1rpx; }
 .mp-sheet-x { font-size:30rpx; color:#8a7e6c; padding:0 8rpx; }
 .mp-sheet-bd { max-height:52vh; }
-.mp-sheet.lizhu .mp-sheet-bd { max-height:82vh; }
+.mp-sheet.lizhu .mp-sheet-bd { max-height:72vh; }
+
+/* 骊珠视图：地名考据入口（浮于矢量舆图之上） */
+.mp-lzbtn { position:absolute; left:50%; transform:translateX(-50%); z-index:12;
+  bottom:24rpx; bottom:calc(env(safe-area-inset-bottom) + 24rpx);
+  font-size:23rpx; color:#c9a24b; padding:14rpx 32rpx;
+  background:rgba(25,21,18,.9); border:1rpx solid #3a2f23; border-radius:30rpx; }
 .mp-sheet-d { font-size:25rpx; color:#cdbfa8; line-height:1.75; margin-top:20rpx; white-space:pre-wrap; }
 .mp-chars { margin-top:26rpx; }
 .mp-chars-t { font-size:21rpx; color:#8a7e6c; margin-bottom:12rpx; }

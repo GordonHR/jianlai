@@ -36,6 +36,50 @@ const sleep = ms => new Promise(r => setTimeout(r, Math.max(0, Math.round(ms * s
 // 连击总开关（供平衡采样对照用；默认开启）
 const COMBO_ON = true;
 
+/* ===================== 包袱斋接线（跨分包） =====================
+ * 本引擎在主包，包袱斋模块在 packageRef 分包——主包引不到分包，不能 require。
+ * 故：装配时由包袱斋把 eff 列表预计算进存档 loadout 字段，此处只读、零数据复制。
+ * 常量 BF_SETTLE 与 packageRef/utils/baofuzhai.js 的 BF_COIN_WIN / BF_COIN_LOSE 同值，
+ * 两处分包互引被禁无法共享，改动请同时改两处（_selftest 有一致性断言）。 */
+const BF_SETTLE = { win:18, lose:6 };
+const BF_KEY = 'jianlai_baofu';
+function storeGet(k){
+  try{
+    if(typeof wx!=='undefined' && wx.getStorageSync) return wx.getStorageSync(k);
+    return (typeof global!=='undefined' && global.__ls && global.__ls[k]);
+  }catch(e){ return null; }
+}
+function storeSet(k, v){
+  try{
+    if(typeof wx!=='undefined' && wx.setStorageSync){ wx.setStorageSync(k, v); return; }
+    if(typeof global!=='undefined'){ global.__ls = global.__ls || {}; global.__ls[k] = v; }
+  }catch(e){}
+}
+function bfReadSave(){
+  try{
+    let o = storeGet(BF_KEY);
+    if(typeof o === 'string') o = JSON.parse(o);
+    if(!o || typeof o!=='object' || o.v!==2) return null;
+    return o;
+  }catch(e){ return null; }
+}
+/* 取「已装配的法宝/印记」eff 列表（包袱斋预计算写入） */
+function bfLoadout(){
+  const o = bfReadSave();
+  return (o && Array.isArray(o.loadout)) ? o.loadout : [];
+}
+/* 一局终了结账：读档 → 加雪花钱（先抵赊欠）→ 写回。与 PC baofuzhai.bfAddCoin 同口径。 */
+function bfSettle(win){
+  let o = bfReadSave();
+  if(!o) o = { v:2, coin:0, debt:0 };          // 首次：立个钱袋（其余字段由包袱斋 bfLoad 补全）
+  const gain = win ? BF_SETTLE.win : BF_SETTLE.lose;
+  let left = gain, pay = 0;
+  if((o.debt|0) > 0){ pay = Math.min(o.debt|0, left); o.debt = (o.debt|0) - pay; left -= pay; }
+  o.coin = Math.max(0, (o.coin|0) + left);
+  storeSet(BF_KEY, JSON.stringify(o));
+  return { gain:gain, pay:pay, net:gain-pay, coin:o.coin, debt:o.debt };
+}
+
 /* ===================== 工具 ===================== */
 function isFlagship(p){ return p.flagship === true; }
 function talentOf(p){ return isFlagship(p) ? null : (p.talent || null); }
@@ -117,7 +161,13 @@ function isBaizeBlocked(t){ return t.key==='baize'; }
 /* ===================== 技能引擎（与 PC game.js 对齐） =====================
  * 说明：PC 端 distance/nodist/range 依赖「座次距离判定」，本引擎不强制攻击距离，
  * 故 nodist/range 在 mini 程序中视为被动常驻（不影响默认「任意目标可击」手感）。 */
-function skillsOf(p){ return (D.SKILLS && p && D.SKILLS[p.key]) || []; }
+/* 角色技 + 包袱斋随身之物（extraSkills，见顶部「包袱斋接线」）。
+   与 PC game.js skillsOf 同规则：必须合并，否则小程序端「买了不生效」。 */
+function skillsOf(p){
+  const base = (D.SKILLS && p && D.SKILLS[p.key]) || [];
+  const ex = (p && p.extraSkills) || null;
+  return (ex && ex.length) ? base.concat(ex) : base;
+}
 function condOk(p, c, t){
   if(!c) return true;
   if(typeof c === 'string'){
@@ -213,6 +263,17 @@ function startGame(keys, mode){
   };
   const players = keys.map((k,i)=>makePlayer(k, i, null));
   state.players = players;
+
+  /* 包袱斋：随身法宝与悟道印记随我方入场（群雄论剑为同席切磋，不带私物）。
+     在设 side 之前按 mode 判定——siege/boss 初始全员同阵营，等价于全注入；
+     与 PC game.js 的 injectLoadout 同一纪律（PC 原先写在设 side 之前，已同步修正）。 */
+  const LOADOUT = bfLoadout();
+  if(LOADOUT.length && mode!=='hot'){
+    players.forEach(function(p){
+      if(mode==='siege' || mode==='boss') p.extraSkills = LOADOUT.slice();
+      else if(mode==='ai' && p.id===0)    p.extraSkills = LOADOUT.slice();
+    });
+  }
 
   if(mode==='siege'){
     players.forEach(p=>{ p.side='ally'; });
@@ -538,6 +599,9 @@ function checkEnd(){
 function endGame(win, title, winnerName, winnerId){
   state.over = true;
   state.win = !!win;
+  /* 包袱斋结账：胜/败得雪花钱（先抵赊欠）。与 PC endGame→updateRecord 同纪律——只记一次，
+     否则 checkEnd 多分支走到同一结算会反复入账。 */
+  if(!state.bfSettled){ state.bfSettled = true; state.bfGain = bfSettle(!!win); }
   state.winner = winnerName || '无';
   state.winnerId = (winnerId===undefined || winnerId===null) ? -1 : winnerId;
   state.resultTitle = title || '';
@@ -1509,6 +1573,7 @@ function buildResult(s){
     else                      achievement={ title:'百折不回', grade:'下品', gkey:'low',     note:'道阻且长，百折其志不回。' };
   }
   return { humanWin, win:humanWin, sub, title:s.resultTitle, winner:s.winner, rows, mvp, banner, achievement,
+           coinGain: s.bfGain || null,          // 包袱斋结账明细（供结算页显示雪花钱得数）
            logFull: s.log.slice() };
 }
 
@@ -1564,4 +1629,6 @@ module.exports = {
   cycleBg, toggleSpeed, getSpeed,
   toggleAuto, getAuto,
   getState(){ return state; },
+  BF_SETTLE,        // 供 _selftest 与分包 baofuzhai.js 的 BF_COIN_* 做一致性断言
+  _t: { bfLoadout, bfSettle, skillsOf },   // 仅供 _selftest 断言（页面不直接调用）
 };

@@ -6,6 +6,16 @@
     <view class="pf-greet">{{v.greet}}</view>
   </view>
 
+  <!-- 破境回响（本次会话新破境时出现） -->
+  <view class="pf-broke" wx:if="{{v.broke}}">
+    <view class="pf-broke-h">破 境 · {{v.broke.to}}</view>
+    <view class="pf-broke-d">
+      <text wx:if="{{v.broke.from}}">{{v.broke.from}} → </text>{{v.broke.to}}
+      <text wx:if="{{v.broke.gains}}">　|　新得：{{v.broke.gains}}</text>
+    </view>
+    <view class="pf-broke-q" wx:if="{{v.broke.d}}">{{v.broke.d}}</view>
+  </view>
+
   <!-- 道途择定 -->
   <view class="pf-sec">择 道 途<text class="pf-sec-sp">点选即定 · 不可改途，只向前修</text></view>
   <view class="pf-paths">
@@ -59,11 +69,13 @@
     <view class="pf-stat"><view class="b">{{v.stats.batt.total}}</view><view class="t">战局</view></view>
     <view class="pf-stat"><view class="b">{{v.stats.batt.win}}</view><view class="t">胜</view></view>
     <view class="pf-stat"><view class="b">{{v.stats.batt.lose}}</view><view class="t">负</view></view>
+    <view class="pf-stat"><view class="b">{{v.stats.wr}}%</view><view class="t">胜率</view></view>
+    <view class="pf-stat"><view class="b">{{v.stats.batt.streak}}</view><view class="t">当前连胜</view></view>
     <view class="pf-stat"><view class="b">{{v.stats.batt.best}}</view><view class="t">最高连胜</view></view>
   </view>
   <view class="pf-row">道行 <text class="b">{{v.xp}}</text>　·　包袱斋雪花钱 <text class="b">{{v.stats.baofuCoin}}</text></view>
-  <view class="pf-row">人物志 <text class="b">{{v.stats.codex}}</text> 人　·　无事牌 <text class="b">{{v.stats.wsp}}</text> 面</view>
-  <view class="pf-row">已走结局　书简湖 {{v.stats.seenAsklake}} · 落魄山 {{v.stats.seenSect}} · 山水祠 {{v.stats.seenShenci}}</view>
+  <view class="pf-row">人物志 <text class="b">{{v.stats.codex}}</text> / {{v.stats.codexTot}} 人　·　无事牌 <text class="b">{{v.stats.wsp}}</text> / {{v.stats.wspTot}} 面</view>
+  <view class="pf-row">已走结局　书简湖 {{v.stats.seen.asklake}}/{{v.stats.seen.totAsklake}} · 落魄山 {{v.stats.seen.sect}}/{{v.stats.seen.totSect}} · 山水祠 {{v.stats.seen.shenci}}/{{v.stats.seen.totShenci}}</view>
 
   <view class="pf-acts">
     <button class="btn sm" bindtap="recordWin">录 一 胜（论功）</button>
@@ -72,8 +84,9 @@
 
   <view class="pf-sec" wx:if="{{v.log.length}}">破 境 · 论 功 录</view>
   <view class="pf-log">
-    <view class="pf-lg" wx:for="{{v.log}}" wx:key="t">
+    <view class="pf-lg" wx:for="{{v.log}}" wx:key="index">
       <text class="pf-lg-t">{{item.t}}</text>
+      <text class="pf-lg-m">{{item.m}}</text>
       <text class="pf-lg-s">{{item.s}}</text>
       <text class="pf-lg-x" wx:if="{{item.x>0}}">+{{item.x}}</text>
     </view>

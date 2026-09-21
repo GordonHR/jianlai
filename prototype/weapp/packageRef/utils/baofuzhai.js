@@ -135,7 +135,7 @@ const BF_KEY = 'jianlai_baofu';
 const BF_VER = 2;
 function bfDefault(){
   return { v:BF_VER, coin:0, debt:0, read:[], marks:[], gear:[], owned:[], fakes:[],
-           seen:[], stall:[], say:'', rouDate:'' };
+           seen:[], stall:[], say:'', rouDate:'', loadout:[] };
 }
 function bfLoad(){
   let o = null;
@@ -144,7 +144,20 @@ function bfLoad(){
   if(o.v !== BF_VER){ const keep = Math.max(0, o.coin|0); const d = bfDefault(); d.coin = keep; return d; }
   return Object.assign(bfDefault(), o);
 }
-function bfSave(){ try{ lsSet(BF_KEY, JSON.stringify(BF)); }catch(e){} }
+function bfSave(){ bfSyncLoadout(); try{ lsSet(BF_KEY, JSON.stringify(BF)); }catch(e){} }
+
+/* 把「已装配的法宝 / 悟道印记」预计算成 eff 列表写进存档（loadout 字段）。
+   起因：战斗引擎在主包（utils/engine.js），本模块在 packageRef 分包——主包引不到分包，
+   战斗端拿不到 BF_GEAR / BF_BOOKS。故由本模块预先把 id 映射成 eff，战斗端只读 b.loadout：
+   零数据复制、常量不会漂移（改物件表不必再同步第二处）。 */
+function bfSyncLoadout(){
+  const list = [];
+  (BF.gear||[]).forEach(function(id){ const g=bfGear(id);
+    if(g && g.eff) list.push({ n:g.name, k:g.eff.k, v:g.eff.v, o:g.eff.o||null, c:g.eff.c||null }); });
+  (BF.marks||[]).forEach(function(id){ const b=bfBook(id);
+    if(b && b.eff) list.push({ n:'悟·'+b.name, k:b.eff.k, v:b.eff.v, o:b.eff.o||null, c:b.eff.c||null }); });
+  BF.loadout = list;
+}
 
 let BF = bfLoad();
 let BF_TAB = 'heqi';
@@ -189,10 +202,10 @@ function bfEffText(eff){
   return t + (eff.v ? ' +' + eff.v : '') + (BF_CONDTXT[eff.c]||'')
        + (eff.o==='turn' ? '，每回合限一次' : (eff.o==='once' ? '，每局限一次' : ''));
 }
+/* 资源飘字：只登记 + 定时清理，由调用方 emitView（避免一次操作推两遍视图） */
 function bfFloat(text){
   const id = FLOATS.length ? (FLOATS[FLOATS.length-1].id + 1) : 1;
   FLOATS.push({ id:id, text:text });
-  emitView();
   setTimeout(function(){ FLOATS = FLOATS.filter(f=>f.id!==id); emitView(); }, 1400);
 }
 
@@ -232,7 +245,7 @@ function bfBuy(id){
   BF.owned.push(id);
   if(BF.seen.indexOf(id) < 0) BF.seen.push(id);
   BF_SAY = '「' + g.name + '」记下了。符箓美人在门外挂上一面小木牌，上书四字——已结善缘。';
-  bfSave(); bfTellProfile('buy', g.name); SFX.click(); emitView();
+  bfSave(); bfTellProfile('buy', g.name); bfFloat('-' + g.price + ' 雪花钱'); SFX.click(); emitView();
 }
 function bfCredit(id){
   const g = bfGear(id);
@@ -249,19 +262,18 @@ function bfCredit(id){
   BF.owned.push(id);
   if(BF.seen.indexOf(id) < 0) BF.seen.push(id);
   BF_SAY = '先拿去。日后在浩然天下任何一处包袱斋，随时补上即可——此非破例，是我们包袱斋历来有此定例。';
-  bfSave(); bfTellProfile('buy', g.name); SFX.click(); emitView();
+  bfSave(); bfTellProfile('buy', g.name); bfFloat('赊 ' + g.price + ' 雪花钱'); SFX.click(); emitView();
 }
 function bfSell(id){
   const g = bfGear(id);
   if(!g || !bfHas(id)) return;
   const back = Math.floor(g.price * BF_SELL_RATE);
-  const gi = BF.gear.indexOf(id);
-  if(gi >= 0) BF.gear.splice(gi, 1);
-  const oi = BF.owned.indexOf(id);
-  if(oi >= 0) BF.owned.splice(oi, 1);
+  /* 防御旧档重复项：同 id 一次全摘，避免「卖一件还剩一件」反复变现 */
+  for(let k=BF.gear.length-1;k>=0;k--){ if(BF.gear[k]===id) BF.gear.splice(k,1); }
+  for(let k=BF.owned.length-1;k>=0;k--){ if(BF.owned[k]===id) BF.owned.splice(k,1); }
   BF.coin += back;
   BF_SAY = '退一半，这是规矩。' + back + ' 雪花钱入袋，木牌摘下。';
-  bfSave(); SFX.click(); emitView();
+  bfSave(); bfFloat('+' + back + ' 雪花钱'); SFX.click(); emitView();
 }
 function bfRepay(){
   if(BF.debt <= 0) return;
@@ -272,13 +284,14 @@ function bfRepay(){
   }
   BF.coin -= pay; BF.debt -= pay;
   BF_SAY = '补上 ' + pay + ' 雪花钱，旧账两清' + (BF.debt>0 ? '，还欠 ' + BF.debt + '。' : '。');
-  bfSave(); SFX.click(); emitView();
+  bfSave(); bfFloat('-' + pay + ' 雪花钱'); SFX.click(); emitView();
 }
 
 /* ===================== 拣漏（散修摊位） ===================== */
 function bfRollStall(force){
   if(!force && BF.stall && BF.stall.length) return;
-  const pool = BF_GEAR.slice();
+  /* 真品池排除已拥有之物（与 PC 同规则）：堵住重复购入 → owned 重复 id → 反复退货刷钱 */
+  const pool = BF_GEAR.filter(function(g){ return BF.owned.indexOf(g.id) < 0; });
   const out = [];
   for(let i=0; i<BF_STALL_N && pool.length; i++){
     const idx = Math.floor(Math.random()*pool.length);
@@ -316,6 +329,11 @@ function bfEye(i){
 function bfBuyStall(i){
   const it = BF.stall[i];
   if(!it || it.done) return;
+  /* 防御旧档残留的真品摊位：已拥有就不再重复入账 */
+  if(it.real && it.gid && bfHas(it.gid)){
+    BF_SAY = '这东西你已有一件，何必再买？这件留着，下回再看。';
+    SFX.click(); emitView(); return;
+  }
   if((BF.coin||0) < it.ask){
     BF_SAY = '散修不做赊买卖。' + it.ask + ' 雪花钱，一文都不能少。';
     SFX.click(); emitView(); return;
@@ -333,7 +351,7 @@ function bfBuyStall(i){
     BF_SAY = '打眼了。「' + it.name + '」是假的，' + it.ask + ' 雪花钱买了个数。——这行当，谁没打过眼呢。';
     bfTellProfile('fake', it.name);
   }
-  bfSave(); SFX.click(); emitView();
+  bfSave(); bfFloat('-' + it.ask + ' 雪花钱'); SFX.click(); emitView();
 }
 function bfRefreshStall(){
   bfRollStall(true);
@@ -372,7 +390,7 @@ function bfRead(id){
   if(BF.seen.indexOf('book_'+id) < 0) BF.seen.push('book_'+id);
   if(BF.marks.length < bfMarkSlots()) BF.marks.push(id);
   BF_SAY = '「' + b.name + '」读过了。眼力添了几分（' + bfInsight() + '%），悟道印记可装配 ' + bfMarkSlots() + ' 个。';
-  bfSave(); SFX.click(); emitView();
+  bfSave(); bfFloat('-' + b.price + ' 雪花钱'); SFX.click(); emitView();
 }
 function bfToggleMark(id){
   if(BF.read.indexOf(id) < 0) return;
@@ -516,9 +534,11 @@ function view(){
 
 /* 由战局模块挂钩：一局终了结账，先抵赊欠，余下入袋 */
 function bfAddCoin(n){
-  if(!n) return;
+  if(!n) return null;
+  const gain = n;
+  let pay = 0;
   if(BF.debt > 0){
-    const pay = Math.min(BF.debt, n);
+    pay = Math.min(BF.debt, n);
     BF.debt -= pay; n -= pay;
     BF_SAY = '结账。先抵赊欠 ' + pay + ' 雪花钱' + (n>0 ? '，余下 ' + n + ' 入袋。' : '。');
   }else{
@@ -526,6 +546,8 @@ function bfAddCoin(n){
   }
   BF.coin = Math.max(0, (BF.coin||0) + n);
   bfSave(); emitView();
+  /* 返回结账明细，供结算页呈现（与 PC bfAddCoin 同口径） */
+  return { gain:gain, pay:pay, net:gain-pay, coin:BF.coin, debt:BF.debt };
 }
 /* 由对战模块调用：给我方角色挂上随身法宝与悟道印记（hot 不注入，存公允） */
 function bfApplyLoadout(players, mode){
@@ -546,5 +568,6 @@ module.exports = {
   eye:bfEye, buyStall:bfBuyStall, refreshStall:bfRefreshStall, rouEye:bfRouEye,
   read:bfRead, toggleMark:bfToggleMark, toggleGear:bfToggleGear,
   addCoin:bfAddCoin, applyLoadout:bfApplyLoadout,
-  coinText:bfCoinText, insight:bfInsight, markSlots:bfMarkSlots
+  coinText:bfCoinText, insight:bfInsight, markSlots:bfMarkSlots,
+  coinWin:BF_COIN_WIN, coinLose:BF_COIN_LOSE   // 供 _selftest 与主包 engine.BF_SETTLE 比对
 };

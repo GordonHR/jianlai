@@ -2293,7 +2293,7 @@ function sectDaoqiRecap(s){
 function sectMoodLine(s){
   const season = sectSeason(s);
   if(SECT_NODES.ascend.xun - s.xun <= 3 && !s.nodeFired.ascend)
-    return '飞升之争将近，你握了握拳——这一生，总要有一场硬仗。';
+    return '建宗大典将近，你握了握拳——这一山的道理，终于要立给天下看。';
   if(s.nodeFired.qiguan && !s.nodeFired.ascend)
     return '蛮荒的尘烟已散，山门暂稳，可你知道，更大的事还在后头。';
   const base = {

@@ -1,11 +1,13 @@
-.setup { padding: 24rpx 24rpx 0; }
+/* 诊断 §2.2：滚动区原用 height:calc(100vh - 430rpx)，430rpx 是拍出来的魔法数，
+   机型/导航栏/手势条一变就错位。改为父容器撑满视口 + 滚动区 flex:1，高度由布局自己算。 */
+.setup { padding: 24rpx 24rpx 0; height:100vh; box-sizing:border-box; display:flex; flex-direction:column; }
 .hint { font-size: 23rpx; color: #9c9486; text-align: center; line-height: 1.6; margin-bottom: 16rpx; }
 .filterbar { display: flex; flex-wrap: wrap; gap: 12rpx; align-items: center; margin-bottom: 14rpx; }
 .fbtn { font-size: 22rpx; color: #cdc4b0; border: 1rpx solid rgba(236,230,216,.25); border-radius: 30rpx; padding: 6rpx 18rpx; }
 .fbtn.on { background: #e8c66a; color: #14110f; border-color: #e8c66a; }
 .fsearch { flex: 1; min-width: 160rpx; background: rgba(255,255,255,.06); border: 1rpx solid rgba(236,230,216,.2); border-radius: 30rpx; padding: 8rpx 20rpx; font-size: 24rpx; color: #ece6d8; }
-.grid-scroll { height: calc(100vh - 430rpx); }
-.grid { display: flex; flex-wrap: wrap; gap: 16rpx; padding-bottom: 20rpx; }
+.grid-scroll { flex: 1; min-height: 0; }
+.grid { display: flex; flex-wrap: wrap; gap: 16rpx; padding-bottom: calc(180rpx + env(safe-area-inset-bottom)); }
 .char { width: calc(33.33% - 11rpx); border: 2rpx solid #555; border-radius: 12rpx; overflow: hidden; background: rgba(255,255,255,.03); }
 .char.sel { box-shadow: 0 0 0 3rpx #e8c66a; }
 .cw { position: relative; aspect-ratio: 2 / 3; height: auto; display: flex; align-items: center; justify-content: center; }

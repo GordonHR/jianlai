@@ -1,10 +1,15 @@
+/* 诊断 §4.1：去掉 background-attachment:fixed。
+   webview 对 fixed 背景支持差，且滚动时整屏渐变反复重绘 → 低端机掉帧费电。
+   改为随内容流的普通背景（一次性绘制）+ no-repeat 防平铺串纹；
+   三层柔光锚点由"视口"改为"页面盒"，首屏观感一致，滚动零重绘。 */
 page {
-  background:
-    radial-gradient(1200px 600px at 50% -10%, #3a2f4a 0%, transparent 60%),
-    radial-gradient(900px 500px at 10% 110%, #2a3a44 0%, transparent 55%),
-    radial-gradient(900px 500px at 90% 110%, #432a2a 0%, transparent 55%),
+  background-color: #14110f;
+  background-image:
+    radial-gradient(1200px 600px at 50% 0%, #3a2f4a 0%, transparent 60%),
+    radial-gradient(900px 500px at 8% 100%, #2a3a44 0%, transparent 55%),
+    radial-gradient(900px 500px at 92% 100%, #432a2a 0%, transparent 55%),
     linear-gradient(160deg, #15131c 0%, #1d1a26 50%, #14110f 100%);
-  background-attachment: fixed;
+  background-repeat: no-repeat;
   min-height: 100%;
   color: #ece6d8;
   font-family: "PingFang SC", "Microsoft YaHei", serif;

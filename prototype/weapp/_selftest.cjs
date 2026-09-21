@@ -55,6 +55,55 @@ ok(true, 'buyStall 不抛错');
 bf.eye(1);
 ok(true, 'eye 不抛错');
 
+// ---- 装配后写 loadout 预计算（主包战斗引擎跨分包读不到本模块，只能走存档）----
+const _s0 = JSON.parse(global.__ls['jianlai_baofu'] || '{}');
+ok(Array.isArray(_s0.loadout) && _s0.loadout.length >= 2, '装配后写入 loadout 预计算 (实际 ' + ((_s0.loadout || []).length) + ' 项)');
+ok(_s0.loadout.some(x => x.k === 'range'), 'loadout 含 lufu 的 range 效果');
+ok(_s0.loadout.every(x => x && x.n && x.k && typeof x.v === 'number'), 'loadout 每项结构完整');
+
+// ---- 捡漏不再挂已拥有的真品（旧 bug：重复购入 → owned 重复 → 反复退货刷钱）----
+bf.refreshStall();
+ok(snap.body.stalls.every(s => s.name !== '路引符' && s.name !== '莹莹白骨'), '摊上不再挂已拥有的真品');
+ok(snap.body.stalls.length > 0, '仍能挂出其它物件');
+
+// ---- 退货全清同 id 重复项 ----
+const _s1 = JSON.parse(global.__ls['jianlai_baofu']);
+_s1.coin = 0; _s1.owned = ['lufu', 'lufu']; _s1.gear = ['lufu', 'lufu'];
+global.__ls['jianlai_baofu'] = JSON.stringify(_s1);
+bf.open();
+bf.sell('lufu');
+const _s2 = JSON.parse(global.__ls['jianlai_baofu']);
+ok(_s2.owned.indexOf('lufu') < 0 && _s2.gear.indexOf('lufu') < 0, '退货后同 id 无残留（堵住重复变现）');
+ok(_s2.coin === 15, '退货入账 15 (实际 ' + _s2.coin + ')');
+
+// ============ 对战引擎 × 包袱斋（跨分包走存档 loadout） ============
+LOG.push('【对战引擎 × 包袱斋】');
+const eng = load(U + '/engine.js');
+const ET = eng._t;
+ok(!!ET && typeof ET.bfLoadout === 'function' && typeof ET.bfSettle === 'function', '引擎导出测试接口');
+ok(bf.coinWin === eng.BF_SETTLE.win && bf.coinLose === eng.BF_SETTLE.lose,
+   '雪花钱常量两端一致 (' + eng.BF_SETTLE.win + '/' + eng.BF_SETTLE.lose + ')');
+
+const _s3 = JSON.parse(global.__ls['jianlai_baofu']);
+_s3.loadout = [{ n: '路引符', k: 'range', v: 1, o: null, c: null }];
+global.__ls['jianlai_baofu'] = JSON.stringify(_s3);
+ok(ET.bfLoadout().length === 1, '引擎从存档读到 loadout');
+const _base = ET.skillsOf({ key: 'chenpingan' }).length;
+const _with = ET.skillsOf({ key: 'chenpingan', extraSkills: [{ n: '路引符', k: 'range', v: 1 }] }).length;
+ok(_with === _base + 1, 'skillsOf 合并 extraSkills（买了才生效，+' + (_with - _base) + '）');
+
+// 结算：胜 +18 先抵赊欠，败 +6
+global.__ls['jianlai_baofu'] = JSON.stringify({ v: 2, coin: 10, debt: 5, gear: [], marks: [], owned: [], loadout: [] });
+const _gg = ET.bfSettle(true);
+ok(_gg && _gg.gain === 18 && _gg.pay === 5 && _gg.coin === 23, '结算先抵赊欠 (coin=' + (_gg && _gg.coin) + ')');
+const _gg2 = ET.bfSettle(false);
+ok(_gg2 && _gg2.gain === 6 && _gg2.coin === 29, '败局 +6 (coin=' + (_gg2 && _gg2.coin) + ')');
+// startGame 挂载 / endGame 结算：静态断言（动态调会启动异步对局，不适合放进自测）
+const engSrc = fs.readFileSync(U + '/engine.js', 'utf8');
+ok(/LOADOUT\.length && mode!=='hot'/.test(engSrc) && /p\.extraSkills = LOADOUT\.slice\(\)/.test(engSrc),
+   'startGame 按模式挂载 loadout（静态断言）');
+ok(/state\.bfSettled/.test(engSrc) && /bfSettle\(!!win\)/.test(engSrc), 'endGame 结算只记一次（静态断言）');
+
 // ============ 行者录 ============
 LOG.push('【行者录 profile】');
 const pf = load(RF + '/profile.js');

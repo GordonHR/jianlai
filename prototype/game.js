@@ -1156,13 +1156,22 @@ const MODE_META = {
   boss:  { title:'天下共伐', minPick:2, maxPick:3 },
 };
 
-/* 难度：只调起手牌与巨寇气血，不动核心伤害公式，避免整体节奏失衡 */
+/* 难度：分两个维度 —— ① 资源差（起手牌 / 巨寇气血）② 决策智商 iq（AI「怎么打」）。
+ *   不动核心伤害公式与牌面数值，避免整体节奏失衡。
+ *   iq=0 简单：敌方剑手心神不宁（随手指目标、漏用技能、偶尔整回合走神）
+ *   iq=1 普通：与旧版逐字一致（不放水、也不额外精算）
+ *   iq=2 困难：敌方剑手心思缜密（集火残血咬得更紧、问剑夺守后必补刀） */
 const DIFF = {
-  easy:   { key:'easy',   name:'简 单', desc:'我方起手多摸 1 张，巨寇气血 ×1.35', allyDraw:1, foeDraw:0, bossMul:1.35 },
-  normal: { key:'normal', name:'普 通', desc:'依原典规矩行棋',                    allyDraw:0, foeDraw:0, bossMul:1.60 },
-  hard:   { key:'hard',   name:'困 难', desc:'敌方起手多摸 1 张，巨寇气血 ×1.90', allyDraw:0, foeDraw:1, bossMul:1.90 },
+  easy:   { key:'easy',   name:'简 单', desc:'我方起手多摸 1 张，巨寇气血 ×1.35；敌方剑手心神不宁（会漏招）',   allyDraw:1, foeDraw:0, bossMul:1.35, iq:0 },
+  normal: { key:'normal', name:'普 通', desc:'依原典规矩行棋',                                                 allyDraw:0, foeDraw:0, bossMul:1.60, iq:1 },
+  hard:   { key:'hard',   name:'困 难', desc:'敌方起手多摸 1 张，巨寇气血 ×1.90；敌方剑手心思缜密（集火补刀）', allyDraw:0, foeDraw:1, bossMul:1.90, iq:2 },
 };
 let difficulty = 'normal';
+/* 当前难度对应的 AI 决策智商；任何异常一律退回常态(1)，绝不因数据缺失影响对局。 */
+function aiIQ(){
+  const d = DIFF[difficulty];
+  return (d && d.iq != null) ? d.iq : 1;
+}
 // 战绩（本地留存）：胜/负/当前连胜/最高连胜，以及分模式统计
 let record = { win:0, lose:0, streak:0, best:0, byMode:{} };
 function loadSettings(){
@@ -1218,7 +1227,9 @@ function updateRecord(win, mode){
   // 行迹录（PC 端玩家档案）：战局计入道行、战绩、常用角色
   try{ if(typeof prRecordBattle==='function')
     prRecordBattle(!!win, mode, difficulty, (state&&state.round)||0, myCharsOf(mode)); }catch(e){}
-  if(typeof bfAddCoin==='function' && typeof BF_COIN_WIN!=='undefined') bfAddCoin(win ? BF_COIN_WIN : BF_COIN_LOSE);
+  // 包袱斋结账：胜/败得雪花钱（先抵赊欠）。明细留给结算界面呈现
+  if(typeof bfAddCoin==='function' && typeof BF_COIN_WIN!=='undefined' && state)
+    state.bfGain = bfAddCoin(win ? BF_COIN_WIN : BF_COIN_LOSE);
 }
 
 function startGame(keys, mode){
@@ -1243,10 +1254,13 @@ function startGame(keys, mode){
   state.players = players;
   state.tianxiang = rollTianxiang();   // 天象：开局定局，整局不变
 
-  // 包袱斋：随身法宝与悟道印记随我方入场（群雄论剑为同席切磋，不带私物）
-  if(typeof bfApplyLoadout==='function'){ try{ bfApplyLoadout(players, mode); }catch(e){} }
-  // 行迹录：境界所得精进入局（同包袱斋纪律，hot 不注入）
-  if(typeof prApplyRealm==='function'){ try{ prApplyRealm(players, mode); }catch(e){} }
+  /* 我方入局注入（包袱斋随身之物 + 行迹录境界）。
+     铁律：必须在各模式设完 p.side 之后再调——bfApplyLoadout / prApplyRealm 都以 p.side 判「我方」，
+     原先写在设 side 之前，导致守城（ally）/讨伐（hero）两模式从未注入，只有 1v1 的 id 判定侥幸生效。 */
+  const injectLoadout = function(){
+    if(typeof bfApplyLoadout==='function'){ try{ bfApplyLoadout(players, mode); }catch(e){} }
+    if(typeof prApplyRealm==='function'){ try{ prApplyRealm(players, mode); }catch(e){} }
+  };
 
   // 开局技能：全场发牌 / 专属本命飞剑
   state.players.forEach(pl=>{
@@ -1267,6 +1281,7 @@ function startGame(keys, mode){
   if(mode==='siege'){
     // 守城：玩家方为 ally，敌方按波次生成
     players.forEach(p=>{ p.side='ally'; });
+    injectLoadout();                  // side 就位后才注入我方随身之物/境界
     state.human = 0;
     state.wave = 0;
     state.players = players;
@@ -1290,6 +1305,7 @@ function startGame(keys, mode){
     boss.hp = boss.maxHp;
     boss.isBoss = true;
     players.forEach(p=>{ p.side='hero'; });
+    injectLoadout();                  // side 就位后才注入（boss 自身 side='boss'，不入我方）
     players.push(boss);
     state.players = players;
     state.log = [];
@@ -1301,6 +1317,7 @@ function startGame(keys, mode){
   }
 
   // ai 为「玩家 vs AI」：按难度给双方调起手牌；hot 是同席热座，不作加减
+  injectLoadout();                    // ai 按 id===0 判我方；hot 由 applyLoadout 自身跳过
   players.forEach(p=>{
     const isFoe = (mode==='ai' && p.id !== 0);
     draw(p, 4 + (isFoe ? D.foeDraw : (mode==='ai' ? D.allyDraw : 0)));
@@ -1647,7 +1664,7 @@ async function loseHp(p, amt, reason, source){
   if(source && source.id!==p.id) source.stats.dmg += realAmt;
   if(realAmt>0){
     log(p.name+' 受 '+realAmt+' 点伤害'+(reason||''), 'hit');
-    pendingFx.push({ id:p.id, amt:realAmt, type:'hit' });
+    pendingFx.push({ id:p.id, amt:realAmt, type:'hit', fac: (source && source.faction) || (p && p.faction) });
     // 反弹：直接扣血，不递归触发对方技能
     const _rf = firstK(p,'reflect',source);
     if(_rf && source && source.alive && source.id!==p.id){
@@ -1899,7 +1916,9 @@ async function resolveAttack(attacker, target){
 
   slashFx(attacker.faction);
   SFX.slash();
-  await sleep(180);
+  /* 定向剑气：攻→守光痕（演出层，不改结算） */
+  await dirSwordFx(attacker, target);
+  await sleep(120);
   await applyDamage(attacker, target, dmg);
 }
 
@@ -2281,6 +2300,7 @@ async function useSkillCore(p, key){
     shout('一 剑', '#ff8a6b');
     if(isFlagship(p)) flagshipInk(p, '一剑');
     await bladeFx(p, t);
+    await dirSwordFx(p, t);
     await applyDamage(p, t, dmg);
     return;
   }
@@ -2409,24 +2429,29 @@ function aiChooseTarget(p){
     const foes = cands.filter(q=>q.side !== p.side);
     if(foes.length) pool = foes;
   }
+  const iq = aiIQ();
   const score = q=>{
     let s = 0;
     if(q.faction !== p.faction) s += 10;
     if(q.faction === (HOSTILE[p.faction]||'__')) s += 6;
     if(aiExpectedAtk(p,q) >= q.hp) s += 40;   // 可一剑斩杀，最高优先
     if(q.flagship) s += 4;                    // 主将倒则阵崩，优先压制
-    s -= q.hp * 3;                            // 残血优先集火
+    s -= q.hp * (iq>=2 ? 5 : 3);              // 残血优先集火（困难档咬得更紧）
     s -= q.hand.length * 0.4;
     if(q.key==='caoci' || q.key==='fozu') s -= 3;   // 反弹，非必要时不碰
-    if(p.noDodgeFrom && p.noDodgeFrom.has && p.noDodgeFrom.has(q.id)) s += 8;  // 已问剑夺守，必补刀
+    if(p.noDodgeFrom && p.noDodgeFrom.has && p.noDodgeFrom.has(q.id)) s += (iq>=2 ? 14 : 8);  // 已问剑夺守，必补刀
     return s;
   };
+  // 简单档「走神」：约四成概率不挑最优，随手打一个（仍可能碰巧选中同一人）
+  if(iq===0 && Math.random() < 0.4) return pool[Math.floor(Math.random()*pool.length)];
   const sorted = pool.slice().sort((a,b)=> score(b)-score(a));
   return sorted[0];
 }
 
 function aiPickCard(p){
   const h = p.hand;
+  // 简单档「迟钝」：约两成概率这一回合心不在焉，直接收手
+  if(aiIQ()===0 && Math.random() < 0.2) return null;
   // 1. 装备（未装备时优先）
   if(!p.equip && hasCard(p,'equip')) return findCard(p,'equip');
   // 2. 残血自救
@@ -2505,9 +2530,11 @@ async function aiPlay(p){
 
 async function aiTrySkills(p){
   if(state.over) return;
+  const iq = aiIQ();
   // 数据驱动：按 SKILLS 表逐个尝试主动技，手牌不足则跳过
   for(const sk of skillsOf(p)){
     if(sk.k!=='act') continue;
+    if(iq===0 && Math.random() < 0.5) continue;   // 简单档：半数主动技「想不起来」
     if(sk.o==='once' && usedFlag(p,sk)) continue;
     if(sk.o==='turn' && usedFlag(p,sk)) continue;
     if(p.hand.length < (ACT_NEED[sk.a]||0)) continue;
@@ -2612,7 +2639,7 @@ function showMulti(title, cards, count, confirmLabel){
 }
 
 /* ===================== 特效 ===================== */
-function fxHit(id, amt){
+function fxHit(id, amt, faction){
   const el = document.getElementById('pl-'+id); if(!el) return;
   el.classList.remove('fx-hit'); void el.offsetWidth; el.classList.add('fx-hit');
   setTimeout(()=>el.classList.remove('fx-hit'), 460);
@@ -2620,6 +2647,8 @@ function fxHit(id, amt){
   const grade = amt>=3 ? ' big' : (amt===2 ? ' mid' : '');
   floatNum(id, '-'+amt, 'dmg'+grade);
   fxBlood(id, amt);
+  /* 命中冲击：目标处迸射 + 光环（视觉层，不改数值） */
+  hitSparks(id, faction || '#ff5b46', amt>=3 ? 14 : 8);
   if(amt>=3){
     shakeApp(2);
     fxFlash('rgba(255,48,32,.40)', 340);
@@ -2640,6 +2669,83 @@ function floatNum(id, txt, cls){
   const el = document.getElementById('pl-'+id); if(!el) return;
   const f = document.createElement('div'); f.className='floatnum '+cls; f.textContent=txt;
   el.appendChild(f); setTimeout(()=>f.remove(), 1000);
+}
+/* 目标命中迸射：火花 + 光环 */
+function hitSparks(id, col, n){
+  if(typeof document === 'undefined' || !document.getElementById) return;
+  const el = document.getElementById('pl-'+id);
+  if(!el || !el.getBoundingClientRect) return;
+  const r = el.getBoundingClientRect();
+  const cx = r.left + r.width/2;
+  const cy = r.top + r.height*0.42;
+  const N = n || 8;
+  for(let i = 0; i < N; i++){
+    const a = (Math.PI * 2 * i / N) + Math.random()*0.45;
+    const d = 22 + Math.random()*40;
+    spawnFx('fx-hitspark', {
+      left: cx + 'px',
+      top: cy + 'px',
+      '--sc': col,
+      '--dx': (Math.cos(a)*d).toFixed(0) + 'px',
+      '--dy': (Math.sin(a)*d).toFixed(0) + 'px',
+    }, 700);
+  }
+  spawnFx('fx-hitring', {
+    left: (cx - 28) + 'px',
+    top: (cy - 28) + 'px',
+    '--sc': col,
+  }, 520);
+}
+/* 定向剑气：攻方→守方光痕 + 剑尖抵近目标（演出层） */
+function dirSwordFx(from, to){
+  return new Promise(function(res){
+    if(typeof document === 'undefined' || !document.getElementById){ res(); return; }
+    const L = fxLayer();
+    const a = document.getElementById('pl-' + (from && from.id));
+    const b = document.getElementById('pl-' + (to && to.id));
+    if(!L || !a || !b || !a.getBoundingClientRect || !b.getBoundingClientRect){ res(); return; }
+    const r1 = a.getBoundingClientRect(), r2 = b.getBoundingClientRect();
+    const x1 = r1.left + r1.width/2, y1 = r1.top + r1.height/2;
+    const x2 = r2.left + r2.width/2, y2 = r2.top + r2.height*0.42;
+    const col = (typeof FACTIONS !== 'undefined' && from && from.faction) ? (FACTIONS[from.faction] || '#e8c66a') : '#e8c66a';
+    const dx = x2 - x1, dy = y2 - y1;
+    const len = Math.sqrt(dx*dx + dy*dy) || 1;
+    const ang = Math.atan2(dy, dx) * 180 / Math.PI;
+    const wrap = document.createElement('div');
+    wrap.className = 'fx-dirwrap';
+    wrap.innerHTML = '<div class="fx-dirline" style="--col:' + col + '"></div>'
+      + '<div class="fx-dirtip" style="--col:' + col + '"></div>';
+    wrap.style.left = x1 + 'px';
+    wrap.style.top = y1 + 'px';
+    L.appendChild(wrap);
+    const line = wrap.querySelector ? wrap.querySelector('.fx-dirline') : null;
+    const tip = wrap.querySelector ? wrap.querySelector('.fx-dirtip') : null;
+    if(line){
+      line.style.width = len + 'px';
+      line.style.transform = 'rotate(' + ang + 'deg) scaleX(0)';
+    }
+    if(tip) tip.style.transform = 'rotate(' + ang + 'deg) translateX(0px)';
+    const go = function(){
+      if(line) line.style.transform = 'rotate(' + ang + 'deg) scaleX(1)';
+      if(tip) tip.style.transform = 'rotate(' + ang + 'deg) translateX(' + (len - 6) + 'px)';
+    };
+    if(typeof requestAnimationFrame === 'function') requestAnimationFrame(function(){ requestAnimationFrame(go); });
+    else setTimeout(go, 16);
+    setTimeout(function(){
+      if(to && to.id != null){
+        hitSparks(to.id, col, 10);
+        const tel = document.getElementById('pl-' + to.id);
+        if(tel && tel.classList){
+          tel.classList.add('fx-dir-hit');
+          setTimeout(function(){ try{ tel.classList.remove('fx-dir-hit'); }catch(e){} }, 400);
+        }
+      }
+    }, 260);
+    setTimeout(function(){
+      try{ if(wrap.parentNode) wrap.parentNode.removeChild(wrap); }catch(e){}
+      res();
+    }, 400);
+  });
 }
 // lv>=2 为「重击」：幅度更大、更久
 function shakeApp(lv){
@@ -2840,7 +2946,7 @@ function fxTrickOpen(id){
 
 function flushFx(){
   for(const f of pendingFx){
-    if(f.type==='hit') fxHit(f.id, f.amt);
+    if(f.type==='hit') fxHit(f.id, f.amt, f.fac);
     else if(f.type==='heal') fxHeal(f.id, f.amt);
     else if(f.type==='death') fxDeath(f.id);
     else if(f.type==='draw') SFX.draw();
@@ -3358,7 +3464,7 @@ function renderTales(){
     const t = (typeof TALES!=='undefined') ? TALES.find(x=>x.id===state.selTale) : null;
     if(t) return renderTaleDetail(t);
   }
-  let h = '<p class="hint">原著中的小故事 · 取《剑来》本意，不杜撰情节。</p>';
+  let h = '<p class="hint">原著名场面与小故事 · 体现作者本意，不杜撰情节。</p>';
   h += '<div class="cx-tales">';
   (typeof TALES!=='undefined' ? TALES : []).forEach(t=>{
     const art = 'assets/tales/'+t.id+'.jpg';
@@ -5639,6 +5745,16 @@ function renderResult(app){
   }
   html += '<div class="rs-title '+(humanWin?'win':'lose')+'">'+(humanWin?'胜':'败')+'</div>';
   html += '<div class="rs-sub">'+sub+'</div>';
+  /* 包袱斋结账：本局雪花钱得数（原先只悄悄入账，玩家打完不知赚了多少） */
+  const bg = state.bfGain;
+  if(bg && bg.gain > 0){
+    html += '<div class="rs-coin">'
+         +  '<span class="rc-k">雪 花 钱</span>'
+         +  '<span class="rc-v">+'+bg.gain+'</span>'
+         +  (bg.pay>0 ? '<span class="rc-pay">抵赊欠 '+bg.pay+'</span>' : '')
+         +  '<span class="rc-net">囊中结余 '+bg.coin+'</span>'
+         + '</div>';
+  }
   html += '<div class="rs-stats"><table>'
        +  '<tr><th>人物</th><th>阵营</th><th>境界</th><th>斩杀</th><th>造成伤害</th><th>承受</th><th>疗愈</th></tr>';
   state.players.slice().sort((a,b)=> (b.alive?1:0)-(a.alive?1:0) || b.stats.kills-a.stats.kills)
@@ -5787,7 +5903,7 @@ function showCharBrief(key){
 /* 弹窗统一开关：打开时锁整页滚动，关闭时解锁 */
 function lockBody(on){
   const b = document.body;
-  if(!b) return;
+  if(!b || !b.classList) return;
   if(on) b.classList.add('modal-lock'); else b.classList.remove('modal-lock');
 }
 function closeModal(){

@@ -21,7 +21,8 @@ Page({
     showSearch: false,
     q: '',
     hits: [],
-    expanded: {}
+    expanded: {},
+    showLizhuList: false
   },
 
   onLoad() {
@@ -96,6 +97,7 @@ Page({
     const s = map.state();
     try {
       if (s.level === 'zhou') md.drawZhou(this.ctx, this.cam, st, s.zhouKey);
+      else if (s.level === 'lizhu') md.drawLizhu(this.ctx, this.cam, st);
       else md.drawWorld(this.ctx, this.cam, st);
     } catch (e) {
       /* 绘制异常不阻断交互 */
@@ -186,6 +188,9 @@ Page({
     } else if (s.level === 'zhou') {
       const pk = md.hitZhou(this.cam, s.zhouKey, x, y, 32);
       if (pk) { this.lastTap = null; map.showPlace(pk); }
+    } else if (s.level === 'lizhu') {
+      const pk = md.hitLizhu(this.cam, x, y, 32);
+      if (pk) { this.lastTap = null; this.setData({ showLizhuList: false }); map.showLizhu(pk); }
     }
   },
 
@@ -272,6 +277,12 @@ Page({
   /* ---------- 快捷入口 ---------- */
   drillZhou(e) { map.drill(e.currentTarget.dataset.k); this.zoomReset(); },
   openLizhu() { map.drillLizhu(); },
+  toggleLizhuList() { this.setData({ showLizhuList: !this.data.showLizhuList }); },
+  pickLizhuPlace(e) {
+    const k = e.currentTarget.dataset.k;
+    this.setData({ showLizhuList: false });
+    map.showLizhu(k);
+  },
   toggleLizhuItem(e) {
     const k = e.currentTarget.dataset.k;
     const ex = Object.assign({}, this.data.expanded);

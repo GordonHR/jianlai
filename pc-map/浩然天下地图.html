@@ -63,6 +63,10 @@
     stroke:#ffb4a0 !important;
   }
   .painted-bg{ pointer-events:none; }
+  .ocean-bleed{ pointer-events:none; }
+  #oceanbg{ pointer-events:none; }
+  /* 写实绘卷画风：满铺底改用底图边雾色（PIL 实测四边均值 #90a3aa~#b8c6cc，取中） */
+  .mapstage[data-style="huijuan"] #oceanBgRect{ fill:#9dafb6; }
   /* 画风：把 SVG 元素绑定到 CSS 变量（随 data-style 实时切换） */
   #ocean stop:nth-child(1){stop-color:var(--ocean0)}
   #ocean stop:nth-child(2){stop-color:var(--ocean1)}
@@ -107,11 +111,7 @@
   .cont:hover .landfill{filter:brightness(1.07)}
   .cont-name{font-size:15px;fill:var(--ink);font-weight:bold;paint-order:stroke;stroke:#efe5cb;stroke-width:3px}
   .pl{font-size:19px;fill:var(--ink);font-weight:bold;paint-order:stroke;stroke:#efe5cb;stroke-width:3.4px}
-  #lizhuBox{position:fixed;inset:0;background:#1c1812;z-index:50;display:none}
-  #lizhuBox.open{display:block}
-  #lizhuBox iframe{width:100%;height:100%;border:0}
-  #lizhuBox .back{position:fixed;top:14px;left:14px;z-index:60;padding:8px 14px;border:1px solid var(--gold);
-    background:var(--side);color:var(--ink);border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px}
+
   .crumb{position:fixed;top:14px;left:14px;z-index:30;display:flex;gap:10px;align-items:center;
     font-size:14px;color:#e8dcc0; letter-spacing:1px}
   .crumb button{border:1px solid rgba(232,198,106,.45);background:rgba(20,17,15,.72);color:#e8c66a;
@@ -172,6 +172,20 @@
   .chardetail .dpos{text-align:center;font-size:12px;color:#6b5f49;margin:4px 0 10px}
   .chardetail .dline{display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center;font-size:12px;margin-bottom:8px}
   .chardetail .dk{color:#8a785a;margin-right:2px}
+
+.lizhu-body{position:fixed;inset:0;background:#d2bf94;z-index:20;display:none}
+#lizhuMap{width:100%;height:100%;display:block;touch-action:none}
+.lizhu-body.grabbing{cursor:grabbing}
+.lizhu-body .poi{cursor:pointer;pointer-events:all}
+.lizhu-body .poi .lbl{transition:fill .12s,font-weight .12s}
+.lizhu-body .poi:hover .lbl{fill:#9c3b2e}
+.lizhu-body .poi .hit{fill:transparent;pointer-events:all}
+.lizhu-body .poi:hover .hit{fill:rgba(154,123,46,.10)}
+.lizhu-body .poi.sel .hit{fill:rgba(156,59,46,.14)}
+.lizhu-body .poi.sel .lbl{fill:#9c3b2e;font-weight:bold}
+.lizhu-body .trigger{cursor:pointer;pointer-events:all}
+.lizhu-body .trigger:hover{opacity:.84}
+
 </style>
 </head>
 <body>
@@ -183,7 +197,10 @@
       <pattern id="sea" width="46" height="24" patternUnits="userSpaceOnUse">
         <path d="M0,12 q11,-8 23,0 t23,0" fill="none" stroke="#7fb0ad" stroke-width="1" opacity="0.55"/>
       </pattern>
-      <radialGradient id="ocean" cx="50%" cy="46%" r="70%">
+      <!-- 海色渐变改用 userSpaceOnUse：锚在「图幅中心」(800,506)，椭圆半径 1120x770（等价旧的 70%，
+           观感一致）。这样同一份渐变既供「屏幕满铺底」，又不受容器尺寸变化影响，
+           越出半径即平接到 --ocean1，永远不会出现"渐变没走完就被截断"的硬边。 -->
+      <radialGradient id="ocean" gradientUnits="userSpaceOnUse" cx="800" cy="506" r="1120" gradientTransform="matrix(1,0,0,0.6875,0,158.125)">
         <stop offset="0%" stop-color="#dcebe7"/><stop offset="100%" stop-color="#a9cbc6"/>
       </radialGradient>
       <g id="mtn"><path d="M0,0 L9,-15 L16,-5 L25,-18 L34,0 Z" fill="#356f8c" stroke="#1d4560" stroke-width="1" stroke-linejoin="round"/>
@@ -212,6 +229,15 @@
       <path id="land-posuo" d="M340,398 C360,368 396,354 434,354 C470,354 496,342 528,348 C570,354 606,376 622,406 C640,436 638,472 614,494 C586,516 550,522 514,520 C478,518 452,528 420,526 C384,524 348,508 328,478 C310,452 316,418 340,398 Z M262,410 C280,402 296,412 292,428 C288,444 266,448 256,434 C248,424 250,416 262,410 Z M206,440 C222,434 236,444 232,458 C228,472 208,476 200,464 C192,454 196,446 206,440 Z"/>
     </defs>
 
+    <!-- 满铺底（屏幕固定层）：不随缩放平移，永远严丝合缝盖满整个视口 —— 与小程序 canvas 同思路。
+         它是"海/纸"本身，所以地图再怎么缩小、窗口比例再怪，也不可能露出一圈边或框。
+         矢量画风=海色渐变；写实绘卷=雾色（见 CSS）。 -->
+    <g id="oceanbg" aria-hidden="true">
+      <rect id="oceanBgRect" x="-4000" y="-4000" width="9600" height="9100" fill="url(#ocean)"/>
+    </g>
+
+    <g id="scene"></g>
+
     <g id="ui-fixed">
       <g class="seal" transform="translate(1492,56)">
         <rect x="-26" y="-26" width="52" height="52" rx="4" fill="none" stroke="#9c3b2e" stroke-width="2.4"/>
@@ -233,8 +259,6 @@
         <use href="#mtn" transform="translate(120,64) scale(.7)"/><text x="150" y="68" font-size="12" fill="#2f2a20">山脉</text>
       </g>
     </g>
-
-    <g id="scene"></g>
   </svg>
 </div>
 
@@ -274,10 +298,449 @@
   </div>
   <div class="bd" id="pBody"></div>
 </div>
-<div id="lizhuBox">
-  <button class="back" id="lizhuBack">← 返回宝瓶洲</button>
-  <iframe id="lizhuIframe" src=""></iframe>
-</div>
+<div id="lizhuBody" class="lizhu-body"><svg id="lizhuMap" viewBox="0 0 1400 1000" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="骊珠洞天古舆图">
+    <defs>
+      <!-- 纸色渐变同样改 userSpaceOnUse：锚在纸心 (672,400)，半径 1120x800（等价旧的 48%/40%/80%），
+           与「屏幕满铺纸底」共用同一份 → 纸边与底完全连续，缩放/比例变化都不露框 -->
+      <radialGradient id="parch" gradientUnits="userSpaceOnUse" cx="672" cy="400" r="1120" gradientTransform="matrix(1,0,0,0.7143,0,114.29)">
+        <stop offset="0" stop-color="#f4ead0"/><stop offset="0.68" stop-color="#e8d8b4"/>
+        <stop offset="1" stop-color="#d2bf94"/>
+      </radialGradient>
+      <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#bfd6d1"/><stop offset="0.5" stop-color="#9cc1ba"/>
+        <stop offset="1" stop-color="#7ba39c"/>
+      </linearGradient>
+      <linearGradient id="mtn" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#9aa889"/><stop offset="0.55" stop-color="#7e8d6c"/>
+        <stop offset="1" stop-color="#5e6c50"/>
+      </linearGradient>
+      <linearGradient id="mtnFar" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#cdd4bb"/><stop offset="1" stop-color="#aab59c"/>
+      </linearGradient>
+      <linearGradient id="mtnMist" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#e3e3d2"/><stop offset="1" stop-color="#c9cdb6"/>
+      </linearGradient>
+      <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="11" result="n"/>
+        <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.36  0 0 0 0 0.22  0 0 0 0.06 0"/></filter>
+      <!-- 手绘抖动：低频湍流 + 位移，让所有墨线自然颤抖 -->
+      <filter id="rough" x="-4%" y="-3%" width="108%" height="106%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.013 0.021" numOctaves="2" seed="7" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="2.8" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="haze" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="9"/></filter>
+      <filter id="soft"><feGaussianBlur stdDeviation="1.6"/></filter>
+
+      <!-- 图例符号（手绘风） -->
+      <g id="house">
+        <path d="M3,40 L3,21 Q3,20 4,20 L36,20 Q37,20 37,21 L37,40 Z" fill="#d8c39a" stroke="#3a2f1e" stroke-width="1.2"/>
+        <path d="M-1,21 Q19,4 41,21 L37,21 Q19,9 3,21 Z" fill="#a8703f" stroke="#5a3f22" stroke-width="1.2"/>
+        <path d="M3,21 Q19,7 37,21" fill="none" stroke="#3a2f1e" stroke-width="0.9"/>
+        <path d="M11,17 L29,17" stroke="#5a3f22" stroke-width="0.6" opacity="0.7"/>
+        <rect x="15" y="27" width="9" height="13" fill="#6b4a2a" stroke="#3a2f1e" stroke-width="0.8"/>
+        <path d="M3,22 L37,22" stroke="#000" stroke-opacity="0.10" stroke-width="2"/>
+      </g>
+      <g id="tree">
+        <path d="M18,40 L18,25 M18,31 L13,26 M18,29 L24,24" stroke="#5a3f22" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <circle cx="18" cy="14" r="13" fill="#7e8e6e" stroke="#3f4a2e" stroke-width="1.1"/>
+        <circle cx="9" cy="19" r="9" fill="#8a9a7a" stroke="#3f4a2e" stroke-width="0.9"/>
+        <circle cx="27" cy="18" r="10" fill="#86997a" stroke="#3f4a2e" stroke-width="0.9"/>
+        <circle cx="19" cy="22" r="6" fill="#9aab88" opacity="0.5"/>
+      </g>
+      <g id="kiln">
+        <path d="M5,40 L5,22 Q20,6 35,22 L35,40 Z" fill="#b07a45" stroke="#5a3f22" stroke-width="1.2"/>
+        <path d="M9,30 L31,30 M11,35 L29,35" stroke="#5a3f22" stroke-width="0.6" opacity="0.55"/>
+        <path d="M14,40 Q20,27 26,40 Z" fill="#2a1808"/>
+        <rect x="27" y="2" width="6" height="13" fill="#8a5a30" stroke="#5a3f22" stroke-width="0.9"/>
+        <path d="M30,2 q-4,-5 2,-9 q5,4 -1,9" fill="none" stroke="#9a9a90" stroke-width="1.2" opacity="0.45"/>
+      </g>
+      <g id="gate">
+        <rect x="4" y="14" width="10" height="28" fill="#8a6a3a" stroke="#3a2f1e" stroke-width="1.2"/>
+        <rect x="26" y="14" width="10" height="28" fill="#8a6a3a" stroke="#3a2f1e" stroke-width="1.2"/>
+        <path d="M14,42 L14,26 Q20,20 26,26 L26,42 Z" fill="#5a3f22"/>
+        <path d="M0,14 Q20,0 40,14 L36,14 Q20,4 4,14 Z" fill="#a8703f" stroke="#3a2f1e" stroke-width="1.2"/>
+        <rect x="2" y="11" width="36" height="3" fill="#7a5a32"/>
+      </g>
+      <g id="bridge">
+        <path d="M2,34 Q20,8 38,34" fill="none" stroke="#7a5a32" stroke-width="3.4" stroke-linecap="round"/>
+        <path d="M2,22 Q20,2 38,22" fill="none" stroke="#7a5a32" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="11" y1="20" x2="11" y2="31" stroke="#7a5a32" stroke-width="1.4"/>
+        <line x1="29" y1="20" x2="29" y2="31" stroke="#7a5a32" stroke-width="1.4"/>
+        <path d="M5,30 Q20,14 35,30" fill="none" stroke="#5a3f22" stroke-width="0.6" opacity="0.5"/>
+        <!-- 锁龙井：桥底碧绿深潭·老剑条镇压（原著：囚真龙残魂所化骊珠） -->
+        <ellipse cx="20" cy="40" rx="16" ry="5.5" fill="#3f6a6a" opacity="0.55" stroke="#2f5a5a" stroke-width="0.9"/>
+        <line x1="20" y1="40" x2="13" y2="29" stroke="#6a6a6a" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M13,29 l-2,3 M13,29 l3,1" stroke="#5a5a5a" stroke-width="1"/>
+      </g>
+      <g id="shrine">
+        <rect x="7" y="20" width="26" height="20" fill="#c9b48a" stroke="#3a2f1e" stroke-width="1.2"/>
+        <path d="M3,20 Q20,8 37,20 L33,20 Q20,12 7,20 Z" fill="#9a7b4e" stroke="#3a2f1e" stroke-width="1.1"/>
+        <rect x="16" y="27" width="8" height="13" fill="#5a3f22"/>
+      </g>
+      <g id="rock">
+        <path d="M3,34 Q9,14 21,20 Q33,12 37,34 Q20,40 3,34 Z" fill="#9a9080" stroke="#3a2f1e" stroke-width="1.1"/>
+        <path d="M12,30 Q18,22 26,28" fill="none" stroke="#5a5040" stroke-width="0.8" opacity="0.7"/>
+      </g>
+      <g id="tomb">
+        <path d="M5,38 Q20,12 35,38 Z" fill="#b8a884" stroke="#3a2f1e" stroke-width="1.2"/>
+        <rect x="17" y="30" width="6" height="10" fill="#6b5f49" stroke="#3a2f1e" stroke-width="0.8"/>
+      </g>
+      <g id="pailou">
+        <rect x="5" y="12" width="5" height="30" fill="#8a5a30" stroke="#3a2f1e" stroke-width="1"/>
+        <rect x="30" y="12" width="5" height="30" fill="#8a5a30" stroke="#3a2f1e" stroke-width="1"/>
+        <path d="M0,12 Q20,4 40,12 L40,18 Q20,10 0,18 Z" fill="#9a7b4e" stroke="#3a2f1e" stroke-width="1.1"/>
+        <rect x="0" y="20" width="40" height="4" fill="#9a7b4e" stroke="#3a2f1e" stroke-width="0.9"/>
+      </g>
+      <g id="well">
+        <ellipse cx="20" cy="20" rx="15" ry="11" fill="#cfc3a4" stroke="#3a2f1e" stroke-width="1.2"/>
+        <ellipse cx="20" cy="20" rx="9" ry="6.5" fill="#3a2f1e"/>
+        <path d="M6,16 L34,16 M6,24 L34,24" stroke="#5a5040" stroke-width="0.6" opacity="0.6"/>
+        <!-- 铁锁井：井口铁锁·缚妖索（原著：拽铁锁出井口每出一尺折寿一年） -->
+        <path d="M20,9 L20,20" stroke="#2f2f2f" stroke-width="1.6" stroke-linecap="round"/>
+        <rect x="16.5" y="18" width="7" height="6" rx="1" fill="#2f2f2f"/>
+        <path d="M16.5,21 L16.5,23 M23.5,21 L23.5,23" stroke="#2f2f2f" stroke-width="1"/>
+      </g>
+      <g id="shenfen">
+        <!-- 半圆坟冢 -->
+        <path d="M3,30 Q15,14 27,30 Z" fill="#b8a884" stroke="#3a2f1e" stroke-width="1.2"/>
+        <path d="M11,30 L11,22 M15,30 L15,21 M19,30 L19,22" stroke="#5a5040" stroke-width="0.5" opacity="0.5"/>
+        <!-- 四方斩龙台（红虚线方台） -->
+        <rect x="1" y="30" width="38" height="9" fill="none" stroke="#9c3b2e" stroke-width="1.2" stroke-dasharray="3 2"/>
+        <!-- 披甲神人（五彩泥塑·踏斩龙台） -->
+        <path d="M19,9 q4,0 4,3.5 l-8,0 q0,-3.5 4,-3.5 z" fill="#3a2f1e"/>
+        <path d="M15,13 L23,13 L25,27 L13,27 Z" fill="#c2a878" stroke="#3a2f1e" stroke-width="1"/>
+        <path d="M14,27 L14,30 M22,27 L22,30" stroke="#3a2f1e" stroke-width="1.4" fill="none"/>
+        <path d="M15,16 L23,16 M14,21 L24,21" stroke="#5a5040" stroke-width="0.6" opacity="0.7" fill="none"/>
+        <!-- 五彩：红蓝细线（呼应五彩泥塑） -->
+        <path d="M15,14.5 L23,14.5" stroke="#9c3b2e" stroke-width="0.9" opacity="0.6"/>
+        <path d="M14,19 L24,19" stroke="#3f6a8a" stroke-width="0.8" opacity="0.5"/>
+        <!-- 持长兵（戟） -->
+        <line x1="27" y1="5" x2="27" y2="30" stroke="#3a2f1e" stroke-width="1.4"/>
+        <path d="M27,6 l5,2 M27,6 l-2,4" stroke="#3a2f1e" stroke-width="1"/>
+      </g>
+      <g id="qingniu">
+        <!-- 青色石崖 -->
+        <path d="M2,34 L9,14 Q13,8 22,12 L37,30 L29,34 Z" fill="#5a7a6a" stroke="#2f4a3a" stroke-width="1.2"/>
+        <path d="M9,14 Q14,18 22,18" fill="none" stroke="#3f5a4a" stroke-width="0.7" opacity="0.6"/>
+        <!-- 上古月宫镜（圆辉·炼化得当是半仙兵） -->
+        <circle cx="22" cy="11" r="7" fill="#d4ecec" stroke="#3f6a6a" stroke-width="1"/>
+        <circle cx="22" cy="11" r="7" fill="none" stroke="#bfe0e0" stroke-width="1.4" opacity="0.5"/>
+        <path d="M22,4 L22,18 M15,11 L29,11" stroke="#9acaca" stroke-width="0.6" opacity="0.6"/>
+      </g>
+    </defs>
+
+    <!-- 满铺纸底（屏幕固定）：不随缩放平移，永远盖满整屏；与图内纸面共用同一 userSpaceOnUse 渐变，
+         所以纸边与底同色同渐 → 任何缩放/窗口比例下都看不到"框" -->
+    <rect class="ocean-bleed" x="-4000" y="-4000" width="9600" height="9100" fill="url(#parch)"/>
+    <!-- 地图可缩放层：拖拽平移 / 滚轮缩放 作用于此组 -->
+    <g id="lizhuViewport">
+    <!-- 纸面 -->
+    <rect x="0" y="0" width="1400" height="1000" fill="url(#parch)"/>
+    <rect x="0" y="0" width="1400" height="1000" filter="url(#grain)" opacity="0.7"/>
+    <!-- 做旧斑渍 -->
+    <g filter="url(#soft)" opacity="0.5">
+      <circle cx="160" cy="700" r="22" fill="#8a6a3a" opacity="0.07"/>
+      <circle cx="1180" cy="240" r="30" fill="#8a6a3a" opacity="0.06"/>
+      <circle cx="980" cy="930" r="26" fill="#8a6a3a" opacity="0.06"/>
+      <circle cx="360" cy="120" r="18" fill="#8a6a3a" opacity="0.06"/>
+      <circle cx="640" cy="560" r="34" fill="#8a6a3a" opacity="0.04"/>
+    </g>
+    <!-- 手绘双框 -->
+    <g fill="none" stroke="#6b5f49">
+      <path d="M16,18 Q700,10 1384,18 Q1392,500 1384,982 Q700,990 16,982 Q8,500 16,18 Z" stroke-width="3" filter="url(#rough)"/>
+      <path d="M25,27 Q700,21 1375,27 Q1382,500 1375,973 Q700,980 25,973 Q18,500 25,27 Z" stroke="#9a7b2e" stroke-width="1" filter="url(#rough)"/>
+    </g>
+
+
+    <!-- ======== 远山雾层（最背景，淡墨晕染，不套 rough） ======== -->
+    <g opacity="0.55" filter="url(#haze)">
+      <path d="M40,720 L90,560 L150,600 L210,440 L270,500 L340,360 L260,720 Z" fill="url(#mtnMist)"/>
+      <path d="M980,300 L1050,210 L1120,260 L1190,180 L1260,260 L1320,220 L1360,320 L1320,420 L980,420 Z" fill="url(#mtnMist)" opacity="0.7"/>
+    </g>
+
+    <!-- ============ 手绘地景层（统一套 rough 滤镜，墨线自然抖动） ============ -->
+    <g filter="url(#rough)" stroke-linejoin="round" stroke-linecap="round">
+
+      <!-- 西边大山：远山 + 主山层叠 + 皴法 -->
+      <path d="M18,830 L42,600 L66,560 L92,330 L116,370 L150,170 L176,230 L200,160 L224,250 L244,300 L236,470 L252,640 L226,770 L248,830 Z"
+            fill="url(#mtnFar)" stroke="#8a9a7a" stroke-width="1.2" opacity="0.8"/>
+      <path d="M28,826 L54,640 L74,664 L100,360 L120,400 L144,205 L164,250 L188,150 L210,212 L230,300 L250,278 L256,400 L240,522 L258,642 L228,762 L252,826 Z"
+            fill="url(#mtn)" stroke="#3f4a2e" stroke-width="1.6"/>
+      <!-- 皴法（沿坡短笔触，加密） -->
+      <g stroke="#3f4a2e" stroke-width="0.7" opacity="0.5" fill="none">
+        <path d="M104,360 L114,402"/><path d="M118,372 L128,410"/><path d="M150,210 L160,252"/><path d="M162,224 L172,264"/>
+        <path d="M190,158 L200,200"/><path d="M204,178 L214,216"/><path d="M232,300 L242,340"/><path d="M246,300 L254,334"/>
+        <path d="M58,360 L66,402"/><path d="M72,400 L80,442"/><path d="M242,520 L252,562"/><path d="M230,560 L240,602"/>
+        <path d="M88,420 L96,460"/><path d="M176,300 L186,340"/><path d="M214,330 L224,368"/>
+      </g>
+      <!-- 山顶苔点 -->
+      <g fill="#3f4a2e" opacity="0.55">
+        <circle cx="144" cy="205" r="1.6"/><circle cx="188" cy="150" r="1.6"/><circle cx="100" cy="360" r="1.6"/>
+        <circle cx="256" cy="278" r="1.6"/><circle cx="210" cy="212" r="1.5"/>
+      </g>
+
+      <!-- 龙须溪：婉转双岸 + 流水纹（通透） -->
+      <path d="M228,704 C420,726 560,764 700,802 C842,840 980,860 1112,872 L1112,896 C980,884 842,862 700,824 C560,786 420,748 228,728 Z"
+            fill="url(#water)" stroke="#4f6f74" stroke-width="1.3"/>
+      <path d="M252,716 C442,738 582,774 722,812 C862,848 1000,868 1100,880" fill="none" stroke="#eef4f2" stroke-width="1.2" opacity="0.6"/>
+      <path d="M300,728 C470,748 600,782 730,818 C860,852 990,872 1080,884" fill="none" stroke="#dcebe8" stroke-width="0.9" opacity="0.55"/>
+      <g stroke="#5f7f84" stroke-width="0.8" opacity="0.5" fill="none">
+        <path d="M360,742 q10,-4 20,0"/><path d="M520,772 q10,-4 20,0"/><path d="M700,808 q10,-4 20,0"/><path d="M880,840 q10,-4 20,0"/><path d="M430,756 q10,-4 20,0"/>
+      </g>
+      <!-- 龙须溪源头：西边大山泉眼（原著：源出西边大山，本名浯溪） -->
+      <g transform="translate(232,706)">
+        <ellipse cx="0" cy="0" rx="6" ry="3.2" fill="#bfe0e0" stroke="#3f6a6a" stroke-width="1"/>
+        <path d="M-11,-4 q11,-4 22,0 M-11,4 q11,4 22,0" stroke="#7ba39c" stroke-width="0.8" fill="none" opacity="0.7"/>
+      </g>
+      <text x="244" y="700" font-size="10" fill="#3f5a5e" opacity="0.85">龙须溪·源</text>
+
+      <!-- 小镇围垣：手绘不规则双线 -->
+      <path d="M300,250
+        C300,206 352,186 430,188 C560,190 700,184 842,190
+        C962,196 1058,188 1076,250 C1088,330 1062,402 1080,498
+        C1092,598 1060,694 1040,742 C980,772 858,770 720,768
+        C560,766 420,774 340,762 C300,754 296,330 300,250 Z"
+        fill="#efe2c4" opacity="0.5" stroke="#9a7b2e" stroke-width="1.8"/>
+      <path d="M312,262
+        C312,222 360,206 432,208 C560,210 700,204 840,210
+        C956,216 1050,208 1066,262 C1076,334 1052,402 1068,494
+        C1078,590 1050,682 1032,728 C976,756 858,754 722,752
+        C566,750 430,758 352,748 C318,740 308,338 312,262 Z"
+        fill="none" stroke="#b89b5e" stroke-width="0.9" opacity="0.7"/>
+      <!-- 街巷与交通路网：主街/福禄街更亮更宽，巷弄明显收窄，交通路清晰 -->
+      <g class="roads" filter="url(#rough)" stroke-linejoin="round" stroke-linecap="round">
+        <!-- 主街（显·龙须）：南北向宽石板街，自北市井贯至南巷区、接廊桥 -->
+        <path d="M700,206 C700,330 706,430 709,520 C711,600 700,682 690,742 C678,748 642,766 614,780"
+              fill="none" stroke="#f1e4c4" stroke-width="17" opacity="0.92"/>
+        <path d="M700,206 C700,330 706,430 709,520 C711,600 700,682 690,742 C678,748 642,766 614,780"
+              fill="none" stroke="#caa86a" stroke-width="1.4" opacity="0.6"/>
+        <!-- 福禄街（龙颈）：东西主横，东门→四姓→市井→西 -->
+        <path d="M1080,452 C920,332 760,302 540,300 C470,300 392,302 320,300"
+              fill="none" stroke="#f1e4c4" stroke-width="15" opacity="0.92"/>
+        <path d="M1080,452 C920,332 760,302 540,300 C470,300 392,302 320,300"
+              fill="none" stroke="#caa86a" stroke-width="1.4" opacity="0.6"/>
+
+        <!-- 主街石板缝（竖向） -->
+        <g stroke="#a98f5c" stroke-width="0.8" opacity="0.4" fill="none">
+          <path d="M692,280 L708,280"/><path d="M692,380 L708,380"/><path d="M692,480 L708,480"/>
+          <path d="M694,580 L710,580"/><path d="M696,680 L712,680"/>
+        </g>
+        <!-- 福禄街符箓纹（原著：街上每座府邸即一张符箓，镇压龙颈气府） -->
+        <g stroke="#9a7b2e" stroke-width="0.9" opacity="0.5" fill="none">
+          <path d="M600,292 L600,308"/><path d="M700,290 L700,306"/><path d="M800,294 L800,310"/>
+          <path d="M900,300 L900,316"/><path d="M1000,322 L1000,338"/>
+        </g>
+
+        <!-- 西巷（泥瓶巷）：福禄街西端分出，北接泥瓶巷口、南串各院落达无名巷 -->
+        <path d="M320,300 C314,250 312,240 312,232" fill="none" stroke="#7a5a32" stroke-width="3" opacity="0.7"/>
+        <path d="M320,300 C316,362 350,432 432,470 C452,482 470,512 484,544"
+              fill="none" stroke="#7a5a32" stroke-width="3" opacity="0.7"/>
+
+        <!-- 市井横连街（中）：主街→骑龙巷/扁担巷→东连桃叶巷 -->
+        <path d="M709,520 C620,560 560,600 500,640 C492,652 488,668 488,700"
+              fill="none" stroke="#8a6a3a" stroke-width="4.2" opacity="0.72"/>
+        <path d="M709,520 C800,580 850,620 900,560"
+              fill="none" stroke="#8a6a3a" stroke-width="4.2" opacity="0.72"/>
+        <!-- 东横街：杏花巷←→二郎巷 -->
+        <path d="M560,648 C680,664 740,664 792,664" fill="none" stroke="#7a5a32" stroke-width="2.6" opacity="0.66"/>
+        <!-- 杏花巷（龙脊余脉·黄泥路）：自东横街向南接铁锁井 -->
+        <path d="M612,664 C616,676 616,686 614,694" fill="none" stroke="#7a5a32" stroke-width="2.6" opacity="0.62"/>
+
+        <!-- 骑龙巷台阶纹（一二〇级台阶 · 示意）：沿市井横连街→扁担巷 -->
+        <g stroke="#8a6a3a" stroke-width="0.9" opacity="0.55" fill="none">
+          <path d="M500,560 L512,558"/><path d="M500,576 L512,574"/><path d="M500,592 L512,590"/>
+          <path d="M500,608 L512,606"/><path d="M500,624 L512,622"/><path d="M500,640 L512,638"/>
+          <path d="M500,656 L512,654"/><path d="M500,672 L512,670"/><path d="M500,688 L512,686"/>
+        </g>
+
+        <!-- 桃叶巷（龙脊）：北接福禄街，南接市井东横街（林·魏·谢沿巷而居） -->
+        <path d="M900,318 C905,420 898,500 900,560" fill="none" stroke="#b07a3a" stroke-width="3.4" opacity="0.66"/>
+        <!-- 困龙钉：桃叶巷每株桃树根须入地，如一颗困龙钉（原著） -->
+        <g fill="#6b4a2a" opacity="0.72">
+          <path d="M900,358 l3,5 l-3,5 l-3,-5 z"/><path d="M903,408 l3,5 l-3,5 l-3,-5 z"/>
+          <path d="M899,458 l3,5 l-3,5 l-3,-5 z"/><path d="M900,508 l3,5 l-3,5 l-3,-5 z"/>
+          <path d="M901,553 l3,5 l-3,5 l-3,-5 z"/>
+        </g>
+
+        <!-- 交通：东门云梯出镇路（东北出框） -->
+        <path d="M1078,452 C1170,430 1260,392 1342,358" fill="none" stroke="#caa86a" stroke-width="6" opacity="0.8"/>
+        <path d="M1078,452 C1170,430 1260,392 1342,358" fill="none" stroke="#6b5f49" stroke-width="0.9" stroke-dasharray="2 5" opacity="0.55"/>
+        <!-- 交通：龙须溪南岸路（西→东，经青牛背·廊桥·铁匠铺） -->
+        <path d="M300,792 C470,800 600,812 740,818 C840,822 980,834 1104,844"
+             fill="none" stroke="#caa86a" stroke-width="5.5" opacity="0.72"/>
+        <!-- 交通：镇南黄泥小路（廊桥南→小庙→父母坟） -->
+        <path d="M614,800 C560,840 500,862 474,884 C450,910 432,912 420,912"
+             fill="none" stroke="#b9925a" stroke-width="4.2" opacity="0.7"/>
+        <!-- 交通：西边大山山道（泥瓶巷西→进山） -->
+        <path d="M312,232 C240,300 160,440 90,560 C60,600 40,630 28,662"
+             fill="none" stroke="#caa86a" stroke-width="5" opacity="0.68"/>
+        <!-- 主街南端已直连廊桥（见上），此处不再另设接驳线 -->
+      </g>
+
+      <!-- 北：老瓷山（残瓷堆积） -->
+      <g transform="translate(360,150)">
+        <path d="M0,42 L18,10 L40,32 L60,6 L80,30 L100,12 L122,42 Z" fill="#cbb78c" stroke="#8a734a" stroke-width="1.2"/>
+        <path d="M6,40 L16,22 M30,38 L40,26 M60,40 L70,24 M92,38 L102,24" stroke="#8a734a" stroke-width="0.6" opacity="0.6"/>
+      </g>
+      <!-- 北：龙窑群（真龙脊柱窍穴） -->
+      <g transform="translate(700,150)">
+        <use href="#kiln" transform="translate(0,0)"/><use href="#kiln" transform="translate(44,0)"/><use href="#kiln" transform="translate(88,0)"/>
+        <use href="#kiln" transform="translate(132,0)"/><use href="#kiln" transform="translate(176,0)"/><use href="#kiln" transform="translate(220,0)"/>
+      </g>
+
+      <!-- 各地点图例符号（视觉层） -->
+      <use href="#house" transform="translate(300,245) scale(0.85)"/>
+      <use href="#house" transform="translate(352,292) scale(0.85)"/>
+      <use href="#house" transform="translate(402,340) scale(0.85)"/>
+      <use href="#house" transform="translate(316,418) scale(0.85)"/>
+      <use href="#house" transform="translate(412,466) scale(0.85)"/>
+      <use href="#tree" transform="translate(604,346)"/>
+      <use href="#pailou" transform="translate(700,296) scale(0.9)"/>
+      <use href="#house" transform="translate(700,432) scale(0.85)"/>
+      <use href="#house" transform="translate(560,288) scale(0.85)"/>
+      <use href="#house" transform="translate(560,452) scale(0.85)"/>
+      <use href="#house" transform="translate(520,560) scale(0.8)"/><use href="#house" transform="translate(560,598) scale(0.8)"/>
+      <use href="#house" transform="translate(540,648) scale(0.8)"/><use href="#house" transform="translate(558,690) scale(0.8)"/>
+      <use href="#house" transform="translate(500,608) scale(0.8)"/><use href="#house" transform="translate(540,638) scale(0.8)"/>
+      <use href="#well" transform="translate(602,694) scale(0.9)"/>
+      <use href="#house" transform="translate(700,648) scale(0.8)"/><use href="#house" transform="translate(740,680) scale(0.8)"/>
+      <use href="#house" transform="translate(850,262) scale(0.82)"/>
+      <use href="#house" transform="translate(900,272) scale(0.82)"/>
+      <use href="#house" transform="translate(950,266) scale(0.82)"/>
+      <use href="#house" transform="translate(850,320) scale(0.82)"/>
+      <use href="#house" transform="translate(950,320) scale(0.82)"/>
+      <use href="#house" transform="translate(850,452) scale(0.82)"/>
+      <use href="#house" transform="translate(900,462) scale(0.82)"/>
+      <use href="#house" transform="translate(950,452) scale(0.82)"/>
+      <use href="#gate" transform="translate(1058,430) scale(1.0)"/>
+      <use href="#house" transform="translate(1006,398) scale(0.8)"/>
+      <use href="#qingniu" transform="translate(512,828) scale(1.05)"/>
+      <use href="#bridge" transform="translate(594,756) scale(1.1)"/>
+      <text x="556" y="804" font-size="10" fill="#2f6a6a" opacity="0.9" text-anchor="end">锁龙井</text>
+      <use href="#kiln" transform="translate(792,852) scale(0.95)"/>
+      <use href="#shrine" transform="translate(430,866) scale(0.95)"/>
+      <use href="#tomb" transform="translate(376,892) scale(0.95)"/>
+      <use href="#tree" transform="translate(463,838) scale(0.7)"/>
+      <use href="#shenfen" transform="translate(904,872) scale(1.05)"/>
+
+      <!-- 龙形堪舆·困龙局（原著：龙须溪+主街=二龙须；福禄街=龙颈；桃叶巷=龙脊，桃根=困龙钉） -->
+      <g class="kan" filter="url(#rough)" fill="none" stroke-linecap="round">
+        <!-- 龙颈·福禄街 -->
+        <path d="M1080,452 C920,332 760,302 540,300 C470,300 392,302 320,300" stroke="#9c3b2e" stroke-width="1.7" stroke-dasharray="7 6" opacity="0.5"/>
+        <!-- 龙脊·桃叶巷 -->
+        <path d="M900,318 C905,420 898,500 900,560" stroke="#9c3b2e" stroke-width="1.7" stroke-dasharray="7 6" opacity="0.5"/>
+        <!-- 龙须·主街（显） -->
+        <path d="M700,206 C700,330 706,430 709,520 C711,600 700,682 690,742 C678,748 642,766 614,780" stroke="#9c3b2e" stroke-width="1.7" stroke-dasharray="7 6" opacity="0.42"/>
+        <!-- 龙须·龙须溪（隐，沿河流走向） -->
+        <path d="M228,704 C420,726 560,764 700,802 C842,840 980,860 1112,872" stroke="#9c3b2e" stroke-width="1.4" stroke-dasharray="4 7" opacity="0.34"/>
+      </g>
+      <!-- 堪舆朱标（点击展开「困龙局」考据） -->
+      <g font-size="11" fill="#9c3b2e" opacity="0.92">
+        <g class="trigger" data-kan="1" tabindex="0" role="button"><text x="548" y="284">龙颈</text></g>
+        <g class="trigger" data-kan="1" tabindex="0" role="button"><text x="912" y="324">龙脊</text></g>
+        <g class="trigger" data-kan="1" tabindex="0" role="button"><text x="612" y="216">龙须</text></g>
+      </g>
+    </g>
+
+    <!-- 山脚晕染（淡墨，haze） -->
+    <g filter="url(#haze)" opacity="0.35">
+      <ellipse cx="150" cy="820" rx="150" ry="36" fill="#4f5a3e"/>
+      <ellipse cx="700" cy="900" rx="300" ry="26" fill="#5f8083"/>
+    </g>
+
+    <!-- 天空点缀：飞鸟（远笔） -->
+    <g stroke="#5a5040" stroke-width="1.1" fill="none" opacity="0.5" stroke-linecap="round">
+      <path d="M470,150 q9,-7 18,0 q9,-7 18,0"/>
+      <path d="M520,168 q7,-5 14,0 q7,-5 14,0"/>
+      <path d="M1120,470 q9,-7 18,0 q9,-7 18,0"/>
+    </g>
+    <!-- 水面远帆一笔 -->
+    <g stroke="#5a5040" stroke-width="1" fill="none" opacity="0.4" stroke-linecap="round">
+      <path d="M980,876 q3,-14 3,-14 q0,14 3,14 M983,862 l0,-14"/>
+    </g>
+
+    <!-- 西边大山·范围名（区域标注，置于山脚左下，非列表） -->
+    <g fill="#2f3a22" opacity="0.92">
+      <text x="54" y="500" text-anchor="end" font-size="15" fill="#3a4a2e" font-weight="bold" letter-spacing="2">西边大山</text>
+      <text x="54" y="518" text-anchor="end" font-size="10.5" fill="#5a6a48">六十二峰·封禁之山</text>
+    </g>
+
+    <!-- ============ 交互层（最短地名 + 热区，置于地景之上） ============ -->
+    <g class="pois" font-size="13" fill="#2f2a20">
+      <g class="poi" data-key="xibiandashan" tabindex="0" role="button"><rect class="hit" x="28" y="148" width="230" height="676"/></g>
+      <!-- 西边大山·十四峰：依山形散布于峰顶/山脊，引线标注（非列表） -->
+      <g class="poi" data-key="piyun" tabindex="0" role="button"><line x1="188" y1="152" x2="190" y2="143" stroke="#5a6a48" stroke-width="0.8" opacity="0.6" pointer-events="none"/><circle cx="188" cy="150" r="1.8" fill="#3a4a2e" pointer-events="none"/><text class="lbl" x="190" y="140" text-anchor="middle" fill="#2f3a22" font-weight="bold">披云山</text><rect class="hit" x="160" y="128" width="60" height="18"/></g>
+      <g class="poi" data-key="yuanmu" tabindex="0" role="button"><line x1="150" y1="170" x2="108" y2="162" stroke="#5a6a48" stroke-width="0.8" opacity="0.6" pointer-events="none"/><circle cx="150" cy="170" r="1.8" fill="#3a4a2e" pointer-events="none"/><text class="lbl" x="104" y="162" text-anchor="end" fill="#2f3a22">远幕峰</text><rect class="hit" x="62" y="150" width="42" height="18"/></g>
+      <g class="poi" data-key="shenxiu" tabindex="0" role="button"><line x1="144" y1="205" x2="100" y2="212" stroke="#5a6a48" stroke-width="0.8" opacity="0.6" pointer-events="none"/><circle cx="144" cy="205" r="1.8" fill="#3a4a2e" pointer-events="none"/><text class="lbl" x="96" y="213" text-anchor="end" fill="#2f3a22">神秀山</text><rect class="hit" x="54" y="201" width="42" height="18"/></g>
+      <g class="poi" data-key="caiyun" tabindex="0" role="button"><line x1="200" y1="160" x2="222" y2="156" stroke="#5a6a48" stroke-width="0.8" opacity="0.6" pointer-events="none"/><circle cx="200" cy="160" r="1.8" fill="#3a4a2e" pointer-events="none"/><text class="lbl" x="224" y="154" text-anchor="start" fill="#2f3a22">彩云峰</text><rect class="hit" x="224" y="142" width="42" height="18"/></g>
+      <g class="poi" data-key="hengshuo" tabindex="0" role="button"><line x1="164" y1="250" x2="194" y2="246" stroke="#5a6a48" stroke-width="0.8" opacity="0.6" pointer-events="none"/><circle cx="164" cy="250" r="1.8" fill="#3a4a2e" pointer-events="none"/><text class="lbl" x="196" y="244" text-anchor="start" fill="#2f3a22">横槊峰</text><rect class="hit" x="196" y="232" width="42" height="18"/></g>
+      <g class="poi" data-key="wutong" tabindex="0" role="button"><line x1="210" y1="212" x2="238" y2="208" stroke="#5a6a48" stroke-width="0.8" opacity="0.6" pointer-events="none"/><circle cx="210" cy="212" r="1.8" fill="#3a4a2e" pointer-events="none"/><text class="lbl" x="238" y="206" text-anchor="start" fill="#2f3a22">梧桐山</text><rect class="hit" x="238" y="194" width="42" height="18"/></g>
+      <g class="poi" data-key="niujiao" tabindex="0" role="button"><line x1="224" y1="250" x2="252" y2="246" stroke="#5a6a48" stroke-width="0.8" opacity="0.6" pointer-events="none"/><circle cx="224" cy="250" r="1.8" fill="#3a4a2e" pointer-events="none"/><text class="lbl" x="254" y="244" text-anchor="start" fill="#2f3a22">牛角山</text><rect class="hit" x="254" y="232" width="42" height="18"/></g>
+      <g class="poi" data-key="huanghu" tabindex="0" role="button"><line x1="250" y1="278" x2="264" y2="272" stroke="#5a6a48" stroke-width="0.8" opacity="0.6" pointer-events="none"/><circle cx="250" cy="278" r="1.8" fill="#3a4a2e" pointer-events="none"/><text class="lbl" x="266" y="270" text-anchor="start" fill="#2f3a22">黄湖山</text><rect class="hit" x="266" y="258" width="42" height="18"/></g>
+      <g class="poi" data-key="baolu" tabindex="0" role="button"><line x1="244" y1="300" x2="266" y2="300" stroke="#5a6a48" stroke-width="0.8" opacity="0.6" pointer-events="none"/><circle cx="244" cy="300" r="1.8" fill="#3a4a2e" pointer-events="none"/><text class="lbl" x="268" y="300" text-anchor="start" fill="#2f3a22">宝箓山</text><rect class="hit" x="268" y="288" width="42" height="18"/></g>
+      <g class="poi" data-key="dengxin" tabindex="0" role="button"><line x1="230" y1="302" x2="231" y2="318" stroke="#5a6a48" stroke-width="0.8" opacity="0.6" pointer-events="none"/><circle cx="230" cy="300" r="1.8" fill="#3a4a2e" pointer-events="none"/><text class="lbl" x="232" y="320" text-anchor="middle" fill="#2f3a22">灯芯台</text><rect class="hit" x="208" y="308" width="48" height="18"/></g>
+      <g class="poi" data-key="tiaodeng" tabindex="0" role="button"><line x1="92" y1="330" x2="40" y2="322" stroke="#5a6a48" stroke-width="0.8" opacity="0.6" pointer-events="none"/><circle cx="92" cy="330" r="1.8" fill="#3a4a2e" pointer-events="none"/><text class="lbl" x="36" y="320" text-anchor="end" fill="#2f3a22">挑灯山</text><rect class="hit" x="0" y="308" width="40" height="18"/></g>
+      <g class="poi" data-key="dizhen" tabindex="0" role="button"><line x1="100" y1="360" x2="48" y2="353" stroke="#5a6a48" stroke-width="0.8" opacity="0.6" pointer-events="none"/><circle cx="100" cy="360" r="1.8" fill="#3a4a2e" pointer-events="none"/><text class="lbl" x="44" y="352" text-anchor="end" fill="#2f3a22">地真山</text><rect class="hit" x="6" y="340" width="40" height="18"/></g>
+      <g class="poi" data-key="xiancao" tabindex="0" role="button"><line x1="236" y1="470" x2="238" y2="486" stroke="#5a6a48" stroke-width="0.8" opacity="0.6" pointer-events="none"/><circle cx="236" cy="470" r="1.8" fill="#3a4a2e" pointer-events="none"/><text class="lbl" x="240" y="488" text-anchor="middle" fill="#2f3a22">仙草山</text><rect class="hit" x="218" y="476" width="44" height="18"/></g>
+      <g class="poi" data-key="zhenzhu" tabindex="0" role="button"><line x1="252" y1="640" x2="254" y2="656" stroke="#5a6a48" stroke-width="0.8" opacity="0.6" pointer-events="none"/><circle cx="252" cy="640" r="1.8" fill="#3a4a2e" pointer-events="none"/><text class="lbl" x="256" y="658" text-anchor="start" fill="#2f3a22" font-weight="bold">真珠山</text><rect class="hit" x="256" y="646" width="42" height="18"/></g>
+      <g class="poi" data-key="longxuxi" tabindex="0" role="button"><text class="lbl" x="300" y="700" fill="#3f5a5e">龙须溪</text><rect class="hit" x="296" y="688" width="90" height="20"/></g>
+
+      <g class="poi" data-key="lipingxiang" tabindex="0" role="button"><text class="lbl" x="312" y="232" font-weight="bold" fill="#3a4a2e">泥瓶巷</text><rect class="hit" x="308" y="220" width="80" height="20"/></g>
+      <g class="poi" data-key="lier" tabindex="0" role="button"><text class="lbl" x="332" y="270">李二家</text><rect class="hit" x="298" y="244" width="78" height="30"/></g>
+      <g class="poi" data-key="chenpingan" tabindex="0" role="button"><text class="lbl" x="384" y="317">陈平安宅</text><rect class="hit" x="350" y="291" width="94" height="30"/></g>
+      <g class="poi" data-key="songjixin" tabindex="0" role="button"><text class="lbl" x="434" y="365">宋集薪宅</text><rect class="hit" x="400" y="339" width="94" height="30"/></g>
+      <g class="poi" data-key="cao" tabindex="0" role="button"><text class="lbl" x="348" y="443">曹家</text><rect class="hit" x="314" y="417" width="62" height="30"/></g>
+      <g class="poi" data-key="sanshanjiuhou" tabindex="0" role="button"><text class="lbl" x="444" y="491">三山九侯宅</text><rect class="hit" x="410" y="465" width="124" height="30"/></g>
+      <g class="poi" data-key="wumingxiang" tabindex="0" role="button"><text class="lbl" x="484" y="544">无名巷</text><rect class="hit" x="468" y="528" width="80" height="24"/></g>
+
+      <g class="poi" data-key="laohuai" tabindex="0" role="button"><text class="lbl" x="560" y="352">老槐树</text><rect class="hit" x="556" y="340" width="78" height="26"/></g>
+      <g class="poi" data-key="daxue" tabindex="0" role="button"><text class="lbl" x="744" y="316">大学士坊</text><rect class="hit" x="698" y="294" width="120" height="28"/></g>
+      <g class="poi" data-key="xiangshu" tabindex="0" role="button"><text class="lbl" x="744" y="452">乡塾</text><rect class="hit" x="698" y="431" width="72" height="28"/></g>
+      <g class="poi" data-key="jiulou" tabindex="0" role="button"><text class="lbl" x="600" y="300">酒楼</text><rect class="hit" x="558" y="287" width="60" height="26"/></g>
+      <g class="poi" data-key="yangjia" tabindex="0" role="button"><text class="lbl" x="600" y="464">杨家铺子</text><rect class="hit" x="558" y="451" width="104" height="26"/></g>
+      <g class="poi" data-key="qilong" tabindex="0" role="button"><text class="lbl" x="500" y="592">骑龙巷</text><rect class="hit" x="498" y="556" width="76" height="40"/></g>
+      <g class="poi" data-key="biandan" tabindex="0" role="button"><text class="lbl" x="500" y="700">扁担巷</text><rect class="hit" x="498" y="646" width="76" height="40"/></g>
+      <g class="poi" data-key="xinghua" tabindex="0" role="button"><text class="lbl" x="612" y="640">杏花巷</text><rect class="hit" x="610" y="626" width="76" height="24"/></g>
+      <g class="poi" data-key="tiesuo" tabindex="0" role="button"><circle cx="608" cy="698" r="5" fill="#9c3b2e"/><text class="lbl" x="640" y="700" fill="#9c3b2e" font-weight="bold">铁锁井</text><rect class="hit" x="602" y="686" width="86" height="46"/></g>
+      <g class="poi" data-key="erlang" tabindex="0" role="button"><text class="lbl" x="772" y="668">二郎巷</text><rect class="hit" x="770" y="646" width="76" height="40"/></g>
+
+      <g class="poi" data-key="lu" tabindex="0" role="button"><text class="lbl" x="888" y="278">卢家</text><rect class="hit" x="848" y="261" width="62" height="24"/></g>
+      <g class="poi" data-key="li" tabindex="0" role="button"><text class="lbl" x="938" y="288">李家</text><rect class="hit" x="898" y="271" width="62" height="24"/></g>
+      <g class="poi" data-key="song" tabindex="0" role="button"><text class="lbl" x="988" y="282">宋家</text><rect class="hit" x="948" y="265" width="62" height="24"/></g>
+      <g class="poi" data-key="guandi" tabindex="0" role="button"><text class="lbl" x="888" y="336">督造官府</text><rect class="hit" x="848" y="319" width="104" height="24"/></g>
+      <g class="poi" data-key="zhao" tabindex="0" role="button"><text class="lbl" x="988" y="336">赵家</text><rect class="hit" x="948" y="319" width="62" height="24"/></g>
+      <g class="poi" data-key="lin" tabindex="0" role="button"><text class="lbl" x="888" y="468">林家</text><rect class="hit" x="848" y="451" width="62" height="24"/></g>
+      <g class="poi" data-key="wei" tabindex="0" role="button"><text class="lbl" x="938" y="478">魏家</text><rect class="hit" x="898" y="461" width="62" height="24"/></g>
+      <g class="poi" data-key="xie" tabindex="0" role="button"><text class="lbl" x="988" y="468">谢家</text><rect class="hit" x="948" y="451" width="62" height="24"/></g>
+      <g class="poi" data-key="zisunhuai" tabindex="0" role="button"><text class="lbl" x="912" y="564">子孙槐</text><rect class="hit" x="898" y="548" width="78" height="22"/></g>
+      <g class="poi" data-key="dongmen" tabindex="0" role="button"><text class="lbl" x="1058" y="420" text-anchor="middle" fill="#9c3b2e" font-weight="bold">东门</text><rect class="hit" x="1052" y="408" width="80" height="64"/></g>
+      <g class="poi" data-key="zhengdafeng" tabindex="0" role="button"><text class="lbl" x="1006" y="392" text-anchor="middle" font-size="11.5">郑大风宅</text><rect class="hit" x="1000" y="388" width="80" height="40"/></g>
+
+      <g class="poi" data-key="laocishan" tabindex="0" role="button"><text class="lbl" x="356" y="124" fill="#7a5a2a" font-weight="bold">老瓷山</text><rect class="hit" x="356" y="110" width="80" height="44"/></g>
+      <g class="poi" data-key="longyao" tabindex="0" role="button"><text class="lbl" x="700" y="128" fill="#7a5a2a" font-weight="bold">龙窑</text><rect class="hit" x="696" y="110" width="64" height="44"/></g>
+
+      <g class="poi" data-key="qingniu" tabindex="0" role="button"><text class="lbl" x="470" y="852" text-anchor="end">青牛背</text><rect class="hit" x="430" y="828" width="80" height="26"/></g>
+      <g class="poi" data-key="langqiao" tabindex="0" role="button"><text class="lbl" x="612" y="814" fill="#9c3b2e" font-weight="bold">廊桥</text><rect class="hit" x="588" y="758" width="68" height="56"/></g>
+      <g class="poi" data-key="tiejiang" tabindex="0" role="button"><text class="lbl" x="836" y="872">铁匠铺</text><rect class="hit" x="790" y="848" width="90" height="30"/></g>
+      <g class="poi" data-key="xiaomiao" tabindex="0" role="button"><text class="lbl" x="474" y="884">小庙</text><rect class="hit" x="428" y="862" width="64" height="28"/></g>
+      <g class="poi" data-key="fumu" tabindex="0" role="button"><text class="lbl" x="420" y="910">父母坟</text><rect class="hit" x="374" y="888" width="78" height="28"/></g>
+      <g class="poi" data-key="laoliushu" tabindex="0" role="button"><text class="lbl" x="448" y="838" text-anchor="end" font-size="11.5">老柳树</text><rect class="hit" x="420" y="832" width="60" height="24"/></g>
+      <g class="poi" data-key="shenxianfen" tabindex="0" role="button"><text class="lbl" x="952" y="894">神仙坟</text><rect class="hit" x="906" y="872" width="78" height="28"/></g>
+    </g>
+
+    <!-- 交通路名（淡墨小字） -->
+    <g font-size="11" fill="#6b5f49" opacity="0.92">
+      <text x="726" y="430" transform="rotate(90 726 430)">主街</text>
+      <text x="556" y="296" transform="rotate(-2 556 296)">福禄街</text>
+      <text x="1156" y="404" transform="rotate(-16 1156 404)">云梯路·出镇</text>
+      <text x="150" y="470" transform="rotate(-52 150 470)">入山道</text>
+      <text x="352" y="806" transform="rotate(6 352 806)">溪畔路</text>
+      <text x="560" y="828" transform="rotate(-28 560 828)">南下黄泥路</text>
+    </g>
+
+    </g>
+
+    <!-- ======== 固定 UI 覆盖层（不随地图缩放/平移，钉在画面四角） ======== -->
+    </svg></div>
 
 <script>
 const CLS = {red:'#9c3b2e', gold:'#b5892f', green:'#4f7a3a', purple:'#6a4a7a', blue:'#3f6a8a', teal:'#2f8a7a', ink:'#2f2a20'};
@@ -652,14 +1115,33 @@ const side=document.getElementById('side');
 const crumb=document.getElementById('crumb');
 const stageEl=document.querySelector('.mapstage');
 
+/* 满铺底（#oceanbg）是**屏幕固定**的（见 SVG 静态层），不随缩放平移，所以地图缩小到底也不会露边。
+   场景里只放「会随地图缩放平移」的东西：
+   · 矢量画风 → 浪纹（userSpaceOnUse 图案；铺到 ±4000，任何缩放下都盖满视口）
+   · 写实绘卷 → 底图本身（图幅四边/四角各镜像一份续接：镜像在边界逐像素同色，天然无接缝，
+                且完全不裁内容 —— 不能用 slice 铺满，那会切掉图例/指北针/南北两端） */
+const WAVE_RECT='<rect class="ocean-bleed" x="-4000" y="-4000" width="9600" height="9100" fill="url(#sea)"/>';
+/* 8 个镜像变换：左右上下四边 + 四角（图幅占 [0,1600]x[0,1100]） */
+const PAINT_MIRROR=[
+  'translate(0,0) scale(-1,1)',        'translate(3200,0) scale(-1,1)',
+  'translate(0,2200) scale(1,-1)',     'translate(1600,2200) scale(1,-1)',
+  'translate(0,0) scale(-1,-1)',       'translate(3200,0) scale(-1,-1)',
+  'translate(0,2200) scale(-1,-1)',    'translate(3200,2200) scale(-1,-1)'
+];
+function paintedExt(img){
+  return PAINT_MIRROR.map(tf=>
+    `<image class="painted-bg" href="${img}" x="0" y="0" width="1600" height="1100" preserveAspectRatio="xMidYMid slice" transform="${tf}"/>`
+  ).join('');
+}
+
 function renderWorld(){
   const painted = (stageEl && stageEl.dataset.style === 'huijuan');
   let s='';
-  s+='<rect x="0" y="0" width="1600" height="1100" fill="url(#ocean)"/>';
   if(painted){
+    s+=paintedExt('map-assets/haoran-painted.png');
     s+='<image class="painted-bg" href="map-assets/haoran-painted.png" x="0" y="0" width="1600" height="1100" preserveAspectRatio="xMidYMid slice"/>';
   }else{
-    s+='<rect x="0" y="0" width="1600" height="1100" fill="url(#sea)"/>';
+    s+=WAVE_RECT;
   }
   const seas=[['东海',1002,424],['南海',762,716],['西海',562,548],['北海',772,368]];
   if(!painted){
@@ -749,11 +1231,11 @@ function renderZhou(key){
   const zhouImg = 'map-assets/zhou-'+key+'.png';
   const d=z.detail;
   let s='';
-  s+='<rect x="0" y="0" width="1600" height="1100" fill="url(#ocean)"/>';
   if(painted){
+    s+=paintedExt(zhouImg);
     s+=`<image class="painted-bg" href="${zhouImg}" x="0" y="0" width="1600" height="1100" preserveAspectRatio="xMidYMid slice"/>`;
   }else{
-    s+='<rect x="0" y="0" width="1600" height="1100" fill="url(#sea)"/>';
+    s+=WAVE_RECT;
   }
   const fit=fitLayer(d);
   const gx=fit.ox, gy=fit.oy, gs=fit.s;
@@ -828,22 +1310,168 @@ function renderZhou(key){
   updateCrumb();
 }
 
-function showLizhu(){
-  document.getElementById('lizhuIframe').src='骊珠洞天古地图.html';
-  document.getElementById('lizhuBox').classList.add('open');
-  scene.style.display='none';
-  document.querySelector('.zoom').style.display='none';
-  crumb.innerHTML='<button type="button" id="lizhuCrumbBack">← 返回</button><span class="here">骊珠洞天</span>';
-  const _lb=document.getElementById('lizhuCrumbBack');
-  if(_lb) _lb.addEventListener('click',hideLizhu);
+const LIZHU_DESC = {
+  dongmen:{tag:"东·门户",name:"东门",text:"小镇最东的一排东倒西歪老旧栅栏，门口一个树墩。穿门后沿山路向上，山顶平台立两石柱（柱间水流转，其后景象难辨），再沿云梯向下约三十里即抵大骊；云梯四周云雾缭绕。外乡来小镇寻机缘者，须交看门人一袋金精铜钱（多则三十枚、少则二十枚），另携两枚信物锦囊，意即最多捞取两件宝物带出。"},
+  zhengdafeng:{tag:"东·门户",name:"郑大风宅",text:"小镇看门人郑大风的宅子，孤零零一座黄泥房，紧邻东门栅栏旁。郑大风即骊珠洞天阍者（守门人）。"},
+  lu:{tag:"东·福禄街",name:"卢家",text:"四姓十族中以卢氏为首。门口摆两尊等人高石狮子，狮口含一粒石球；门上有青铜狮子门首，贴彩绘财神像；内有一座临湖水榭。但在外，卢氏地位垫底——其主支当国执政的王朝被大骊两大边军联手覆灭，卢氏在东宝瓶洲地位已岌岌可危。"},
+  li:{tag:"东·福禄街",name:"李家",text:"后院角落一片紫竹林，为李宝瓶高祖所种。有一座李宝瓶以蛇胆石堆砌的水池，先养一只金黄色螃蟹，后又添一条金色过山鲫。李家后举家迁往大骊京城。"},
+  song:{tag:"东·福禄街",name:"宋家",text:"福禄街上李家再往前的大姓。四姓十族底蕴在于掌握多少口龙窑、管辖多少门户，决定每年供多少只本命瓷。"},
+  guandi:{tag:"东·福禄街",name:"窑务督造官官邸",text:"并不豪奢，占地不如卢李两姓宅子。衙署大堂外有广场，立一座牌坊正对大门，写一古体「岳」字（上丘下狱）。有一座戒备森严的库房，搁放烧造出的各类御用瓷器，验收无误即定期秘密送往京城。库房门口春联按例为坐镇圣人手笔；若是道家圣人坐镇一甲子内，还会就近取材，用桃叶巷桃木作春联底板。"},
+  zhao:{tag:"东·福禄街",name:"赵家",text:"在小镇不显山不露水，自诩为书香门第，书房古色古香。"},
+  lin:{tag:"东·桃叶巷",name:"林家",text:"不在四姓十族之列。林正诚是崔瀺亲自挑选出来的第二任阍者（守门人）。"},
+  wei:{tag:"东·桃叶巷",name:"魏家",text:"位于桃叶巷街角，名声不显。神仙坟一带魏家占地最多。"},
+  xie:{tag:"东·桃叶巷",name:"谢家",text:"北俱芦洲天君谢实祖宅，靠着一对香火小人维持家风数百年，勉强保住香火子嗣。"},
+  zisunhuai:{tag:"东·福禄街",name:"子孙槐",text:"在李宋两家大宅交界处的外墙，生长一棵槐树，与小镇中心的老槐一脉相承，被唤作子孙槐。"},
+  lipingxiang:{tag:"西",name:"泥瓶巷",text:"小镇西边住着的都是穷人，泥瓶巷即在此处，是小镇最为狭窄逼仄的巷弄之一，家家户户黄土院墙都很低矮。"},
+  lier:{tag:"西·泥瓶巷",name:"李二家",text:"位于小镇最西边。如今李二去往北俱芦洲，钥匙交给了陈暖树，宅院依旧干净整洁。"},
+  chenpingan:{tag:"西·泥瓶巷",name:"陈平安祖宅",text:"陈平安的祖宅，在泥瓶巷中。主角陈平安少年时于此长大，以烧瓷窑工、打草鞋为生。"},
+  songjixin:{tag:"西·泥瓶巷",name:"宋集薪家·怀远堂",text:"位于陈平安家右侧，在泥瓶巷属大户门庭，除悬挂匾额的大堂外还有左右偏房；大堂匾额为「怀远堂」，并无署名。宋集薪即小说开篇与陈平安同巷的「小少爷」。"},
+  cao:{tag:"西·泥瓶巷",name:"曹家祖宅",text:"大骊曹氏、剑仙曹曦的祖宅。牌匾中的香火小人被王朱吞食，因此破旧无人，以至于曾被袁真页踏破；院中有天井。"},
+  sanshanjiuhou:{tag:"西·泥瓶巷",name:"三山九侯宅",text:"万法宗师三山九侯先生曾在骊珠洞天游历，便住在泥瓶巷，位于陈平安祖宅隔壁。骊珠洞天的格局正由三山九侯先生精心布置。"},
+  wumingxiang:{tag:"西·泥瓶巷",name:"无名小巷",text:"从西边泥瓶巷可由此抄近路去往锁龙井。光线阴暗，比泥瓶巷更狭窄逼仄，身材稍高的青壮男子走入其中茅檐低于眉，只能低头而行，抬头便额头触檐；小巷不长，两壁对峙几要夹身。巷口处有口小水井，井口小且水浅。"},
+  laohuai:{tag:"中·市井",name:"老槐树（祖宗槐）",text:"过了牌坊没多远、位于小镇中心地带，一棵枝繁叶茂的老槐树，被小镇称作祖宗槐。树底下垫两块青石板作简易长凳，夏日百姓爱来乘凉，富户从井里捞出冰镇瓜果。老槐树叶即便离枝仍苍翠欲滴，每片叶中蕴含一份不同姓氏的祖宗福荫。骊珠洞天坠地后，老槐树被连根拔起。"},
+  daxue:{tag:"中·市井",name:"大学士坊（螃蟹牌坊）",text:"乡塾再往前，牌坊楼修十二根石柱，石柱底座为龙生九子九种异兽，之外是白虎、玄武、朱雀，当地人称为螃蟹牌坊。它相当于一份契约书——斩龙一役论功行赏最早在此签订盟约；也是镇剑楼与青童天君负责的飞升台。牌坊每面四块匾额、四字，共十六字：儒教「当仁不让」、道教「希言自然」、佛教「莫向外求」、兵家「气冲斗牛」，蕴含书写之人磅礴神意与四位圣人留在此地的一部分气数。写「当仁不让」者曾是当世书法第一人；「希言自然」由四位道教祖庭大真人分写。「冲」「斗」二字被齐静春赠予宁姚。骊珠洞天坠地后，其余字被大骊礼部以风雷笺拓碑，剥离精气神。"},
+  xiangshu:{tag:"中·市井",name:"乡塾",text:"距杏花巷再过一条街即是乡塾。内有一座不挂匾额的草堂书屋，后面有院子，北面矮小柴门通竹林，后院有下棋石桌。如更换圣人，有可能将乡塾改成道观或佛像，以甲子为限，由道人或僧人主持。齐静春曾在此讲学；陆沉的算命摊子设在乡塾附近。"},
+  jiulou:{tag:"中·市井",name:"酒楼",text:"小镇酒楼不大，共三层但只开放两层，此处是封姨的产业。窗外可看见牌坊「当仁不让」匾额，曾是小镇最高的建筑。"},
+  yangjia:{tag:"中·市井",name:"杨家铺子",text:"前店后坊格局，前院是药铺，后边有院子，正堂后门有回廊屋檐、天井。在杨老头眼中，天井内地面香火无数，每一炷香就是小镇某个人的香火，井底铺满香灰。历任圣人上任后，第二件事便是去杨家铺子打声招呼（早期宝瓶洲佛家势盛时，圣人往往不敢来，怕沾因果；如齐静春等未有人告知真相，故未能及时去）。杨老头即神道青童天君。"},
+  qilong:{tag:"中·市井",name:"骑龙巷",text:"骑道路狭窄，是一条斜坡，拥有一百二十二级台阶。草头铺子（贩卖杂物，最早是石家祖业，算骊珠洞天最早一处当铺，石家离开时半数古董珍玩留在铺子）与专门售糕点的压岁铺子，都是石嘉春家祖业；后石家搬去大骊京城，两间铺子在阮邛帮忙下辗转到了陈平安手上。巷内还有黄二娘桃花春烧酒铺。骑龙巷台阶顶部上边有相邻两口小水潭，被老人说成一双龙眼，水潭旁街道称火炉尖。"},
+  biandan:{tag:"中·市井",name:"扁担巷",text:"毛大娘包子家，肉包子尤其个大。另有喜事铺子——小镇白事铺子不少，喜事铺子却只有一个，掌柜是胡沣的爷爷，老人真名柴道煌；陆沉平时便借住在此处。"},
+  xinghua:{tag:"中·市井",name:"杏花巷",text:"此处巷道为黄泥路铺就。杏花巷深处是马家大宅，从内到外乃至院门口道路都比别家整洁；董水井家位于杏花巷，家中一口水井旁种有柳树；邹子曾在杏花巷摆糖葫芦摊子。"},
+  tiesuo:{tag:"中·市井",name:"铁锁井",text:"杏花巷一口水井，名叫铁锁井，一根粗如青壮手臂的铁链垂挂井口内。这条铁锁曾是成功束缚住世间最后一条真龙的一根缚妖索。此地规矩：「拽铁锁出井口者，每出一尺，折寿一年」。铁锁井也是真龙王朱的一口生气所在，能让她与外界天地相通；水井内有一座小洞天，地盘不大，适宜蛟龙之属、水泽精怪修行。后被大骊王朝封禁，百姓不得靠近汲水。小镇最后一次对外乡人开放时，锁链被姜韫带走。"},
+  erlang:{tag:"中·市井",name:"二郎巷",text:"紧挨着杏花巷。二郎巷与杏花巷没住大富大贵人家，比上不足比下绰绰有余。袁家祖宅大门贴两张崭新彩绘门神（一持短戟银甲、金鸡独立作金刚怒目状），不大却精致，头顶开方正天井、地上凿水池、通风极好，二楼设美人靠。胡沣家距离大骊上柱国袁氏祖宅不远。"},
+  qingniu:{tag:"南·小镇外",name:"青牛背",text:"出小镇往南，位于廊桥三十步外的溪畔。青色石崖，能站十多人，表面坑坑洼洼，以前小镇孩子来此凫水摸鱼各有挑选好的「座位」。本是一块上古月宫镜，如炼化得当，会是件半仙兵。"},
+  longxuxi:{tag:"南·水系",name:"龙须溪",text:"源头在西边大山中，为东南流向。廊桥附近水位多及膝，稍高处及腰，偶有人等高小水坑。小镇水源只有这一条。最早是条小溪涧，名浯溪；早年的浯溪陈氏，曾是骊珠洞天的头等大姓。龙须溪与小镇主街，被堪舆家视为隐显的两条「龙须」。"},
+  langqiao:{tag:"南·小镇外",name:"廊桥·风生水起",text:"位于小镇外南边，前身是一座横跨小溪的石拱桥。后大骊为求国祚绵长、国势风生水起，由宋煜章奉命在石拱桥外包裹一层木制廊桥，主要梁柱木头来自西边大山。廊桥悬一块金字匾额，四字极大——「风生水起」。建造时此地埋入一只等人高的大瓷罐，罐中葬着凄惨枉死的大骊宋氏龙子龙孙。廊桥下偶有成群鲤鱼（红青两色，曾有一条金色）；老剑条悬挂桥下，被圣人用来镇压锁龙井出口（即桥底碧绿深潭），防龙气流溢过快将小洞天撑破。小镇三千年来不管发多大洪水，龙须溪最高水位从未高过老剑条剑尖。骊珠洞天下坠后，恢复成老旧石拱桥。（注意：锁龙井即桥底那口碧绿深潭，囚着真龙残魂所化的骊珠；它与杏花巷的「铁锁井」并非一处——铁锁井中铁链乃缚妖索，系真龙王朱的一口生气所在，二者不可混淆。）"},
+  tiejiang:{tag:"南·小镇外",name:"阮家铁匠铺",text:"廊桥再走三四里路的溪畔，是阮家父女开办的铁匠铺，搭建黄泥屋和茅舍七八栋。打造有七口水井，井口留轱辘架子和围栏。此地土壤为火性土最后一种，按姚老头说法叫「七月流火壤」，土性自行转温凉、可塑性强。七口水井除蕴含七元解厄、承担一些佛家因果外，实与真龙尸骸遥遥呼应，是争珠之势（压胜之意更多）。洞天坠地后形势翻转，加大骊龙泉剑宗选的几座西边大山为阵眼，牵引气运反哺祖师堂所在神秀山。"},
+  xiaomiao:{tag:"南·小镇外",name:"小庙",text:"小镇南边黄泥小路，两侧是百姓稻田庄稼地，小路半道有座破败白墙黑瓦小庙，供百姓歇脚。庙内破败墙壁满是稚童炭笔涂鸦，大多是人名，低处斑驳不清或被人涂抹，高些处清晰可见：宋集薪、稚圭、赵繇、谢实、曹曦……刘羡阳和陈平安、顾粲三人的名字聚在左上角最高处。小庙里头写上名字的小镇孩子大多陨落，活下来的无一例外都是雄踞一方的豪杰枭雄（如谢实、曹曦）。杨老头如收租般，后来把小庙搬走。"},
+  fumu:{tag:"南·小镇外",name:"陈平安父母坟",text:"位于小庙再往南一处小山岭的半山腰，周围是多年不种庄稼的荒芜田地。"},
+  laoliushu:{tag:"南·小镇外",name:"老柳树",text:"位于出小镇的南下线路上的一棵老柳树。"},
+  shenxianfen:{tag:"南·小镇外",name:"神仙坟",text:"位于小镇东南方向。人迹罕至，周围是一座座早已无后人祭拜的坟茔，以及破败不堪的泥塑神像。有一尊五彩泥塑神像为披甲神人，大髯，铠甲铮铮、鳞片连绵，甲片边缘饰两条珠线、联珠颗粒饱满；神像踩踏在一座四方斩龙台上，《撼山》谱中的剑炉可能脱胎于此神像。骊珠洞天坠地后此处神像皆炸裂；后大骊朝廷出资修建为规格很高的武庙。三尊神像「肚内」既有市井铜钱，又有金精供养钱。"},
+  laocishan:{tag:"北·小镇外",name:"老瓷山",text:"位于小镇外北边，堆积着历朝历代被督造官亲笔判定为残次品的瓷器碎片；小镇本命瓷的碎片也在此处。"},
+  longyao:{tag:"北·小镇外",name:"龙窑（三十余口）",text:"除小镇东边外，小镇共有三十几座烧造瓷器的龙窑。它们建在那条真龙尸骸之上，以一处脊柱关键窍穴打造窑口，故每座龙窑烧造的本命瓷先天身负不同本命神通（如文昌窑、武隆窑、冲霄窑、拱璧窑、宝溪窑等）。龙窑号称千年窑火不熄，对于真龙王朱来说宛如油锅业火，不断灼烧其魂魄，亦压制人间蛟龙气运。此等布置与寻常堪舆多为对冲，却以天理压地理。东边没有龙窑、也没有田地。"},
+  xibiandashan:{tag:"西·群山",name:"西边大山（六十二峰）",text:"小镇西边群山，总计六十二座山头，早年陆陆续续被朝廷派来的督造官下令变成一座座封禁之山。原著明载其名者十四座：真珠山（骊珠所在·沂山）、披云山（最高峰·最神圣·北岳）、神秀山（天开神秀）、远幕峰（云海·千年古松）、黄湖山（山腰小湖·蟒蛇泓下）、仙草山（草木精魅）、地真山（远幕峰一带早年几被掏空）、挑灯山（神秀山西·瀑布深潭）、横槊峰（神秀山北·掎角之势）、灯芯台、宝箓山（占地极大·规模仅次披云神秀）、牛角山（临近神秀·敦厚）、梧桐山（隔宝箓牛角与神秀相邻）、彩云峰（小而高·风景秀美）。其余山头原著未赋专名，图上不臆造。小镇到挑灯山、横槊峰一带往返最少半月、最多一月。"},
+  zhenzhu:{tag:"西·大山",name:"真珠山（沂山）",text:"在窑务督造署官衙档案上记载叫沂山，位于小镇和西边大山接壤处，是真龙所衔「骊珠」所在，土味最全。入山先杂草丛生，后一片竹林。"},
+  piyun:{tag:"西·大山",name:"披云山",text:"西边大山最高峰，亦为骊珠洞天最为神圣之地（人称北岳），山势宏伟。"},
+  shenxiu:{tag:"西·大山",name:"神秀山",text:"高度仅次于披云山，有一面陡峭山壁刻四个大字——「天开神秀」。挑灯山、横槊峰与其呈掎角之势。"},
+  yuanmu:{tag:"西·大山",name:"远幕峰",text:"云海比落魄山稍胜一筹；有一座极高崖壁，有棵至少千年的古松，松间藤接树连壁，蜿蜒如大螈。"},
+  huanghu:{tag:"西·大山",name:"黄湖山",text:"半山腰有一座小湖泊，远观湖水泛黄、近看极清澈。盘踞着一条井口粗细的蟒蛇泓下，在与小泥鳅的「争水之战」中落败。"},
+  xiancao:{tag:"西·大山",name:"仙草山",text:"只比真珠山大上一筹，山势矮小但草木格外茂盛、参天大树颇多，是群山中唯一一座有望诞生草木精魅的风水宝地（只惜地方太小，即便出现一位，根脚品相也不会太好）。"},
+  dizhen:{tag:"西·大山",name:"地真山",text:"早年和远幕峰这一带几座山峰，几乎已被掏空采掘，一直到真珠山一带才有所好转。"},
+  tiaodeng:{tag:"西·大山",name:"挑灯山",text:"位于神秀山西方，隔着约莫十余里路。山中有一条大瀑布，瀑布之下有深潭。"},
+  hengshuo:{tag:"西·大山",name:"横槊峰",text:"位于神秀山北方，隔着约莫十余里路。与挑灯山、神秀山呈掎角之势，如同三尊巨人各立一方。小镇往返此地一带，最少半月、最多一月。"},
+  dengxin:{tag:"西·大山",name:"灯芯台",text:"与神秀山、黄湖山、宝箓山、彩云峰、仙草山同处「一峰两山」周围百里之内；灯芯台为其中较大的山头之一。"},
+  baolu:{tag:"西·大山",name:"宝箓山",text:"占地极大，在六十余座山头中名列前茅，且非空架子；云深山高水长，规模仅次于披云山与神秀山。陈平安曾买下此山。"},
+  niujiao:{tag:"西·大山",name:"牛角山",text:"临近神秀峰，山势不高、敦厚。"},
+  wutong:{tag:"西·大山",name:"梧桐山",text:"和神秀山之间，隔着宝箓山与牛角山。"},
+  caiyun:{tag:"西·大山",name:"彩云峰",text:"与仙草山、黄湖山、灯芯台、宝箓山同处「一峰两山」周围。山头较小而高、风景秀美（陈平安曾买下三座山头：仙草山小、宝箓山大、彩云峰高）。"}
+};
+const LIZHU_LEGEND_HTML="\n        <h2>一、洞天总览</h2>\n        <ul>\n          <li><b>方位</b>：东宝瓶洲最北端版图上，高悬于天，如一粒珠子；隶属大骊，三十六小洞天最小。</li>\n          <li><b>来历</b>：三千年前最后真龙被三教一家围杀，残魂化「骊珠」囚于锁龙井，洞天因而得名。</li>\n          <li><b>规制</b>：四圣人立约，每六十年换一人坐镇主持法阵；齐静春（文圣嫡传）主动争取坐镇一甲子。</li>\n          <li><b>格局</b>：三山九侯布置。龙须溪+主街为二龙须，福禄街为龙颈，桃叶巷为龙脊，桃根似困龙钉。</li>\n          <li><b>坠地与兵解</b>：三十余年前珠壁破碎、洞天坠地；齐静春一力担因果，兵解前代师收徒陈平安。</li>\n          <li><b>压制</b>：洞天压制内部人修行，外来高阶修士法力亦暂被压制。</li>\n        </ul>\n\n        <h2>二、东·四姓十族（福禄街·桃叶巷）</h2>\n        <h3>福禄街</h3>\n        <ul>\n          <li><b>卢家</b>：四姓之首，石狮含珠，临湖水榭。</li>\n          <li><b>李家</b>：紫竹林；李宝瓶以蛇胆石砌池养金蟹金鲫。后迁大骊京城。</li>\n          <li><b>宋家</b>；<b>窑务督造官官邸</b>：岳字古体牌坊，库房密送御瓷，春联为圣人手笔。</li>\n          <li><b>赵家</b>：书香门第。<b>子孙槐</b>：李宋交界，与镇中心老槐一脉。</li>\n        </ul>\n        <h3>桃叶巷</h3>\n        <ul>\n          <li><b>林家</b>：林正诚，崔瀺亲选第二任阍者。<b>魏家</b>：神仙坟占地最多。<b>谢家</b>：谢实祖宅，香火小人。</li>\n        </ul>\n        <h3>东门</h3>\n        <ul>\n          <li>最东栅栏·树墩；云梯向下约卅里抵大骊。看门人郑大风宅在旁。外乡人须交金精铜钱（廿~卅枚），最多带出二宝。</li>\n        </ul>\n\n        <h2>三、西·泥瓶巷（贫户）</h2>\n        <ul>\n          <li>最狭窄逼仄巷弄，黄土院墙低矮。</li>\n          <li><b>李二家</b>（最西，去北俱芦洲）、<b>陈平安祖宅</b>、<b>宋集薪家·怀远堂</b>（陈平安右侧）、<b>曹家祖宅</b>（曹曦）、<b>三山九侯宅</b>（陈平安隔壁）。</li>\n          <li><b>无名小巷</b>：自泥瓶巷抄近路通锁龙井，极暗极窄，巷口有小水井。</li>\n        </ul>\n\n        <h2>四、中·市井核心</h2>\n        <ul>\n          <li><b>老槐树（祖宗槐）</b>：镇中心，每叶含一姓福荫；坠地后被连根拔起。</li>\n          <li><b>大学士坊（螃蟹牌坊）</b>：十二石柱（龙生九子+白虎玄武朱雀）；四面十六字圣意；亦镇剑楼与飞升台。「冲」「斗」二字赠宁姚。</li>\n          <li><b>乡塾</b>：齐静春讲学，草堂书屋，陆沉算命摊在侧。</li>\n          <li><b>酒楼</b>：封姨产业，三层，曾最高建筑。<b>杨家铺子</b>：药铺，杨老头即青童天君。</li>\n          <li><b>骑龙巷</b>：一二〇级，草头铺子、黄二娘酒铺、石家；巷顶「龙眼」小水潭。<b>扁担巷</b>：毛大娘包子、喜事铺子（陆沉借住）。</li>\n          <li><b>杏花巷</b>：马家、董水井（柳）、邹子糖葫芦摊；<b>铁锁井</b>——缚妖索曾锁真龙王朱，拽链每尺折寿一年。</li>\n          <li><b>二郎巷</b>：袁家祖宅（门神·天井）、胡沣家。</li>\n        </ul>\n\n        <h2>五、南·小镇外（龙须溪以南）</h2>\n        <ul>\n          <li><b>青牛背</b>：廊桥卅步溪畔青石崖，本上古月宫镜。</li>\n          <li><b>龙须溪</b>：源出西边大山，东南流，小镇唯一水源，本名浯溪。</li>\n          <li><b>廊桥·风生水起</b>：外包木廊桥，悬金字匾；桥下埋瓷罐葬宋氏龙子龙孙。老剑条悬桥底镇锁龙井出口（碧绿深潭）。坠地后复为旧石拱桥。</li>\n          <li><b>阮家铁匠铺</b>：廊桥再三四里溪畔，七井（七月流火壤）。</li>\n          <li><b>小庙</b>：壁上稚童写名（宋集薪、赵繇、谢实、曹曦……陈平安、刘羡阳、顾粲居左上最高）。后被杨老头搬走。</li>\n          <li><b>陈平安父母坟</b>：小庙再往南。<b>老柳树</b>：南下路上。<b>神仙坟</b>：东南，五彩披甲神人踏斩龙台，后建武庙。</li>\n        </ul>\n\n        <h2>六、北·老瓷山与龙窑</h2>\n        <ul>\n          <li><b>老瓷山</b>：镇外北，堆积历朝残瓷碎片，本命瓷碎亦在此。</li>\n          <li><b>龙窑（三十余口）</b>：除东门外，建于真龙尸骸脊柱窍穴，各窑本命瓷身负不同神通（文昌、武隆、冲霄、拱璧、宝溪等）。</li>\n          <li>千年窑火于真龙王朱如油锅业火；<b>东边无龙窑、无田地</b>。</li>\n        </ul>\n\n        <h2>七、西边大山（六十二峰·有名可考者）</h2>\n        <ul>\n          <li><b>真珠山</b>（沂山·骊珠所在）、<b>披云山</b>（最高峰·最神圣·北岳）、<b>神秀山</b>（天开神秀）、<b>远幕峰</b>（云海·千年古松）、<b>黄湖山</b>（山腰小湖·蟒蛇泓下）、<b>仙草山</b>（草木精魅）。</li>\n          <li><b>地真山</b>（远幕峰一带，早年几被掏空）、<b>挑灯山</b>（神秀山西·瀑布深潭）、<b>横槊峰</b>（神秀山北·掎角之势）、<b>灯芯台</b>、<b>宝箓山</b>（占地极大·规模仅次披云神秀）、<b>牛角山</b>（临近神秀·敦厚）、<b>梧桐山</b>（隔宝箓牛角与神秀相邻）、<b>彩云峰</b>（小而高·风景秀美）。</li>\n          <li>六十二峰中，仅此十四座于原著明载其名；其余山头无专名，地图上不臆造。</li>\n        </ul>\n\n        <h2 id=\"kan\">八、龙形堪舆·困龙局</h2>\n        <ul>\n          <li>骊珠洞天本是世间最后一条真龙尸骸所化，格局由万法宗师<b>三山九侯先生</b>亲自布置「困龙局」，镇压真龙残余气数。</li>\n          <li><b>二龙须</b>：龙须溪（隐）与小镇主街（显），一隐一显，如龙之双须。（地图上以朱色虚线标示主街与龙须溪走向）</li>\n          <li><b>龙颈·福禄街</b>：东西横贯四姓十族、直抵东门。街上每一座府邸屋舍便是一张符箓，镇压真龙龙颈处气府，防其「抬头」。（地图上以朱色虚线沿福禄街标示）</li>\n          <li><b>龙脊·桃叶巷</b>：南北一段，林·魏·谢诸家沿巷而居。巷中每株桃树，根须扎入地底便是一颗「困龙钉」，禁锢龙脊筋骨，使其身躯不得动弹。（地图上以朱色虚线沿桃叶巷标示，并以深色小钉点示困龙钉）</li>\n          <li>龙须溪自西边大山来，东南流，为小镇唯一水源；主街（显龙须）南北贯镇、南接廊桥。此即「三山九侯布置」之龙形全貌。</li>\n        </ul>\n\n        <div class=\"src\">考据来源：《剑来》原著（烽火戏诸侯）及落魄山 WIKI「骊珠洞天」地理堪舆辑录；地点、方位、称谓均依原著，未臆造。本图为文学虚构世界地图，非现实地理。</div>\n      ";
+/* ===== 骊珠洞天 · 内联为地图层级（跟小程序一样：从宝瓶洲下钻、共用缩放/面包屑/详情抽屉） ===== */
+/* LIZHU_DESC 与 LIZHU_LEGEND_HTML 由内联脚本在注入前拼接，本文件不重复定义 */
+const lizhuBody=document.getElementById('lizhuBody');
+const lizhuMap=document.getElementById('lizhuMap');
+const lizhuVP=document.getElementById('lizhuViewport');
+
+let scaleL=1,txL=0,tyL=0,lDown=false,lMoved=false,lLastX=0,lLastY=0,lPinch=0;
+
+function applyLizhu(){
+  lizhuVP.setAttribute('transform','translate('+txL+','+tyL+') scale('+scaleL+')');
+  const pct=document.getElementById('pct'); if(pct) pct.textContent=Math.round(scaleL*100)+'%';
 }
-function hideLizhu(){
-  document.getElementById('lizhuBox').classList.remove('open');
-  document.getElementById('lizhuIframe').src='';
-  scene.style.display='';
-  document.querySelector('.zoom').style.display='';
+function resetLizhu(){ scaleL=1;txL=0;tyL=0;applyLizhu(); }
+function clientToLizhu(cx,cy){
+  const ctm=lizhuMap.getScreenCTM();
+  const p=new DOMPoint(cx,cy).matrixTransform(ctm.inverse());
+  return [p.x,p.y];
+}
+function zoomAtLizhu(cx,cy,f){
+  const ns=Math.min(9,Math.max(0.6,scaleL*f));
+  const P=clientToLizhu(cx,cy);
+  txL=P[0]-(P[0]-txL)*(ns/scaleL);
+  tyL=P[1]-(P[1]-tyL)*(ns/scaleL);
+  scaleL=ns; applyLizhu();
+}
+function enterLizhu(){
+  view='lizhu';
+  const ms=document.querySelector('.mapstage'); if(ms) ms.style.display='none';
+  const sb=document.querySelector('.stylebar'); if(sb) sb.style.display='none';
+  const lb=document.querySelector('.layerbar'); if(lb) lb.style.display='none';
+  lizhuBody.style.display='block';
+  fitLizhuVB();
+  resetLizhu();
   updateCrumb();
 }
+function exitLizhu(){
+  view='zhou'; curKey='bao';
+  lizhuBody.style.display='none';
+  const ms=document.querySelector('.mapstage'); if(ms) ms.style.display='';
+  const sb=document.querySelector('.stylebar'); if(sb) sb.style.display='';
+  const lb=document.querySelector('.layerbar'); if(lb) lb.style.display='';
+  fitStage();
+  resetT(); renderZhou('bao'); updateCrumb();
+  const _p=document.getElementById('pct'); if(_p) _p.textContent='100%';
+}
+function showLizhuPoi(key){
+  const d=LIZHU_DESC[key]; if(!d) return;
+  document.getElementById('pTag').textContent=d.tag;
+  document.getElementById('pName').textContent=d.name;
+  document.getElementById('pSub').textContent='骊珠洞天';
+  let html='<p>'+d.text+'</p>';
+  html+=charsSectionHtml(PLACE_CHARS['lizhu']);
+  html+='<div class="src">考据来源：《剑来》原著及落魄山 WIKI「骊珠洞天」地理堪舆辑录；地点、方位、称谓均依原著，未臆造。</div>';
+  document.getElementById('pBody').innerHTML=html;
+  bindCharCards(document.getElementById('pBody'));
+  side.classList.add('open');
+}
+function showLizhuLegend(){
+  document.getElementById('pTag').textContent='考据';
+  document.getElementById('pName').textContent='骊珠洞天·洞天考据';
+  document.getElementById('pSub').textContent='';
+  document.getElementById('pBody').innerHTML=LIZHU_LEGEND_HTML;
+  side.classList.add('open');
+}
+function bindLizhuPoi(){
+  lizhuBody.querySelectorAll('.poi').forEach(function(p){
+    const k=p.getAttribute('data-key');
+    const go=function(){ if(lMoved){lMoved=false;return;} showLizhuPoi(k); };
+    p.addEventListener('click',go);
+    p.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();go();} });
+  });
+  lizhuBody.querySelectorAll('.trigger').forEach(function(t){
+    const fn=function(){ if(lMoved){lMoved=false;return;} showLizhuLegend(); };
+    t.addEventListener('click',fn);
+    t.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();fn();} });
+  });
+}
+lizhuMap.addEventListener('wheel',function(e){ e.preventDefault(); zoomAtLizhu(e.clientX,e.clientY, e.deltaY<0?1.15:1/1.15); },{passive:false});
+lizhuMap.addEventListener('mousedown',function(e){ lDown=true;lMoved=false;lLastX=e.clientX;lLastY=e.clientY; lizhuBody.classList.add('grabbing'); });
+window.addEventListener('mousemove',function(e){
+  if(view!=='lizhu'||!lDown) return;
+  const dx=e.clientX-lLastX,dy=e.clientY-lLastY;
+  if(!lMoved&&Math.abs(dx)+Math.abs(dy)>3) lMoved=true;
+  if(lMoved){ const ctm=lizhuMap.getScreenCTM(); txL+=dx/ctm.a; tyL+=dy/ctm.d; lLastX=e.clientX;lLastY=e.clientY; applyLizhu(); }
+});
+window.addEventListener('mouseup',function(){ if(view==='lizhu'){ lDown=false; lizhuBody.classList.remove('grabbing'); } });
+lizhuMap.addEventListener('touchstart',function(e){
+  if(e.touches.length===1){ lDown=true;lMoved=false;lLastX=e.touches[0].clientX;lLastY=e.touches[0].clientY; }
+  else if(e.touches.length===2){ lDown=false; lPinch=lTouchDist(e); }
+},{passive:false});
+lizhuMap.addEventListener('touchmove',function(e){
+  e.preventDefault();
+  if(e.touches.length===1&&lDown){
+    const t=e.touches[0],dx=t.clientX-lLastX,dy=t.clientY-lLastY;
+    if(!lMoved&&Math.abs(dx)+Math.abs(dy)>4) lMoved=true;
+    if(lMoved){ const ctm=lizhuMap.getScreenCTM(); txL+=dx/ctm.a; tyL+=dy/ctm.d; lLastX=t.clientX;lLastY=t.clientY; applyLizhu(); }
+  } else if(e.touches.length===2){
+    const d=lTouchDist(e);
+    if(lPinch){ const m=lTouchMid(e); zoomAtLizhu(m.x,m.y,d/lPinch); }
+    lPinch=d;
+  }
+},{passive:false});
+lizhuMap.addEventListener('touchend',function(){ lDown=false;lPinch=0; });
+function lTouchDist(e){ const a=e.touches[0],b=e.touches[1]; return Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY); }
+function lTouchMid(e){ const a=e.touches[0],b=e.touches[1]; return {x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2}; }
+
 
 function attachCont(){
   scene.querySelectorAll('.cont').forEach(g=>{
@@ -864,7 +1492,7 @@ function attachPoi(){
     const go=()=>{
       if(moved){ moved=false; return; }
       const p=ZHOU[zk].detail.places.find(x=>x.key===key);
-      if(p&&p.drill==='lizhu'){ showLizhu(); return; }
+      if(p&&p.drill==='lizhu'){ enterLizhu(); return; }
       show(key, zk);
     };
     g.addEventListener('click',go);
@@ -1002,22 +1630,43 @@ function updateCrumb(){
   }else if(view==='zhou'){
     const name=(ZHOU[curKey]&&ZHOU[curKey].name)||'';
     crumb.innerHTML=`<button type="button" onclick="backWorld()">← 返回</button><span class="here">${name}</span>`;
+  }else if(view==='lizhu'){
+    crumb.innerHTML='<button type="button" id="lizhuCrumbBack">← 返回宝瓶洲</button><span class="here">骊珠洞天</span><button type="button" id="lizhuKan">洞天考据</button>';
+    const _b=document.getElementById('lizhuCrumbBack'); if(_b) _b.addEventListener('click',exitLizhu);
+    const _k=document.getElementById('lizhuKan'); if(_k) _k.addEventListener('click',showLizhuLegend);
   }
 }
 function backWorld(){ view='world'; curKey=null; resetT(); renderWorld(); side.classList.remove('open'); }
 window.backWorld=backWorld;
-document.getElementById('lizhuBack').addEventListener('click',hideLizhu);
+/* 骊珠返回入口已并入面包屑（exitLizhu） */
 
 function applyT(){ scene.setAttribute('transform',`translate(${tx},${ty}) scale(${scale})`);
   document.getElementById('pct').textContent=Math.round(scale*100)+'%'; }
 function resetT(){ scale=1; tx=0; ty=0; applyT(); }
+/* 视口贴合：把 viewBox 调成与舞台同宽高比（等比向外撑开可视范围），
+   使画布铺满整屏——多出的部分由满铺海面／纸面续接，四周不再留边；
+   内容仍按“完整可见”缩放，观感与原先保持一致。 */
+const BASE_W=1600, BASE_H=1100, LBASE_W=1400, LBASE_H=1000;
+let vbX=0, vbY=0, vbW=BASE_W, vbH=BASE_H;
+function fitBox(el,bw,bh){
+  const r=el.getBoundingClientRect(), W=r.width, H=r.height;
+  if(!(W>2&&H>2)) return null;
+  const k=Math.min(W/bw,H/bh)||1;
+  const w=W/k, h=H/k, x=(bw-w)/2, y=(bh-h)/2;
+  el.setAttribute('viewBox', x+' '+y+' '+w+' '+h);
+  return [x,y,w,h];
+}
+function fitWorldVB(){ const v=fitBox(svg,BASE_W,BASE_H); if(v){ vbX=v[0]; vbY=v[1]; vbW=v[2]; vbH=v[3]; } }
+function fitLizhuVB(){ fitBox(lizhuMap,LBASE_W,LBASE_H); }
+function fitStage(){ if(view==='lizhu') fitLizhuVB(); else fitWorldVB(); }
+window.addEventListener('resize',fitStage);
 function zoomAt(cx,cy,factor){
   const ns=Math.min(9,Math.max(0.6,scale*factor));
   tx=cx-(cx-tx)*(ns/scale); ty=cy-(cy-ty)*(ns/scale); scale=ns; applyT();
 }
 function clientToSvg(e){
   const r=svg.getBoundingClientRect();
-  return [(e.clientX-r.left)/r.width*1600, (e.clientY-r.top)/r.height*1100];
+  return [vbX+(e.clientX-r.left)/r.width*vbW, vbY+(e.clientY-r.top)/r.height*vbH];
 }
 let moved=false, last=null;
 svg.addEventListener('wheel',e=>{ e.preventDefault(); const [cx,cy]=clientToSvg(e); zoomAt(cx,cy, e.deltaY<0?1.15:1/1.15); },{passive:false});
@@ -1025,23 +1674,23 @@ svg.addEventListener('mousedown',e=>{ moved=false; last=[e.clientX,e.clientY]; }
 window.addEventListener('mousemove',e=>{
   if(!last) return; const dx=e.clientX-last[0], dy=e.clientY-last[1];
   if(Math.abs(dx)+Math.abs(dy)>3) moved=true;
-  if(moved){ const r=svg.getBoundingClientRect(); tx+=dx/r.width*1600; ty+=dy/r.height*1100; last=[e.clientX,e.clientY]; applyT(); }
+  if(moved){ const r=svg.getBoundingClientRect(); tx+=dx/r.width*vbW; ty+=dy/r.height*vbH; last=[e.clientX,e.clientY]; applyT(); }
 });
 window.addEventListener('mouseup',()=>{ last=null; });
 let t2=null;
 svg.addEventListener('touchstart',e=>{ if(e.touches.length===1){last=[e.touches[0].clientX,e.touches[0].clientY];moved=false;} else if(e.touches.length===2){ t2=touchDist(e); } },{passive:false});
 svg.addEventListener('touchmove',e=>{ e.preventDefault();
   if(e.touches.length===1&&last){ const dx=e.touches[0].clientX-last[0], dy=e.touches[0].clientY-last[1];
-    if(Math.abs(dx)+Math.abs(dy)>3) moved=true; if(moved){ const r=svg.getBoundingClientRect(); tx+=dx/r.width*1600; ty+=dy/r.height*1100; last=[e.touches[0].clientX,e.touches[0].clientY]; applyT(); } }
+    if(Math.abs(dx)+Math.abs(dy)>3) moved=true; if(moved){ const r=svg.getBoundingClientRect(); tx+=dx/r.width*vbW; ty+=dy/r.height*vbH; last=[e.touches[0].clientX,e.touches[0].clientY]; applyT(); } }
   else if(e.touches.length===2){ const d=touchDist(e); if(t2){ const [cx,cy]=touchMid(e); zoomAt(cx,cy,d/t2); } t2=d; }
 },{passive:false});
 svg.addEventListener('touchend',()=>{ last=null; t2=null; });
 function touchDist(e){ const a=e.touches[0],b=e.touches[1]; return Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY); }
 function touchMid(e){ const a=e.touches[0],b=e.touches[1]; const r=svg.getBoundingClientRect();
-  return [(a.clientX+b.clientX)/2/r.width*1600,(a.clientY+b.clientY)/2/r.height*1100]; }
-document.getElementById('zin').addEventListener('click',()=>zoomAt(800,550,1.2));
-document.getElementById('zout').addEventListener('click',()=>zoomAt(800,550,1/1.2));
-document.getElementById('zreset').addEventListener('click',resetT);
+  return [vbX+((a.clientX+b.clientX)/2-r.left)/r.width*vbW, vbY+((a.clientY+b.clientY)/2-r.top)/r.height*vbH]; }
+document.getElementById('zin').addEventListener('click',()=>{ if(view==='lizhu'){ const r=lizhuMap.getBoundingClientRect(); zoomAtLizhu(r.left+r.width/2,r.top+r.height/2,1.2); } else { zoomAt(800,550,1.2); } });
+document.getElementById('zout').addEventListener('click',()=>{ if(view==='lizhu'){ const r=lizhuMap.getBoundingClientRect(); zoomAtLizhu(r.left+r.width/2,r.top+r.height/2,1/1.2); } else { zoomAt(800,550,1/1.2); } });
+document.getElementById('zreset').addEventListener('click',()=>{ if(view==='lizhu') resetLizhu(); else resetT(); });
 
 /* 画风切换：CSS 变量驱动；写实绘卷需重绘 scene 以贴底图 */
 const styleSel=document.getElementById('styleSel');
@@ -1150,7 +1799,9 @@ function jumpToRealm(zk, key){
 }
 window.jumpToRealm=jumpToRealm;
 
+fitStage();
 renderWorld(); applyT();
+bindLizhuPoi();
 </script>
 </body>
 </html>

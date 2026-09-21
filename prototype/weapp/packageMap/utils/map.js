@@ -76,9 +76,14 @@ function snapshot() {
   }
 
   if (S.place) {
-    const z = GEO.ZHOU[S.zhouKey];
-    const pl = z && z.detail ? (z.detail.places || []).filter(function (p) { return p.key === S.place; })[0] : null;
-    if (pl) base.place = { key: pl.key, name: pl.name, tag: pl.tag || '', desc: pl.desc || '', chars: charsOfPlace(pl.key) };
+    if (S.level === 'lizhu') {
+      const it = (LZ.LIZHU || []).filter(function (p) { return p.key === S.place; })[0];
+      if (it) base.place = { key: it.key, name: it.name, tag: it.tag || '', desc: it.desc || '', chars: [] };
+    } else {
+      const z = GEO.ZHOU[S.zhouKey];
+      const pl = z && z.detail ? (z.detail.places || []).filter(function (p) { return p.key === S.place; })[0] : null;
+      if (pl) base.place = { key: pl.key, name: pl.name, tag: pl.tag || '', desc: pl.desc || '', chars: charsOfPlace(pl.key) };
+    }
   }
   return base;
 }
@@ -111,6 +116,7 @@ function showPlace(key) {
   emitView();
 }
 function closePlace() { ensure(); S.place = null; emitView(); }
+function showLizhu(key) { ensure(); if (!key) return; S.place = key; emitView(); }
 function setStyle(k) {
   ensure();
   if (GEO.STYLES[k]) { S.styleKey = k; emitView(); }
@@ -175,6 +181,7 @@ module.exports = {
   backWorld: backWorld,
   showPlace: showPlace,
   closePlace: closePlace,
+  showLizhu: showLizhu,
   setStyle: setStyle,
   toggleLayer: toggleLayer,
   currentStyle: currentStyle,

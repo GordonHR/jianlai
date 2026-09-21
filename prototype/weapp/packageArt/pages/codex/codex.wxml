@@ -14,7 +14,7 @@
         <view wx:for="{{item.list}}" wx:for-item="ch" wx:key="key" class="cx-card" bindtap="open" data-key="{{ch.key}}">
           <view class="cx-port">
             <text wx:if="{{!ch.art}}" class="cx-initial" style="color:{{ch.col}}">剑来</text>
-            <image wx:else src="{{ch.art}}" class="cx-img" mode="aspectFill"/>
+            <image wx:else src="{{ch.art}}" class="cx-img" mode="aspectFill" lazy-load/>
           </view>
           <view class="cx-name">{{ch.name}}</view>
           <view class="cx-realm">{{ch.realm}} · {{ch.skills}}技</view>

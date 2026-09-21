@@ -550,6 +550,16 @@ function renderProfile(app){
          + '<td>'+pct+'%<span class="pf-bar2" style="width:'+Math.max(4,Math.round(pct*0.5))+'px"></span></td></tr>';
   }).join('') || '<tr><td class="nm" colspan="5" style="color:#6f6857">未曾下场</td></tr>';
 
+  /* —— 分难度：PF.byDiff 一直在记账，此前界面从不展示 —— */
+  const DIFF_NM = { easy:'简 单', normal:'普 通', hard:'困 难' };
+  const diffHtml = Object.keys(DIFF_NM).map(function(k){
+    const m = PF.byDiff[k];
+    if(!m || !(m.w+m.l)) return '';
+    const tot = m.w+m.l, pct = Math.round(m.w/tot*100);
+    return '<tr><td class="nm">'+DIFF_NM[k]+'</td><td>'+tot+'</td><td>'+m.w+'</td><td>'+m.l+'</td>'
+         + '<td>'+pct+'%<span class="pf-bar2" style="width:'+Math.max(4,Math.round(pct*0.5))+'px"></span></td></tr>';
+  }).join('') || '<tr><td class="nm" colspan="5" style="color:#6f6857">未曾按难度分账</td></tr>';
+
   /* —— 分角色 Top —— */
   const chars = Object.keys(PF.byChar).map(function(k){
       const c = PF.byChar[k];
@@ -652,7 +662,9 @@ function renderProfile(app){
     +   '</div>'
     +   '<div class="pf-2col">'
     +     '<div><div class="pf-sec-t">分 模 式</div><table class="pf-tbl">'
-    +       '<tr><th>模式</th><th>局</th><th>胜</th><th>负</th><th>胜率</th></tr>'+modeHtml+'</table></div>'
+    +       '<tr><th>模式</th><th>局</th><th>胜</th><th>负</th><th>胜率</th></tr>'+modeHtml+'</table>'
+    +       '<div class="pf-sec-t">分 难 度</div><table class="pf-tbl">'
+    +       '<tr><th>难度</th><th>局</th><th>胜</th><th>负</th><th>胜率</th></tr>'+diffHtml+'</table></div>'
     +     '<div><div class="pf-sec-t">常 用 角 色</div><table class="pf-tbl">'
     +       '<tr><th>角色</th><th>出场</th><th>胜</th><th>负</th><th>胜率</th></tr>'+charHtml+'</table></div>'
     +   '</div>'

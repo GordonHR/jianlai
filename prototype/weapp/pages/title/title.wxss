@@ -25,75 +25,85 @@
 .md-meta { font-size: 21rpx; color: #7d756a; margin-top: 16rpx; }
 .ts-foot { text-align: center; color: #6f675c; font-size: 24rpx; margin-top: 60rpx; }
 
-/* ========== 开场：单图电影运镜 ========== */
+/* ========== 开场运镜（bg-ink.jpg 1280x825） ==========
+ * 用户定稿（2026-09-20）：
+ *   ① 开场更近：画面放大锁人，脚对画面底
+ *   ② 镜头逐渐拉远 = 整幅 scale 匀速↓
+ *   ③ 到极限（高度填满、不漏黑）停止，【不再放大】
+ * 图位：人 px≈50% 头≈73% 脚≈94%。overscan 150%。
+ * 锁人 S=1.35 ty≈-30.5% → 脚≈93%；极限 S=0.72 ty=-2% */
 .op {
   position: fixed; left:0; top:0; right:0; bottom:0; z-index: 999;
   overflow: hidden; background: #0c0a08;
 }
-/* 新图：人物约 32%/78%，镇门约 52%/62%，长城约 40%/38% */
 .op-stage {
-  position:absolute; inset:0;
-  transform-origin: 50% 50%;
-  background:#0c0a08;
+  position:absolute; left:0; top:0; right:0; bottom:0;
   overflow:hidden;
-  transform: translate(22%, -36%) scale(1.3);
-  filter: brightness(.9) saturate(.98);
+  background:#0c0a08;
 }
-.op-bgimg { position:absolute; left:0; top:0; width:100%; height:100%; display:block; }
-.op-stage.camIn {
-  transform: translate(22%, -36%) scale(1.3);
-  filter: brightness(.9) saturate(.98);
+.op-bgimg {
+  position:absolute; left:-25%; top:-25%; width:150%; height:150%;
+  display:block;
+  transform-origin: 50% 50%;
+  /* 起幅：更近 · 锁人 */
+  transform: translate(0%, -30.5%) scale(1.35);
+  filter: brightness(.94) saturate(.98);
 }
-.op-stage.camOut { animation: filmOut 2.8s cubic-bezier(.42,.08,.25,1) both; }
+/* ① 开场放大锁人 */
+.op-stage.camIn .op-bgimg {
+  transform: translate(0%, -30.5%) scale(1.35);
+  filter: brightness(.94) saturate(.98);
+}
+/* ② 匀速拉远到极限 */
+.op-stage.camOut .op-bgimg { animation: filmOut 3.5s linear both; }
 @keyframes filmOut {
-  0% { transform: translate(22%, -36%) scale(1.3); filter: brightness(.9) saturate(.98); }
-  55% { transform: translate(4%, 2%) scale(1.08); filter: brightness(.98) saturate(1.02); }
-  100% { transform: translate(0%, 0%) scale(1.03); filter: brightness(1.02) saturate(1.04); }
+  0%   { transform: translate(0%, -30.5%) scale(1.35); filter: brightness(.94) saturate(.98); }
+  100% { transform: translate(0%, -2%) scale(0.72);    filter: brightness(1.04) saturate(1.04); }
 }
-.op-stage.camHold {
-  transform: translate(0%, 0%) scale(1.03);
-  filter: brightness(1.02) saturate(1.04);
+/* ③ 极限停住：不再放大 */
+.op-stage.camHold .op-bgimg,
+.op-stage.youthFx .op-bgimg,
+.op-stage.title .op-bgimg,
+.op-stage.done .op-bgimg {
+  transform: translate(0%, -2%) scale(0.72);
 }
-.op-stage.camPush { animation: filmPush 2.1s cubic-bezier(.42,.08,.25,1) both; }
-@keyframes filmPush {
-  0% { transform: translate(0%, 0%) scale(1.03); filter: brightness(1.02) saturate(1.04); }
-  100% { transform: translate(20%, -32%) scale(1.22); filter: brightness(.94) saturate(1); }
+.op-stage.camHold .op-bgimg {
+  filter: brightness(1.04) saturate(1.04);
 }
-.op-stage.youthFx {
-  transform: translate(20%, -32%) scale(1.24);
-  filter: brightness(.96) saturate(1.02);
-  transition: transform .9s cubic-bezier(.4,.1,.3,1), filter .9s ease;
+.op-stage.youthFx .op-bgimg {
+  filter: brightness(1.02) saturate(1.03);
+  transition: filter .5s ease;
 }
-.op-stage.title, .op-stage.done {
-  transform: translate(20%, -34%) scale(1.28);
-  filter: brightness(.52) saturate(.88);
-  transition: transform 1s cubic-bezier(.4,.1,.3,1), filter 1s ease;
+/* 题字：保持极限全景，只压暗，不推近 */
+.op-stage.title .op-bgimg, .op-stage.done .op-bgimg {
+  filter: brightness(.46) saturate(.86);
+  transition: filter .8s ease;
 }
 
 /* 光影 */
 .op-light { position:absolute; inset:0; z-index:6; pointer-events:none; overflow:hidden; }
 .op-gate-glow {
-  position:absolute; left:42%; top:54%;
-  width:40%; height:22%;
+  position:absolute; left:48%; top:48%;
+  width:30%; height:16%;
   background: radial-gradient(ellipse at center,
-    rgba(232,198,106,.34) 0%, rgba(232,198,106,.1) 40%, transparent 70%);
-  filter: blur(20rpx); opacity:.5;
-  animation: gateBreath 3.4s ease-in-out infinite;
+    rgba(232,198,106,.28) 0%, rgba(232,198,106,.08) 42%, transparent 72%);
+  filter: blur(20rpx); opacity:.4;
+  animation: gateBreath 3.6s ease-in-out infinite;
 }
 @keyframes gateBreath {
-  0%,100% { opacity:.4; transform: scale(1); }
-  50% { opacity:.8; transform: scale(1.06); }
+  0%,100% { opacity:.28; transform: scale(1); }
+  50% { opacity:.7; transform: scale(1.05); }
 }
 .op-path-ray {
-  position:absolute; left:34%; top:64%;
-  width:32%; height:2.5%;
-  background: linear-gradient(90deg, rgba(232,198,106,.3), rgba(243,224,160,.12) 60%, transparent);
-  filter: blur(6rpx); transform: rotate(32deg); transform-origin: left center;
+  position:absolute; left:42%; top:72%;
+  width:24%; height:2%;
+  background: linear-gradient(90deg, rgba(232,198,106,.26), rgba(243,224,160,.1) 60%, transparent);
+  filter: blur(6rpx); transform: rotate(8deg); transform-origin: left center;
   opacity:0; animation: raySweep 4.8s ease-in-out infinite;
 }
 @keyframes raySweep {
-  0%,100% { opacity:0; transform: rotate(32deg) scaleX(.6); }
-  35% { opacity:.65; transform: rotate(32deg) scaleX(1.05); }
+  0%,100% { opacity:0; transform: rotate(8deg) scaleX(.6); }
+  35% { opacity:.5; transform: rotate(8deg) scaleX(1.05); }
   70% { opacity:0; }
 }
 .op-ray {
@@ -147,14 +157,15 @@
 .op-youthfx.youthFx { opacity:1; }
 .op-youthfx.title, .op-youthfx.done { opacity:.4; transition: opacity .8s ease; }
 
+/* 少年动效：锁人时人约屏位 50% x、头 60% / 脚 93% */
 .yf-robe {
-  position:absolute; left:32%; top:78%;
-  width:38rpx; height:26rpx; margin-left:-6rpx;
-  background: linear-gradient(180deg, rgba(18,14,10,.4), rgba(18,14,10,0));
+  position:absolute; left:50%; top:78%;
+  width:40rpx; height:28rpx; margin-left:-8rpx;
+  background: linear-gradient(180deg, rgba(18,14,10,.45), rgba(18,14,10,0));
   border-radius: 0 0 42% 42%; opacity:0; filter: blur(2rpx);
 }
-.yf-robe.r2 { margin-left:8rpx; width:30rpx; height:22rpx; top:79%; }
-.yf-robe.r3 { margin-left:-18rpx; width:28rpx; height:20rpx; top:79.5%; }
+.yf-robe.r2 { margin-left:10rpx; width:32rpx; height:24rpx; top:79%; }
+.yf-robe.r3 { margin-left:-20rpx; width:30rpx; height:22rpx; top:79.5%; }
 .op-youthfx.youthFx .yf-robe.r1 { animation: robe1 1.7s ease-in-out infinite; }
 .op-youthfx.youthFx .yf-robe.r2 { animation: robe2 2s .12s ease-in-out infinite; }
 .op-youthfx.youthFx .yf-robe.r3 { animation: robe3 2.2s .28s ease-in-out infinite; }
@@ -171,13 +182,13 @@
   50% { opacity:.24; transform: translate(-5rpx,4rpx) rotate(-6deg); }
 }
 .yf-mist {
-  position:absolute; left:32%; top:82%;
-  width:52rpx; height:14rpx; margin-left:-26rpx;
-  background: radial-gradient(ellipse at center, rgba(220,210,190,.2), transparent 70%);
+  position:absolute; left:50%; top:86%;
+  width:56rpx; height:16rpx; margin-left:-28rpx;
+  background: radial-gradient(ellipse at center, rgba(220,210,190,.22), transparent 70%);
   filter: blur(6rpx); opacity:0; border-radius:50%;
 }
-.yf-mist.m2 { width:36rpx; margin-left:-2rpx; top:83%; }
-.yf-mist.m3 { width:42rpx; margin-left:-36rpx; top:82.5%; }
+.yf-mist.m2 { width:38rpx; margin-left:-2rpx; top:87%; }
+.yf-mist.m3 { width:44rpx; margin-left:-38rpx; top:86.5%; }
 .op-youthfx.youthFx .yf-mist.m1 { animation: mist1 2.5s ease-in-out infinite; }
 .op-youthfx.youthFx .yf-mist.m2 { animation: mist2 2.9s .35s ease-in-out infinite; }
 .op-youthfx.youthFx .yf-mist.m3 { animation: mist3 2.7s .7s ease-in-out infinite; }
@@ -230,7 +241,8 @@
 .op-finbar { position:absolute; inset:0; z-index:40; pointer-events:none; }
 .op-btn {
   position:absolute; left:50%;
-  bottom: calc(140rpx + env(safe-area-inset-bottom, 0px));
+  /* 略上移，避免完全压住人物躯干；脚仍落在按钮下方可见 */
+  bottom: calc(200rpx + env(safe-area-inset-bottom, 0px));
   margin-left: -150rpx;
   width: 300rpx; height: 88rpx; line-height: 88rpx;
   text-align: center;

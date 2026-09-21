@@ -109,6 +109,16 @@ const XP_SRC = {
   read:  { codex:1, wsp:2 }
 };
 
+/* 见闻总量（收集度分母）
+   ------------------------------------------------------------------
+   微信分包之间不可相互 require，故此处以常量记录总量；改动源头时必须同步本表：
+     书简湖 asklake = packageShujianhu/utils/shujianhu.js  AL_ENDINGS   （19）
+     落魄山 sect    = 主包 utils/sect.js                    SECT_ENDINGS （17）
+     山水祠 shenci  = packageShui/utils/shenci.js           SC_ENDINGS   （7）
+     人物志 codex   = 主包 utils/data.js                    CHARS        （136，运行时动态取，取不到才用此值）
+     无事牌 wsp     = packageArt/pages/wushipai/wushipai.js WSP_CARDS    （80） */
+const PF_SEEN_TOT = { asklake:19, sect:17, shenci:7, codex:136, wsp:80 };
+
 /* ===================== 三、存档 ===================== */
 const PF_KEY = 'jianlai_profile';
 let PF = null;
@@ -186,13 +196,15 @@ function pfAdd(n, note, mod){
   const after = pfLevel();
   pfNote(mod||'杂', note || ('得道行 '+n), n);
   pfSave();
-  emitView();
+  /* 破境信息必须在 emitView 之前挂好 —— 否则 view() 取到的仍是旧值，
+     破境横幅永远推送不出去（原实现先 emitView 再赋 PF_broke，属时序错位）。 */
+  let info = null;
   if(after > before){
-    const info = { from: pfRealms()[before], to: pfRealms()[after], gains: pfGains(after).filter(g=>g.at>before) };
+    info = { from: pfRealms()[before], to: pfRealms()[after], gains: pfGains(after).filter(g=>g.at>before) };
     PF_broke = info;
-    return info;
   }
-  return null;
+  emitView();
+  return info;
 }
 
 /* ===================== 六、对外：各模块埋点 ===================== */
@@ -209,8 +221,21 @@ function prRecordBattle(win, mode, diff, rounds, myChars){
   bd[win?'w':'l']++; PF.byDiff[diff||'normal'] = bd;
   if(win){ PF.batt.win++; PF.batt.streak++; if(PF.batt.streak>PF.batt.best) PF.batt.best=PF.batt.streak; }
   else   { PF.batt.lose++; PF.batt.streak = 0; }
+  /* 出战角色写入流水（对齐 PC 的「同座：X、Y」）。角色名尽量从主包 data.js 取，
+     取不到（如测试环境无 require）则退回角色 key，不影响流程。 */
+  let named = '';
+  try{
+    const me = Array.isArray(myChars) ? myChars : [];
+    if(me.length){
+      let CH = null;
+      try{ if(typeof require==='function'){ const d = require('../../utils/data.js'); CH = d && d.CHARS; } }catch(e){}
+      named = me.map(function(k){ const c = CH && CH[k]; return (c && c.name) ? c.name : k; }).join('、');
+    }
+  }catch(e){}
   const modeName = { hot:'群雄论剑', ai:'仗剑独行', siege:'剑气长城', boss:'天下共伐' }[mode] || mode;
-  const txt = (win ? '胜' : '败') + ' · ' + modeName + (rounds ? ('　'+rounds+' 回合') : '');
+  const txt = (win ? '胜' : '败') + ' · ' + modeName
+            + (named ? ('　同座：' + named) : '')
+            + (rounds ? ('　' + rounds + ' 回合') : '');
   return pfAdd(gain, txt, '战');
 }
 function prRecordEnding(mod, key, title, isNew){
@@ -287,19 +312,29 @@ function pfRecordWin(){ return prRecordBattle(true,'ai','normal',10,[]); }
 /* ===================== 八、境界图鉴参考 ===================== */
 function ladderOf(which){
   const rs = (which==='WU') ? REALMS_WU : REALMS_LQ;
-  const th = (which==='WU') ? XP_TH_WU : XP_TH_LQ;
-  const lv = (PF && PF.path) ? pfLevel() : -1;
+  const lv = (PF && PF.path) ? pfLevel() : -1;      // -1 = 尚未择道
+  /* 当前道途是否正是这套体系 —— 武道玩家翻练气士图鉴时不标「已抵达」，免得张冠李戴 */
+  const same = !!(PF && PF.path) && (pfRealms() === rs);
   return rs.map(function(r){
+    /* 修正：原判定用 th[lv]+1（道行阈值）去比 r.i（境界序号），六境之后恒真，
+       导致全部境界误显示为已解锁。正解是拿现处境界序号比：r.i <= lv+1。 */
+    const reached = (lv >= 0 && same) ? (r.i <= lv + 1) : false;
     return { i:r.i, n:r.n, grp:r.grp, d:r.d, lost:!!r.lost,
-             unlocked: (lv>=0 && r.i <= th[lv]+1) ? true : false,
-             isNow: (lv>=0 && r.i === (lv+1)) ? true : false };
+             unlocked: reached,
+             isNow: (reached && r.i === (lv + 1)) };
   });
 }
 
 /* ===================== 快照 ===================== */
 function emitView(){ if(HOOK) try{ HOOK(view()); }catch(e){ console.error(e); } }
 function setHook(fn){ HOOK = fn; if(PF) emitView(); }
-function open(){ pfLoad(); if(HOOK) emitView(); }
+function open(){
+  pfLoad();
+  /* 图鉴默认跟随已择道途：武道玩家进来先看武道，免得先见练气士十五境还要手动切 */
+  const p = pfPath(PF.path);
+  SHOW_LADDER = (p && p.realms === 'WU') ? 'WU' : 'LQ';
+  if(HOOK) emitView();
+}
 function setLadder(w){ SHOW_LADDER = (w==='WU') ? 'WU' : 'LQ'; if(HOOK) emitView(); }
 
 function view(){
@@ -310,7 +345,13 @@ function view(){
   // 跨模块：若包袱斋有雪花钱，一并呈现
   let baofuCoin = 0;
   try{ const b = JSON.parse(lsGet('jianlai_baofu','null')); if(b && typeof b==='object') baofuCoin = b.coin|0; }catch(e){}
-  const seenCount = function(o){ let n=0; for(const k in o){ n += (o[k]||0); } return n; };
+  /* 见闻口径对齐 PC：记「结局种类数」而非「走过次数」，收集度才有意义 */
+  const kindCount = function(o){ let n=0; if(o) for(const k in o){ if(o[k]) n++; } return n; };
+  const B = PF.batt;
+  const wr = B.total ? Math.round(B.win / B.total * 100) : 0;
+  /* 人物志总量优先动态取（主包 data.js 对分包可 require），取不到用常量兜底 */
+  let codexTot = PF_SEEN_TOT.codex;
+  try{ if(typeof require==='function'){ const d = require('../../utils/data.js'); if(d && d.CHARS) codexTot = Object.keys(d.CHARS).length || codexTot; } }catch(e){}
   return {
     ready:true,
     title: PF.name ? ('道友 · '+PF.name) : '行 迹 录',
@@ -324,11 +365,21 @@ function view(){
     level: lv, progress: pfProgress(),
     gains: (p ? pfGains(lv).map(function(g){ return { n:g.n, cls:g.k, q:g.q }; }) : []),
     next: (p && pfNext()) ? { name: pfNext().realm.n.replace(/\s/g,''), far: pfNext().far } : null,
+    /* 本次会话新破境时给出，供页面顶部横幅展示（此前算出来却被丢弃，破境提示永不显示） */
+    broke: broke ? {
+      to: broke.to.n.replace(/\s/g,''), grp: broke.to.grp,
+      from: broke.from ? broke.from.n.replace(/\s/g,'') : '',
+      gains: broke.gains.map(function(g){ return g.n; }).join('、'), d: broke.to.d || ''
+    } : null,
     stats: {
-      batt: PF.batt,
+      batt: PF.batt, wr: wr,
       baofuCoin: baofuCoin,
-      seenAsklake: seenCount(PF.seen.asklake), seenSect: seenCount(PF.seen.sect), seenShenci: seenCount(PF.seen.shenci),
-      codex: Object.keys(PF.read.codex).length, wsp: PF.read.wsp
+      seen: {
+        asklake: kindCount(PF.seen.asklake), sect: kindCount(PF.seen.sect), shenci: kindCount(PF.seen.shenci),
+        totAsklake: PF_SEEN_TOT.asklake, totSect: PF_SEEN_TOT.sect, totShenci: PF_SEEN_TOT.shenci
+      },
+      codex: kindCount(PF.read.codex), codexTot: codexTot,
+      wsp: PF.read.wsp, wspTot: PF_SEEN_TOT.wsp
     },
     log: PF.log.slice(0, 20)
   };

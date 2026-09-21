@@ -1,7 +1,9 @@
-# 剑来卡牌 — 本地 Git 忽略规则
+# 剑来 — 本地 Git 忽略规则
+# 根目录只保留目录与项目级文件；产物与脚本见子目录约定（AGENTS.md）
 
-# ── 临时 / 草稿 / 回收站 ──────────────────────────
-_tmp_card/
+# ── 临时 / 草稿 ──────────────────────────────────
+tools/_tmp_card/
+tools/_rembg_venv/
 .workbuddy/_trash/
 prototype/art/tmp_*
 prototype/_pf_smoke_out.txt
@@ -9,33 +11,49 @@ prototype/_pf_smoke_out.txt
 **/tmp_*.jpg
 **/tmp_*.jpeg
 **/tmp_*.webp
+*.bak
+assets/edited/
+prototype/_*.txt
+prototype/_*.png
+prototype/_*.log
+prototype/_pc_probe.html
+prototype/weapp/_*.txt
+prototype/assets/tales/_gen/
 
-# 会话级临时脚本 / 诊断输出 / 生成草图（根目录）
-/_audit*.py
-/_audit*_out.txt
-/_clean*.py
-/_clean*_err.txt
-/_diag.py
-/_diag.txt
-/_place_fulu.py
+# ── tools 下的会话脚本 / 诊断输出（可再生成）────
+tools/_*.py
+tools/_*.cjs
+tools/_*_out.txt
+tools/_*_err.txt
+tools/_*.txt
+tools/_*.npy
+assets/motion/
+assets/ink/
+video/frames/
+
+# 根目录遗留（规范上不要再生成；若出现则忽略）
 /edited-*.png
 /generated-*.jpg
-/prototype/*_report.txt
-/prototype/*_out.txt
-/prototype/weapp/_selftest_report.txt
+/generated-*.png
+/_*.py
+/_*.txt
+/_*.jpg
+/_*.png
+/_*.mp4
 
-# ── 可再生成的预览图（体积大、可重跑脚本产出）────
+# ── 大体积可再生成 / 成片（本地保留，不进普通 Git）──
 generated-images/
+video/previews/*.mp4
+video/output/*.mp4
+assets/generated/
+assets/scroll/*.png
 
-# ── 大体积美术资源（文件保留在磁盘，只是不进 Git）──
-# 本地做代码/文档版本管理足够；若以后要备份美术，
-# 用移动硬盘/网盘或 Git LFS，不要塞进普通仓库。
+# ── 大体积美术资源 ────────────────────────────────
 prototype/art/
 prototype/bg/
 map-assets/
 
-# ── 本地工具二进制（不要进仓库）───────────────────
-prototype/art/resvg.exe
+# ── 本地工具二进制 ────────────────────────────────
 **/resvg.exe
 **/resvg.zip
 
@@ -47,7 +65,7 @@ desktop.ini
 *.swp
 *~
 
-# ── 依赖与构建产物（若以后引入）───────────────────
+# ── 依赖与构建产物 ────────────────────────────────
 node_modules/
 dist/
 build/
@@ -61,7 +79,3 @@ build/
 *.key
 secrets.json
 credentials.json
-
-# 微信小程序本地私有配置可保留（无密钥）；
-# 若以后写入 appid/token 等敏感信息，再取消下面这行：
-# prototype/weapp/project.private.config.json

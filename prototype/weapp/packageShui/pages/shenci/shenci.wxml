@@ -122,7 +122,7 @@
       <view class="h3">本 旬 香 火</view>
       <view class="sc-w-prog" wx:if="{{v.wishTotal > 1}}">本旬所奏 · 第 {{v.wishIndex}} 桩 ／ 共 {{v.wishTotal}} 桩</view>
       <view class="sc-wish {{item.cls}}" wx:for="{{v.wishes}}" wx:key="idx">
-        <image wx:if="{{item.img}}" class="sc-wish-img" src="{{item.img}}" mode="widthFix" binderror="onImgErr" data-idx="{{item.idx}}"/>
+        <image wx:if="{{item.img}}" class="sc-wish-img" src="{{item.img}}" mode="widthFix" lazy-load binderror="onImgErr" data-idx="{{item.idx}}"/>
         <view class="sw-who" wx:if="{{item.who}}">{{item.who}}</view>
         <view class="sw-title">{{item.title}}</view>
         <view class="sw-desc"><text wx:for="{{item.desc}}" wx:for-item="ln" wx:key="*this">{{ln}}\n</text></view>

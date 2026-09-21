@@ -26,6 +26,7 @@ function fakeCtx() {
     fillRect() { c.n.rect++; }, strokeRect() { c.n.rect++; },
     clearRect() {},
     arc() { c.n.arc++; },
+    ellipse() { c.n.arc++; },
     createRadialGradient() { return { addColorStop() {} }; },
     createPattern() { return null; },
     drawImage() { c.n.img++; },
@@ -185,6 +186,29 @@ ok(snap.level === 'world', '返回世界');
 map.drillLizhu();
 ok(snap.level === 'lizhu' && snap.lizhu && snap.lizhu.count === 53, '骊珠地名考据 53 处');
 ok(snap.lizhu.groups.length > 1, '按方位分组 ' + snap.lizhu.groups.length + ' 组');
+/* 骊珠矢量舆图：控制器 + 绘制 + 命中（接用户所选「小程序补骊珠矢量舆图」方向） */
+map.showLizhu('dongmen');
+ok(snap.level === 'lizhu' && snap.place && snap.place.key === 'dongmen', 'showLizhu → 骊珠地名详情：' + (snap.place && snap.place.name));
+ok(snap.place && typeof snap.place.desc === 'string' && snap.place.desc.length > 0, '骊珠地名带考据文案 (' + (snap.place && snap.place.desc.length) + ' 字)');
+map.closePlace();
+ok(snap.place === null, '骊珠详情可关闭');
+const LZ2 = require(PM + '/utils/lizhu.js');
+ok(LZ2.LIZHU_GEO && LZ2.LIZHU_GEO.view && LZ2.LIZHU_GEO.view[0] === 1400 && LZ2.LIZHU_GEO.view[1] === 1000, '骊珠矢量视图 1400×1000');
+ok(LZ2.LIZHU_GEO.places.length === 53, '骊珠矢量 POI 坐标齐全 (53)');
+ok(LZ2.LIZHU.every(function (it) { return it.x != null && it.y != null; }), 'LIZHU 每条文字考据均带 x,y 坐标');
+ok(!!LZ2.LIZHU_GEO.land && !!LZ2.LIZHU_GEO.rivers && !!LZ2.LIZHU_GEO.roads, '骊珠底图 陆地/河流/道路 齐备');
+let dlBad = null;
+try {
+  const c = fakeCtx();
+  md.drawLizhu(c, cam, { pal: md.palette('qinglv'), layers: Object.assign({}, require(PM + '/utils/map.js').DEFAULT_LAYERS), base: base });
+} catch (e) { dlBad = e.message; }
+ok(!dlBad, 'drawLizhu 绘制不抛错' + (dlBad ? ' :: ' + dlBad : ''));
+const fitL = md.fitLayer(LZ2.LIZHU_GEO);
+const PL = md.projector(cam, fitL);
+const dongG = LZ2.LIZHU_GEO.places.filter(function (p) { return p.key === 'dongmen'; })[0];
+const spL = PL(dongG.x, dongG.y);
+ok(md.hitLizhu(cam, spL[0], spL[1], 30) === 'dongmen', 'hitLizhu 命中东门 (' + (dongG && dongG.name) + ')');
+ok(md.hitLizhu(cam, 2, 2, 8) === null, 'hitLizhu 空白处不误命中');
 map.open();
 const s1 = map.search('骊珠');
 ok(s1.length > 0, '搜「骊珠」命中 ' + s1.length + ' 条');

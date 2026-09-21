@@ -196,15 +196,3 @@ page { background:#14110f; color:#e8e0d2; }
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
 
-.tale-full-lead { margin:4rpx 0 8rpx; font-size:26rpx; line-height:1.85; color:#c9b98f; font-style:italic; }
-.cx-sec { font-size:27rpx; line-height:1.8; color:#e8e0d2; margin-top:18rpx; }
-.cx-beat { margin-bottom:20rpx; }
-.cx-bt { font-size:27rpx; font-weight:bold; color:#9ed4be; margin-bottom:8rpx;
-         border-left:6rpx solid #c9a24b; padding-left:12rpx; }
-.cx-bd { font-size:26rpx; line-height:1.9; color:#b8ac98; }
-.cx-quote { font-size:26rpx; color:#e8c66a; line-height:1.9; margin:16rpx 0; padding:16rpx 20rpx;
-            border-left:4rpx solid #c9a24b; background:rgba(201,162,75,.06); border-radius:0 10rpx 10rpx 0; }
-.cx-note { font-size:25rpx; color:#8a7e6c; line-height:1.9; margin-top:10rpx;
-           border-top:1rpx solid #2a2118; padding-top:16rpx; }
-.cx-close { margin-top:28rpx; text-align:center; padding:18rpx; border:1rpx solid #c9a24b;
-            border-radius:12rpx; color:#c9a24b; font-size:26rpx; letter-spacing:4rpx; }

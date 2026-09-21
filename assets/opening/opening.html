@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
+<meta name="theme-color" content="#0c0a08"/>
+<title>剑来 · 起剑运镜</title>
+<style>
+:root{--bg:#0c0a08;--gold:#e8c66a}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);
+  font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;user-select:none}
+#app{position:relative;width:100%;height:100%;overflow:hidden;background:#0c0a08}
+#stage{position:absolute;inset:0;transform-origin:50% 50%;
+  background:#0c0a08;overflow:hidden;
+  transform:scale(1.22) translate(0,-6%);filter:brightness(.86) saturate(.96)}
+#bgimg{position:absolute;left:-10%;top:-10%;width:120%;height:120%;object-fit:cover;display:block}
+#stage.camIn{transform:scale(1.22) translate(0,-6%);filter:brightness(.86) saturate(.96)}
+#stage.camOut{animation:filmOut 2.6s cubic-bezier(.45,.08,.25,1) both}
+@keyframes filmOut{
+  0%{transform:scale(1.22) translate(0,-6%);filter:brightness(.86) saturate(.96)}
+  100%{transform:scale(1.02) translate(0,3%);filter:brightness(1) saturate(1.04)}
+}
+#stage.camHold{transform:scale(1.02) translate(0,3%);filter:brightness(1) saturate(1.04)}
+#stage.camPush{animation:filmPush 2s cubic-bezier(.45,.08,.25,1) both}
+@keyframes filmPush{
+  0%{transform:scale(1.02) translate(0,3%);filter:brightness(1) saturate(1.04)}
+  100%{transform:scale(1.18) translate(0,-8%);filter:brightness(.9) saturate(.98)}
+}
+#stage.youthFx{transform:scale(1.2) translate(0,-8%);filter:brightness(.92) saturate(1);transition:transform .9s cubic-bezier(.4,.1,.3,1),filter .9s ease}
+#stage.title,#stage.done{transform:scale(1.28) translate(0,-9%);filter:brightness(.48) saturate(.85);transition:transform 1s cubic-bezier(.4,.1,.3,1),filter 1s ease}
+.yf-backsword{position:absolute;left:50%;top:72%;width:4px;height:72px;margin-left:-18px;
+  background:linear-gradient(195deg,rgba(243,224,160,.9) 0%,rgba(232,198,106,.7) 40%,rgba(232,198,106,.2) 75%,transparent);
+  border-radius:3px;transform:rotate(-28deg);transform-origin:top center;opacity:0;z-index:9;
+  box-shadow:0 0 10px rgba(232,198,106,.4)}
+.yf-backsword::after{content:"";position:absolute;left:-7px;top:-4px;width:18px;height:8px;
+  background:rgba(232,198,106,.8);border-radius:2px;transform:rotate(8deg)}
+#youthfx.camPush .yf-backsword{opacity:.3}
+#youthfx.youthFx .yf-backsword{opacity:.85;animation:backSword 2.4s ease-in-out infinite}
+@keyframes backSword{0%,100%{opacity:.5;filter:brightness(.95)}45%{opacity:1;filter:brightness(1.2);box-shadow:0 0 14px rgba(232,198,106,.55)}}
+.op-light{position:absolute;inset:0;z-index:6;pointer-events:none;overflow:hidden}
+.op-gate-glow{position:absolute;left:52%;top:68%;width:42%;height:22%;margin-left:-14%;
+  background:radial-gradient(ellipse at center,rgba(232,198,106,.38) 0%,rgba(232,198,106,.12) 40%,transparent 70%);
+  filter:blur(18px);opacity:.55;animation:gateBreath 3.2s ease-in-out infinite}
+@keyframes gateBreath{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:.85;transform:scale(1.08)}}
+.op-path-ray{position:absolute;left:40%;top:70%;width:36%;height:3%;
+  background:linear-gradient(90deg,rgba(232,198,106,.35),rgba(243,224,160,.15) 60%,transparent);
+  filter:blur(6px);transform:rotate(28deg);transform-origin:left center;opacity:0;
+  animation:raySweep 4.5s ease-in-out infinite}
+@keyframes raySweep{0%,100%{opacity:0;transform:rotate(28deg) scaleX(.6)}35%{opacity:.7;transform:rotate(28deg) scaleX(1.1)}55%{opacity:.35;transform:rotate(28deg) scaleX(.9)}70%{opacity:0}}
+.op-ray{position:absolute;top:-10%;width:8%;height:70%;
+  background:linear-gradient(180deg,rgba(243,224,160,.08),rgba(232,198,106,.04) 40%,transparent);
+  filter:blur(12px);transform:rotate(12deg);opacity:0}
+.op-ray.a{left:22%;animation:rayDrift 5.5s ease-in-out infinite}
+.op-ray.b{left:48%;animation:rayDrift 6.5s 1.2s ease-in-out infinite;width:6%}
+.op-ray.c{left:68%;animation:rayDrift 7s 2.4s ease-in-out infinite;width:5%}
+@keyframes rayDrift{0%,100%{opacity:0;transform:rotate(12deg) translateY(0)}40%{opacity:.55;transform:rotate(10deg) translateY(20px)}60%{opacity:.3;transform:rotate(14deg) translateY(8px)}}
+.op-fog{position:absolute;left:-20%;right:-20%;height:18%;
+  background:linear-gradient(90deg,transparent,rgba(200,190,170,.08) 30%,rgba(220,210,190,.1) 50%,rgba(200,190,170,.08) 70%,transparent);
+  filter:blur(16px);opacity:.5}
+.op-fog.f1{top:42%;animation:fogMove 12s linear infinite}
+.op-fog.f2{top:58%;animation:fogMove 16s -4s linear infinite;opacity:.35;height:14%}
+.op-fog.f3{top:72%;animation:fogMove 10s -2s linear infinite;opacity:.4;height:12%}
+@keyframes fogMove{0%{transform:translateX(-8%)}50%{transform:translateX(8%)}100%{transform:translateX(-8%)}}
+.yf-rim{position:absolute;left:50%;top:70%;width:70px;height:110px;margin-left:-30px;
+  border-radius:40% 40% 30% 30%;
+  background:radial-gradient(ellipse at 30% 40%,rgba(232,198,106,.22),transparent 65%);
+  filter:blur(8px);opacity:0}
+#youthfx.youthFx .yf-rim{animation:rimPulse 2.8s ease-in-out infinite}
+@keyframes rimPulse{0%,100%{opacity:.25}50%{opacity:.65}}
+#breathe{position:absolute;inset:0;z-index:7;pointer-events:none;opacity:0;
+  background:radial-gradient(ellipse 55% 40% at 50% 62%,rgba(232,198,106,.14),transparent 70%)}
+#breathe.camOut{animation:breatheIn 2s ease-out both}
+#breathe.camPush,#breathe.youthFx{opacity:.25}
+#breathe.title,#breathe.done{opacity:0;transition:opacity .8s ease}
+@keyframes breatheIn{0%{opacity:0}40%{opacity:.85}100%{opacity:.4}}
+#youthfx{position:absolute;inset:0;z-index:8;pointer-events:none;opacity:0}
+#youthfx.camPush{opacity:.4}
+#youthfx.youthFx{opacity:1}
+#youthfx.title,#youthfx.done{opacity:.5;transition:opacity .8s ease}
+.yf-robe{position:absolute;left:50%;top:80%;width:40px;height:30px;margin-left:-8px;
+  background:linear-gradient(180deg,rgba(18,14,10,.5),rgba(18,14,10,0));border-radius:0 0 42% 42%;opacity:0;filter:blur(2px)}
+.yf-robe.r2{margin-left:6px;width:32px;height:26px;top:81%}
+.yf-robe.r3{margin-left:-22px;width:30px;height:24px;top:81.5%}
+#youthfx.youthFx .yf-robe.r1{animation:robe1 1.7s ease-in-out infinite}
+#youthfx.youthFx .yf-robe.r2{animation:robe2 2s .12s ease-in-out infinite}
+#youthfx.youthFx .yf-robe.r3{animation:robe3 2.2s .28s ease-in-out infinite}
+@keyframes robe1{0%,100%{opacity:.12;transform:translate(0,0) skewX(0) scaleX(1)}50%{opacity:.42;transform:translate(-10px,5px) skewX(-14deg) scaleX(1.18)}}
+@keyframes robe2{0%,100%{opacity:.1;transform:translate(0,0) skewX(0)}50%{opacity:.36;transform:translate(8px,4px) skewX(12deg) scaleX(1.12)}}
+@keyframes robe3{0%,100%{opacity:.08;transform:translate(0,0) rotate(0)}50%{opacity:.3;transform:translate(-6px,6px) rotate(-7deg)}}
+.yf-sword{position:absolute;left:50%;top:72%;width:5px;height:46px;margin-left:8px;
+  background:linear-gradient(200deg,rgba(232,198,106,.9),rgba(232,198,106,.12) 70%,transparent);
+  transform:rotate(24deg);transform-origin:top center;border-radius:3px;opacity:0;box-shadow:0 0 10px rgba(232,198,106,.4)}
+#youthfx.youthFx .yf-sword{animation:swordGlint 2.2s ease-in-out infinite}
+#youthfx.camPush .yf-sword{opacity:.2}
+@keyframes swordGlint{0%,100%{opacity:.2;filter:brightness(.9)}45%{opacity:.85;filter:brightness(1.25);box-shadow:0 0 18px rgba(232,198,106,.55)}}
+.yf-mist{position:absolute;left:50%;top:84%;width:56px;height:18px;margin-left:-28px;
+  background:radial-gradient(ellipse at center,rgba(220,210,190,.25),transparent 70%);filter:blur(6px);opacity:0;border-radius:50%}
+.yf-mist.m2{width:40px;margin-left:-6px;top:85%}
+.yf-mist.m3{width:46px;margin-left:-40px;top:84.5%}
+#youthfx.youthFx .yf-mist.m1{animation:mist1 2.5s ease-in-out infinite}
+#youthfx.youthFx .yf-mist.m2{animation:mist2 2.9s .35s ease-in-out infinite}
+#youthfx.youthFx .yf-mist.m3{animation:mist3 2.7s .7s ease-in-out infinite}
+@keyframes mist1{0%,100%{opacity:0;transform:translate(0,0) scale(1)}40%{opacity:.5;transform:translate(-8px,-12px) scale(1.2)}}
+@keyframes mist2{0%,100%{opacity:0;transform:translate(0,0) scale(1)}40%{opacity:.38;transform:translate(10px,-10px) scale(1.15)}}
+@keyframes mist3{0%,100%{opacity:0;transform:translate(0,0)}40%{opacity:.32;transform:translate(-4px,-14px)}}
+#vig{position:absolute;inset:0;z-index:10;pointer-events:none;
+  background:radial-gradient(ellipse 70% 55% at 50% 50%,transparent 28%,rgba(12,10,8,.35) 70%,rgba(12,10,8,.75) 100%),
+  linear-gradient(180deg,rgba(12,10,8,.25),transparent 22%,transparent 72%,rgba(12,10,8,.7))}
+#vig{position:absolute;inset:0;z-index:10;pointer-events:none;
+  background:radial-gradient(ellipse 70% 55% at 50% 50%,transparent 28%,rgba(12,10,8,.35) 70%,rgba(12,10,8,.75) 100%),
+  linear-gradient(180deg,rgba(12,10,8,.25),transparent 22%,transparent 72%,rgba(12,10,8,.7))}
+#sky{position:absolute;inset:0;background:radial-gradient(ellipse 90% 60% at 50% 30%,#1c1612 0%,#0c0a08 70%),#0c0a08}
+.ridge{position:absolute;left:-5%;right:-5%;background:#0a0806}
+.ridge.far{bottom:38%;height:28%;opacity:.55;background:linear-gradient(180deg,#1a1612,#0a0806);
+  clip-path:polygon(0% 100%,0% 70%,10% 55%,22% 68%,35% 40%,48% 62%,60% 35%,75% 58%,88% 45%,100% 65%,100% 100%)}
+.ridge.mid{bottom:28%;height:26%;opacity:.8;background:linear-gradient(180deg,#14100c,#070605);
+  clip-path:polygon(0% 100%,0% 60%,12% 48%,25% 62%,40% 30%,55% 55%,70% 38%,85% 58%,100% 42%,100% 100%)}
+.ridge.near{bottom:0;height:32%;background:#050403;
+  clip-path:polygon(0% 100%,0% 45%,15% 35%,30% 50%,45% 28%,62% 48%,80% 32%,100% 50%,100% 100%)}
+#gate{position:absolute;left:16%;bottom:30%;width:14%;height:16%;background:#050403;
+  clip-path:polygon(15% 100%,15% 48%,28% 48%,28% 28%,42% 12%,50% 4%,58% 12%,72% 28%,72% 48%,85% 48%,85% 100%);
+  box-shadow:0 0 30px rgba(232,198,106,.08)}
+#path{position:absolute;left:42%;bottom:8%;width:18%;height:28%;
+  background:linear-gradient(180deg,transparent,rgba(232,198,106,.08) 40%,rgba(232,198,106,.04));
+  clip-path:polygon(40% 0%,60% 0%,100% 100%,0% 100%)}
+#glow{position:absolute;left:20%;bottom:28%;width:22%;height:12%;
+  background:radial-gradient(ellipse at center,rgba(232,198,106,.28),transparent 70%);filter:blur(16px)}
+.mist{position:absolute;left:-10%;right:-10%;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(200,190,170,.06),transparent);filter:blur(8px)}
+.mist.m1{top:28%;height:12%;opacity:.7}
+.mist.m2{top:48%;height:10%;opacity:.5}
+.mist.m3{top:62%;height:14%;opacity:.35}
+#youth{position:absolute;left:52%;bottom:18%;width:28px;height:56px;margin-left:-14px;z-index:5}
+#youth .y-head{position:absolute;left:50%;top:0;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:#050403}
+#youth .y-body{position:absolute;left:50%;top:11px;width:14px;height:22px;margin-left:-7px;background:#050403;
+  border-radius:5px 5px 2px 2px;clip-path:polygon(20% 0%,80% 0%,92% 100%,8% 100%)}
+#youth .y-legs{position:absolute;left:50%;top:32px;width:12px;height:20px;margin-left:-6px;background:#050403;
+  clip-path:polygon(0% 0%,45% 0%,42% 100%,8% 100%,8% 0%,55% 0%,100% 0%,92% 100%,58% 100%,55% 0%)}
+#youth .y-sword{position:absolute;right:-2px;top:8px;width:3px;height:28px;
+  background:linear-gradient(180deg,#e8c66a,rgba(232,198,106,.35) 70%,transparent);
+  transform:rotate(22deg);transform-origin:top center;box-shadow:0 0 8px rgba(232,198,106,.35);border-radius:2px}
+#youth .y-sash{position:absolute;left:50%;top:14px;width:16px;height:3px;margin-left:-8px;background:rgba(232,198,106,.35);border-radius:2px}
+#vig{position:absolute;inset:0;z-index:10;pointer-events:none;
+  background:radial-gradient(ellipse 65% 50% at 50% 55%,transparent 25%,rgba(12,10,8,.5) 70%,rgba(12,10,8,.9) 100%),
+  linear-gradient(180deg,rgba(12,10,8,.4),transparent 20%,transparent 75%,rgba(12,10,8,.8))}
+#slashWrap{position:absolute;inset:0;z-index:15;pointer-events:none;opacity:0}
+#slash{position:absolute;left:10%;right:10%;top:46%;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(232,198,106,.2) 22%,rgba(243,224,160,.95) 48%,#fff 52%,rgba(232,198,106,.95) 56%,rgba(232,198,106,.2) 78%,transparent);
+  transform:rotate(-16deg) scaleX(0);box-shadow:0 0 10px rgba(243,224,160,.85),0 0 30px rgba(232,198,106,.4)}
+#slashGlow{position:absolute;left:12%;right:12%;top:40%;height:14%;
+  background:radial-gradient(ellipse at center,rgba(232,198,106,.3),transparent 70%);
+  transform:rotate(-16deg) scaleX(0);filter:blur(14px);opacity:0}
+#slashWrap.slash{opacity:1}
+#slashWrap.slash #slash{animation:slashDraw .5s cubic-bezier(.2,.85,.25,1) both}
+#slashWrap.slash #slashGlow{animation:slashGlow .5s ease-out both}
+@keyframes slashDraw{0%{transform:rotate(-16deg) scaleX(0);opacity:0}20%{opacity:1}55%{transform:rotate(-16deg) scaleX(1);opacity:1}100%{transform:rotate(-16deg) scaleX(1.08);opacity:0}}
+@keyframes slashGlow{0%{transform:rotate(-16deg) scaleX(0);opacity:0}40%{opacity:.85;transform:rotate(-16deg) scaleX(1)}100%{opacity:0;transform:rotate(-16deg) scaleX(1.12)}}
+#title{position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0}
+#logo{width:min(50vw,220px);height:auto;max-height:48vh;transform:translateY(-6vh);
+  filter:blur(20px);opacity:.25;transition:filter .7s cubic-bezier(.2,.7,.3,1),opacity .7s}
+#seal{position:absolute;left:13%;bottom:30%;width:min(14vw,64px);height:auto;opacity:0;transform:scale(1.6) rotate(-18deg);filter:blur(5px)}
+#title.title,#title.done{opacity:1;animation:titleFade .65s ease-out both}
+#title.title #logo,#title.done #logo{filter:blur(0) drop-shadow(0 0 40px rgba(232,198,106,.4)) drop-shadow(0 8px 20px rgba(0,0,0,.55));opacity:1}
+#title.title #seal,#title.done #seal{opacity:1;transform:scale(1) rotate(-8deg);filter:blur(0);animation:sealIn .3s .2s cubic-bezier(.2,1.5,.35,1) both}
+@keyframes titleFade{from{opacity:0}to{opacity:1}}
+@keyframes sealIn{0%{opacity:0;transform:scale(1.8) rotate(-20deg);filter:blur(5px)}65%{opacity:1;transform:scale(.95) rotate(-5deg);filter:blur(0)}100%{opacity:1;transform:scale(1) rotate(-8deg);filter:blur(0)}}
+#enter{position:absolute;left:50%;z-index:40;bottom:calc(12% + env(safe-area-inset-bottom,0px));
+  transform:translateX(-50%) translateY(16px);min-width:200px;height:52px;line-height:50px;
+  border:1.5px solid rgba(232,198,106,.85);border-radius:999px;
+  background:linear-gradient(180deg,rgba(232,198,106,.2),rgba(12,10,8,.35));
+  color:var(--gold);font-size:16px;letter-spacing:.7em;text-indent:.7em;
+  opacity:0;pointer-events:none;cursor:pointer;transition:opacity .3s,transform .3s}
+#enter.on{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0);
+  animation:btnIn .45s cubic-bezier(.2,.8,.3,1) both,ep 1.8s ease-in-out infinite}
+@keyframes btnIn{0%{opacity:0;transform:translateX(-50%) translateY(24px)}100%{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes ep{0%,100%{box-shadow:0 0 0 0 rgba(232,198,106,.28)}50%{box-shadow:0 0 0 14px rgba(232,198,106,0)}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="stage">
+    <img id="bgimg" src="opening-bg.jpg" alt=""/>
+  </div>
+  <div id="vig"></div>
+  <div class="op-light">
+    <div class="op-gate-glow"></div>
+    <div class="op-path-ray"></div>
+    <div class="op-ray a"></div>
+    <div class="op-ray b"></div>
+    <div class="op-ray c"></div>
+    <div class="op-fog f1"></div>
+    <div class="op-fog f2"></div>
+    <div class="op-fog f3"></div>
+  </div>
+  <div id="youthfx">
+    <div class="yf-robe r1"></div>
+    <div class="yf-robe r2"></div>
+    <div class="yf-robe r3"></div>
+    <div class="yf-mist m1"></div>
+    <div class="yf-mist m2"></div>
+    <div class="yf-mist m3"></div>
+  </div>
+  <div id="breathe"></div>
+  <div id="title">
+    <img id="logo" src="design/brand/wordmark-jianlai.png" alt="剑来"/>
+    <img id="seal" src="design/brand/seal-zhu-shuichangdong.png" alt="水长东"/>
+  </div>
+  <button id="enter" type="button">开始问剑</button>
+</div>
+<script>
+(function(){
+  const stage=document.getElementById('stage');
+  const title=document.getElementById('title');
+  const youthfx=document.getElementById('youthfx');
+  const breathe=document.getElementById('breathe');
+  const enter=document.getElementById('enter');
+  function set(ph){
+    stage.className=ph;
+    youthfx.className=ph;
+    breathe.className=ph;
+    title.className=(ph==='title'||ph==='done')?ph:'';
+    enter.className=(ph==='done')?'on':'';
+  }
+  function play(){
+    set('camIn');
+    setTimeout(()=>set('camOut'),600);
+    setTimeout(()=>set('camHold'),3200);
+    setTimeout(()=>set('camPush'),4200);
+    setTimeout(()=>set('youthFx'),6200);
+    setTimeout(()=>set('title'),7400);
+    setTimeout(()=>set('done'),8200);
+  }
+  enter.onclick=function(){ if(this.className.indexOf('on')<0) return; };
+  if(document.readyState==='complete') play();
+  else window.addEventListener('load',play);
+})();
+</script>
+</body>
+</html>

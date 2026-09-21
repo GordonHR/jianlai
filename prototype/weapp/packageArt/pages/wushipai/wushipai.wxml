@@ -15,7 +15,7 @@
           <text class="wsp-no">{{item.no}}</text>
         </view>
         <view class="wsp-face wsp-words">
-          <image wx:if="{{item.w}}" class="wsp-art" src="{{item.art}}" mode="aspectFill" binderror="imgErr" data-i="{{index}}"/>
+          <image wx:if="{{item.w}}" class="wsp-art" src="{{item.art}}" mode="aspectFill" lazy-load binderror="imgErr" data-i="{{index}}"/>
           <view wx:else class="wsp-art wsp-pattern"></view>
         </view>
       </view>

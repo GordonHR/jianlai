@@ -7,7 +7,7 @@
   <view class="cx-tales">
     <view wx:for="{{tales}}" wx:key="id" class="cx-tale" bindtap="openTale" data-id="{{item.id}}">
       <!-- 图作整卡背景（非独立左图区）；卡片固定高度 -->
-      <image class="cx-tale-bg" src="{{item.img}}" mode="aspectFill"/>
+      <image class="cx-tale-bg" src="{{item.img}}" mode="aspectFill" lazy-load/>
       <view class="cx-tale-shade"></view>
       <view class="cx-tale-body">
         <view class="cx-tl">{{item.title}}</view>

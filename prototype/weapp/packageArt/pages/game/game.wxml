@@ -228,6 +228,13 @@
       </view>
       <view class="rs-title {{s.result.win?'win':'lose'}}">{{s.result.win?'胜':'败'}}</view>
       <view class="rs-sub">{{s.result.sub}}</view>
+      <!-- 包袱斋结账：本局雪花钱得数（原先只悄悄入账，玩家打完不知赚了多少） -->
+      <view wx:if="{{s.result.coinGain && s.result.coinGain.gain>0}}" class="rs-coin">
+        <text class="rc-k">雪 花 钱</text>
+        <text class="rc-v">+{{s.result.coinGain.gain}}</text>
+        <text wx:if="{{s.result.coinGain.pay>0}}" class="rc-pay">抵赊欠 {{s.result.coinGain.pay}}</text>
+        <text class="rc-net">囊中结余 {{s.result.coinGain.coin}}</text>
+      </view>
       <view class="rs-stats">
         <view class="rs-row rs-head"><text>人物</text><text>阵营</text><text>境</text><text>斩</text><text>伤</text><text>承</text><text>疗</text></view>
         <view wx:for="{{s.result.rows}}" wx:key="name" class="rs-row {{item.win?'win-row':''}}">

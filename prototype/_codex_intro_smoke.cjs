@@ -32,7 +32,8 @@ var document = {
   querySelector: function(){ return null; },
   querySelectorAll: function(){ return []; },
   addEventListener:function(){}, removeEventListener:function(){},
-  head: { appendChild:function(){} }, body: { appendChild:function(){} },
+  head: { appendChild:function(){} },
+  body: { appendChild:function(){}, classList:{ add:function(){}, remove:function(){}, contains:function(){return false;} }, style:{} },
   documentElement: { style:{ setProperty:function(){} } },
 };
 var window = { innerWidth:1200, innerHeight:800, addEventListener:function(){}, devicePixelRatio:1,

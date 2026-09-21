@@ -11,7 +11,7 @@
       <view wx:for="{{view}}" wx:key="key" class="char {{item.selected?'sel':''}}" style="border-color:{{item.col}}" bindtap="toggleSelect" data-key="{{item.key}}">
         <view class="cw" style="background:{{item.col}}">
           <text wx:if="{{!item.art}}" class="ph-initial">剑来</text>
-          <image wx:else src="{{item.art}}" class="charimg" mode="aspectFill"/>
+          <image wx:else src="{{item.art}}" class="charimg" mode="aspectFill" lazy-load/>
           <view class="name-over">{{item.name}}</view>
           <view class="badge badge-hp">气血 {{item.hp}}</view>
           <view class="badge badge-realm">{{item.realm}}</view>
